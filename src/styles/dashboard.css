@@ -1,0 +1,115 @@
+General Layout
+.dashboard-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+  }
+  
+  /* Header */
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+  }
+  
+  .logo {
+    font-weight: bold;
+  }
+  
+  nav {
+    display: flex;
+    gap: 20px;
+  }
+  
+  nav a {
+    text-decoration: none;
+    color: black;
+  }
+  
+  .logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  /* Navigation Tabs */
+  .dashboard-nav {
+    display: flex;
+    gap: 30px;
+    padding: 10px 0;
+    border-bottom: 2px solid #ccc;
+  }
+  
+  .dashboard-nav span {
+    cursor: pointer;
+  }
+  
+  .dashboard-nav .active {
+    font-weight: bold;
+    border-bottom: 3px solid #18A0FB;
+  }
+  
+  /* Task Section */
+  .task-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .task-box {
+    width: 48%;
+    background: #f8f8f8;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .task-image,
+  .task-calendar {
+    width: 100%;
+    height: 150px;
+    background: #ddd;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+   */
+  /* Topic Buttons */
+  /* .topic-button {
+    display: inline-block;
+    padding: 5px 15px;
+    background: #18A0FB;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  /* Chart Section */
+  .chart-section {
+    margin-top: 40px;
+  }
+  
+  .chart-placeholder {
+    width: 100%;
+    height: 200px;
+    background: #ddd;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .task-section {
+      flex-direction: column;
+    }
+  
+    .task-box {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  }
+  

@@ -1,0 +1,65 @@
+Calendar Container
+.calendar-container {
+    width: 250px;
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: "Poppins", sans-serif;
+    text-align: center;
+  }
+  
+  /* Header */
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  
+  /* Calendar Grid */
+  .calendar-body {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  /* Days Row */
+  .calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    font-size: 14px;
+    font-weight: 500;
+    color: #6c757d;
+  }
+  
+  /* Dates Grid */
+  .calendar-dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  /* Date Styling */
+  .date {
+    padding: 8px;
+    border-radius: 5px;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  /* Empty Date for alignment */
+  .empty-date {
+    visibility: hidden;
+  }
+  
+  /* Highlighted Current Date */
+  .highlight {
+    background: #18A0FB;
+    color: white;
+    font-weight: 600;
+    border-radius: 50%;
+  }
+   

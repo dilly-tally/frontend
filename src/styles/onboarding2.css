@@ -1,0 +1,57 @@
+.onboarding-container {
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+    padding: 50px;
+  }
+  
+
+  
+  .onboarding-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .onboarding-form label {
+    text-align: left;
+    font-weight: bold;
+  }
+  
+  .onboarding-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .back-btn, .submit-btn {
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+  
+  .back-btn {
+    background: #ccc;
+    color: black;
+  }
+  
+  .submit-btn {
+    background: #18A0FB;
+    color: white;
+  }
+  
+  h2 {
+    font-size: 42px;
+   
+  }
+  

@@ -1,0 +1,66 @@
+General Styling
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  /* Onboarding Container */
+  .onboarding-container {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 450px;
+  }
+  
+  /* Form Styling */
+  .onboarding-form {
+    display: flex;
+    font-size: 24px;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .onboarding-form label {
+    text-align: left;
+    font-size: 24px;
+    font-weight: 500;
+  }
+  
+  .onboarding-form input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  } 
+  
+  /* Next Button */
+  .onboarding-form button {
+    margin-top: 20px;
+    padding: 12px;
+    justify-content: space-between;
+    background-color: #18A0FB;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .onboarding-form button:hover {
+    background-color: #007acc;
+  }
+
+  h2 {
+    font-size: 42px;
+   
+  }
+  
