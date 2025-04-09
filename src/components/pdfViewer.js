@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
+// import pdfMake from "pdfmake/build/pdfmake";
+// import pdfFonts from "pdfmake/build/vfs_fonts";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useParams } from "react-router-dom";
 import axios from "../api/auth";
