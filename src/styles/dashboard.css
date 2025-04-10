@@ -75,9 +75,8 @@
     align-items: center;
     justify-content: center;
   }
-   */
-  /* Topic Buttons */
-  /* .topic-button {
+    /* Topic Buttons */
+  .topic-button {
     display: inline-block;
     padding: 5px 15px;
     background: #18A0FB;
