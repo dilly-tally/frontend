@@ -5,8 +5,9 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { useParams } from "react-router-dom";
 import axios from "../api/auth";
 import "../styles/pdfView.css";
+import workerSrc from 'pdfjs-dist/build/pdf.worker.min?url';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
+pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
 
 const PdfViewer = () => {
   // Make sure we're getting the parameter name exactly as defined in the route
