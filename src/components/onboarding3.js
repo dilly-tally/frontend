@@ -46,7 +46,7 @@ const Onboarding3 = () => {
             teachingExperience: userData.teachingExperience,
             whereDoYouTeach: userData.whereDoYouTeach,
           });
-          const response = await axios.post("http://localhost:3000/v1/user/onboarding3", {
+          const response = await axios.post("https://backend-937324960970.us-central1.run.app/v1/user/onboarding3", {
         email,
         teachingExperience: userData.teachingExperience,
         whereDoYouTeach: userData.whereDoYouTeach,
