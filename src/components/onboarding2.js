@@ -17,7 +17,7 @@ const Onboarding2 = () => {
   useEffect(() => {
     const storedEmail = localStorage.getItem("user");
     if (!storedEmail) {
-      console.error("❌ Error: Email not found in localStorage");
+      console.error("Error: Email not found in localStorage");
       setMessage("Session expired. Please sign up again.");
       navigate("/signup");
     } else {
@@ -38,24 +38,24 @@ const Onboarding2 = () => {
         throw new Error("Email not found in localStorage");
       }
 
-      console.log("✅ Sending onboarding2 data:", {
+      console.log("Sending onboarding2 data:", {
         email,
         subjects: userData.subjects,
         yearGroups: userData.yearGroups,
         curriculum: userData.curriculum,
       });
 
-      const response = await axios.post("http://localhost:3000/v1/user/onboarding2", {
+      const response = await axios.post("https://backend-937324960970.us-central1.run.app/v1/user/onboarding2", {
         email,
         subjects: userData.subjects,
         yearGroups: userData.yearGroups,
         curriculum: userData.curriculum,
       });
 
-      console.log("✅ Onboarding2 successful:", response.data);
-      navigate("/onboarding3"); // ✅ Redirect to the next step
+      console.log("Onboarding2 successful:", response.data);
+      navigate("/onboarding3"); // Redirect to the next step
     } catch (error) {
-      console.error("❌ Error submitting onboarding2 data:", error);
+      console.error(" Error submitting onboarding2 data:", error);
       setMessage("Onboarding failed. Please try again.");
     }
   };

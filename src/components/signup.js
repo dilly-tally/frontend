@@ -22,7 +22,7 @@ const SignUp = () => {
 
     try {
       console.log("hai")
-      await axios.post("http://localhost:3000/v1/user/signup", { email: userData.email });
+      await axios.post("https://backend-937324960970.us-central1.run.app/v1/user/signup", { email: userData.email });
       localStorage.setItem("user", userData.email);
       navigate("/onboarding"); // Redirect to onboarding
     } catch (error) {

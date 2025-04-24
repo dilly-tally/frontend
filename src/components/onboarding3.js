@@ -18,7 +18,7 @@ const Onboarding3 = () => {
   useEffect(() => {
     const storedEmail = localStorage.getItem("user");
     if (!storedEmail) {
-      console.error("❌ Error: Email not found in localStorage");
+      console.error("Error: Email not found in localStorage");
       setMessage("Session expired. Please sign up again.");
       navigate("/signup");
     } else {
@@ -41,7 +41,7 @@ const Onboarding3 = () => {
             console.error("Email not found in localStorage");
             return;
           }
-          console.log("✅ Sending onboarding3 data:", {
+          console.log(" Sending onboarding3 data:", {
             email,
             teachingExperience: userData.teachingExperience,
             whereDoYouTeach: userData.whereDoYouTeach,
@@ -51,9 +51,9 @@ const Onboarding3 = () => {
         teachingExperience: userData.teachingExperience,
         whereDoYouTeach: userData.whereDoYouTeach,
       });
-      navigate("/onboarding4"); // ✅ Navigate to next onboarding step
+      navigate("/onboarding4"); // Navigate to next onboarding step
     } catch (error) {
-      console.error("❌ Error submitting onboarding3 data:", error);
+      console.error(" Error submitting onboarding3 data:", error);
     }
   };
 

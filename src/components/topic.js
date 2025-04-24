@@ -19,7 +19,7 @@ const LessonTopics = () => {
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/v1/teacherResource/topics/search", {
+        const res = await axios.get("https://backend-937324960970.us-central1.run.app/v1/teacherResource/topics/search", {
           params: { query, grade, curriculum },
         });
         console.log("Fetched topics:", res.data.topics); // ✅ Log full topic data
@@ -76,7 +76,7 @@ const LessonTopics = () => {
 
         <div className="topics-container">
           {topics.map((topic, index) => {
-            console.log("Topic ID:", topic.TID); // ✅ Logging topic ID
+            console.log("Topic ID:", topic.TID); //  Logging topic ID
             return (
               <div key={index} className="topic-card">
                 <div className="card-content">

@@ -27,7 +27,7 @@ const PdfViewer = () => {
         }
         
         console.log(`Fetching data for topic ID: ${tid}`);
-        const res = await axios.get(`http://localhost:3000/v1/teacherResource/topic/${tid}`);
+        const res = await axios.get(`https://backend-937324960970.us-central1.run.app/v1/teacherResource/topic/${tid}`);
         
         console.log("API response:", res.data);
         const { pdfPath, TNAME } = res.data.topic;
@@ -37,7 +37,7 @@ const PdfViewer = () => {
           throw new Error("PDF path not found in response");
         }
         
-        setPdfUrl(`http://localhost:3000/${pdfPath}`);
+        setPdfUrl(`https://backend-937324960970.us-central1.run.app/${pdfPath}`);
         setTopicTitle(TNAME || "Untitled Topic");
         setLoading(false);
       } catch (err) {
