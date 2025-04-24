@@ -42,12 +42,10 @@ const PdfViewer = () => {
         <h3>{topicTitle}</h3>
         {pdfUrl ? (
           <iframe
-            src={pdfUrl}
-            width="100%"
-            height="600px"
-            style={{ border: "1px solid #ccc" }}
-            title="PDF Viewer"
-          />
+          src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+          className="pdf-iframe"
+          title="PDF Viewer"
+        />
         ) : (
           <p>PDF not available</p>
         )}
