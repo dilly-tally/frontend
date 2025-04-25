@@ -19,12 +19,12 @@ const PdfViewer = () => {
         if (!tid) throw new Error("Topic ID is missing");
 
         const res = await axios.get(
-          https://backend-937324960970.us-central1.run.app/v1/teacherResource/topic/${tid}
+          `https://backend-937324960970.us-central1.run.app/v1/teacherResource/topic/${tid}`
         );
         const { pdfPath, TNAME } = res.data.topic;
         if (!pdfPath) throw new Error("PDF path not found in response");
 
-        setPdfUrl(https://backend-937324960970.us-central1.run.app/${pdfPath});
+        setPdfUrl(`https://backend-937324960970.us-central1.run.app/${pdfPath}`);
         setTopicTitle(TNAME || "Untitled Topic");
         setLoading(false);
       } catch (err) {
@@ -71,7 +71,7 @@ const PdfViewer = () => {
 
         {/* PDF iframe */}
         <iframe
-          src={${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0}
+          src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
           title="PDF Viewer"
           className="pdf-iframe"
           style={{
