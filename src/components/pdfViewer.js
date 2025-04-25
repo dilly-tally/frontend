@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../api/auth";
 import "../styles/pdfView.css";
@@ -12,8 +12,8 @@ const PdfViewer = () => {
   const [drawColor, setDrawColor] = useState("#000");
   const [isErasing, setIsErasing] = useState(false);
 
-  const pdfCanvasRef = useRef(null);
-  const whiteboardCanvasRef = useRef(null);
+  const canvasRef = useRef(null);
+  const scrollContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchPDF = async () => {
@@ -22,6 +22,7 @@ const PdfViewer = () => {
           `https://backend-937324960970.us-central1.run.app/v1/teacherResource/topic/${tid}`
         );
         const { pdfPath, TNAME } = res.data.topic;
+
         if (!pdfPath) throw new Error("PDF path not found in response");
 
         setPdfUrl(`https://backend-937324960970.us-central1.run.app/${pdfPath}`);
@@ -37,16 +38,31 @@ const PdfViewer = () => {
     fetchPDF();
   }, [tid]);
 
-  const startDrawing = (e, ref) => {
-    const canvas = ref.current;
+  useEffect(() => {
+    const adjustCanvasSize = () => {
+      const iframe = document.getElementById("pdf-iframe");
+      const canvas = canvasRef.current;
+      if (iframe && canvas) {
+        canvas.width = iframe.clientWidth;
+        canvas.height = iframe.scrollHeight;
+      }
+    };
+
+    setTimeout(adjustCanvasSize, 1000); // Give time for PDF to load
+    window.addEventListener("resize", adjustCanvasSize);
+    return () => window.removeEventListener("resize", adjustCanvasSize);
+  }, [pdfUrl]);
+
+  const startDrawing = (e) => {
+    const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     canvas.dataset.drawing = "true";
     ctx.beginPath();
     ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
   };
 
-  const draw = (e, ref) => {
-    const canvas = ref.current;
+  const draw = (e) => {
+    const canvas = canvasRef.current;
     if (canvas.dataset.drawing !== "true") return;
     const ctx = canvas.getContext("2d");
     ctx.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
@@ -56,80 +72,57 @@ const PdfViewer = () => {
     ctx.stroke();
   };
 
-  const stopDrawing = (ref) => {
-    const canvas = ref.current;
-    canvas.dataset.drawing = "false";
+  const stopDrawing = () => {
+    canvasRef.current.dataset.drawing = "false";
   };
 
   if (loading) return <div>Loading PDF...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="topic-detail-container" style={{ display: "flex" }}>
-      {/* PDF Viewer & Canvas */}
-      <div className="left-panel" style={{ flex: 3, position: "relative", height: "100vh" }}>
-        <h3 style={{ padding: "10px" }}>{topicTitle}</h3>
-
-        <iframe
-          src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-          title="PDF Viewer"
-          className="pdf-iframe"
-          style={{
-            width: "100%",
-            height: "calc(100% - 60px)",
-            position: "absolute",
-            top: "60px",
-            left: 0,
-            zIndex: 1,
-            border: "none",
-          }}
-        />
-
-        <canvas
-          ref={pdfCanvasRef}
-          width={window.innerWidth * 0.6}
-          height={window.innerHeight - 60}
-          style={{
-            position: "absolute",
-            top: "60px",
-            left: 0,
-            zIndex: 2,
-            backgroundColor: "transparent",
-            pointerEvents: "auto",
-            cursor: isErasing ? "cell" : "crosshair",
-          }}
-          onMouseDown={(e) => startDrawing(e, pdfCanvasRef)}
-          onMouseMove={(e) => draw(e, pdfCanvasRef)}
-          onMouseUp={() => stopDrawing(pdfCanvasRef)}
-          onMouseLeave={() => stopDrawing(pdfCanvasRef)}
-        />
-      </div>
-
-      {/* Tools + Whiteboard */}
-      <div className="right-panel" style={{ flex: 1, padding: "1rem" }}>
-        <h3>Drawing Tools</h3>
+    <div>
+      <div style={{ padding: "1rem" }}>
+        <h3>{topicTitle}</h3>
         <button onClick={() => setDrawColor("#000")}>Black</button>
         <button onClick={() => setDrawColor("red")}>Red</button>
         <button onClick={() => setDrawColor("green")}>Green</button>
         <button onClick={() => setDrawColor("blue")}>Blue</button>
-        <button onClick={() => setIsErasing((prev) => !prev)}>
+        <button onClick={() => setIsErasing(!isErasing)}>
           {isErasing ? "Switch to Pen" : "Eraser"}
         </button>
+      </div>
 
-        <h3 style={{ marginTop: "20px" }}>Whiteboard</h3>
-        <canvas
-          ref={whiteboardCanvasRef}
-          width={400}
-          height={600}
+      <div
+        ref={scrollContainerRef}
+        style={{ position: "relative", height: "calc(100vh - 100px)", overflowY: "scroll" }}
+      >
+        {/* PDF iframe */}
+        <iframe
+          id="pdf-iframe"
+          src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+          title="PDF Viewer"
           style={{
-            border: "1px solid #ccc",
-            background: "#fff",
+            width: "100%",
+            border: "none",
+          }}
+        />
+
+        {/* Canvas overlay */}
+        <canvas
+          ref={canvasRef}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: 10,
+            pointerEvents: "auto",
+            backgroundColor: "transparent",
             cursor: isErasing ? "cell" : "crosshair",
           }}
-          onMouseDown={(e) => startDrawing(e, whiteboardCanvasRef)}
-          onMouseMove={(e) => draw(e, whiteboardCanvasRef)}
-          onMouseUp={() => stopDrawing(whiteboardCanvasRef)}
-          onMouseLeave={() => stopDrawing(whiteboardCanvasRef)}
+          onMouseDown={startDrawing}
+          onMouseMove={draw}
+          onMouseUp={stopDrawing}
+          onMouseLeave={stopDrawing}
         />
       </div>
     </div>
