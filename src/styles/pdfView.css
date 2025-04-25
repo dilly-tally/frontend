@@ -46,7 +46,6 @@
 
 /* Placeholder for whiteboard */
 .right-panel::before {
-  content: "Whiteboard";
   position: absolute;
   top: 10px;
   left: 20px;
