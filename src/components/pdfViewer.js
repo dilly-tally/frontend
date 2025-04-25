@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../api/auth";
 import "../styles/pdfView.css";
@@ -11,13 +11,13 @@ const PdfViewer = () => {
   const [error, setError] = useState(null);
   const [drawColor, setDrawColor] = useState("#000");
   const [isErasing, setIsErasing] = useState(false);
-  const canvasRef = useRef(null);
+
+  const pdfCanvasRef = useRef(null);
+  const whiteboardCanvasRef = useRef(null);
 
   useEffect(() => {
     const fetchPDF = async () => {
       try {
-        if (!tid) throw new Error("Topic ID is missing");
-
         const res = await axios.get(
           `https://backend-937324960970.us-central1.run.app/v1/teacherResource/topic/${tid}`
         );
@@ -37,16 +37,16 @@ const PdfViewer = () => {
     fetchPDF();
   }, [tid]);
 
-  const startDrawing = (e) => {
-    const canvas = canvasRef.current;
+  const startDrawing = (e, ref) => {
+    const canvas = ref.current;
     const ctx = canvas.getContext("2d");
     canvas.dataset.drawing = "true";
     ctx.beginPath();
     ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
   };
 
-  const draw = (e) => {
-    const canvas = canvasRef.current;
+  const draw = (e, ref) => {
+    const canvas = ref.current;
     if (canvas.dataset.drawing !== "true") return;
     const ctx = canvas.getContext("2d");
     ctx.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
@@ -56,8 +56,8 @@ const PdfViewer = () => {
     ctx.stroke();
   };
 
-  const stopDrawing = () => {
-    const canvas = canvasRef.current;
+  const stopDrawing = (ref) => {
+    const canvas = ref.current;
     canvas.dataset.drawing = "false";
   };
 
@@ -66,10 +66,10 @@ const PdfViewer = () => {
 
   return (
     <div className="topic-detail-container" style={{ display: "flex" }}>
+      {/* PDF Viewer & Canvas */}
       <div className="left-panel" style={{ flex: 3, position: "relative", height: "100vh" }}>
         <h3 style={{ padding: "10px" }}>{topicTitle}</h3>
 
-        {/* PDF iframe */}
         <iframe
           src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
           title="PDF Viewer"
@@ -85,9 +85,8 @@ const PdfViewer = () => {
           }}
         />
 
-        {/* Drawing Canvas */}
         <canvas
-          ref={canvasRef}
+          ref={pdfCanvasRef}
           width={window.innerWidth * 0.6}
           height={window.innerHeight - 60}
           style={{
@@ -99,14 +98,14 @@ const PdfViewer = () => {
             pointerEvents: "auto",
             cursor: isErasing ? "cell" : "crosshair",
           }}
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={stopDrawing}
-          onMouseLeave={stopDrawing}
+          onMouseDown={(e) => startDrawing(e, pdfCanvasRef)}
+          onMouseMove={(e) => draw(e, pdfCanvasRef)}
+          onMouseUp={() => stopDrawing(pdfCanvasRef)}
+          onMouseLeave={() => stopDrawing(pdfCanvasRef)}
         />
       </div>
 
-      {/* Tools Panel */}
+      {/* Tools + Whiteboard */}
       <div className="right-panel" style={{ flex: 1, padding: "1rem" }}>
         <h3>Drawing Tools</h3>
         <button onClick={() => setDrawColor("#000")}>Black</button>
@@ -116,6 +115,22 @@ const PdfViewer = () => {
         <button onClick={() => setIsErasing((prev) => !prev)}>
           {isErasing ? "Switch to Pen" : "Eraser"}
         </button>
+
+        <h3 style={{ marginTop: "20px" }}>Whiteboard</h3>
+        <canvas
+          ref={whiteboardCanvasRef}
+          width={400}
+          height={600}
+          style={{
+            border: "1px solid #ccc",
+            background: "#fff",
+            cursor: isErasing ? "cell" : "crosshair",
+          }}
+          onMouseDown={(e) => startDrawing(e, whiteboardCanvasRef)}
+          onMouseMove={(e) => draw(e, whiteboardCanvasRef)}
+          onMouseUp={() => stopDrawing(whiteboardCanvasRef)}
+          onMouseLeave={() => stopDrawing(whiteboardCanvasRef)}
+        />
       </div>
     </div>
   );
