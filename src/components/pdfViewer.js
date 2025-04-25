@@ -42,7 +42,12 @@ const PdfViewer = () => {
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext("2d");
     canvas.dataset.drawing = "true";
-    canvas.style.pointerEvents = "auto"; // Enable drawing interaction
+
+    // ✅ enable drawing
+    if (canvasId === "pdf-canvas") {
+      canvas.style.pointerEvents = "auto";
+    }
+
     ctx.beginPath();
     ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
   }
@@ -62,7 +67,9 @@ const PdfViewer = () => {
   function stopDrawing() {
     document.querySelectorAll("canvas").forEach((canvas) => {
       canvas.dataset.drawing = "false";
-      canvas.style.pointerEvents = "none"; // Revert to scroll mode
+      if (canvas.id === "pdf-canvas") {
+        canvas.style.pointerEvents = "none"; // ✅ restore scroll
+      }
     });
   }
 
@@ -90,7 +97,7 @@ const PdfViewer = () => {
                 left: "20px",
                 zIndex: 10,
                 backgroundColor: "transparent",
-                pointerEvents: "none", // Default to allow scroll
+                pointerEvents: "none", // ✅ allow scroll initially
               }}
               onMouseDown={(e) => startDrawing(e, "pdf-canvas")}
               onMouseMove={(e) => draw(e, "pdf-canvas")}
