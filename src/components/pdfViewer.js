@@ -66,7 +66,7 @@ const PdfViewer = () => {
 
   return (
     <div className="topic-detail-container" style={{ display: "flex" }}>
-      <div className="left-panel" style={{ flex: 3, position: "relative", height: "100vh" }}>
+      <div className="left-panel" style={{ flex: 3, position: "relative", height: "100vh", overflowY: "auto" }}>
         <h3 style={{ padding: "10px" }}>{topicTitle}</h3>
 
         {/* PDF iframe */}
@@ -104,6 +104,19 @@ const PdfViewer = () => {
           onMouseUp={stopDrawing}
           onMouseLeave={stopDrawing}
         />
+
+        {/* Embedded Interactive Tool */}
+        <div style={{ marginTop: `${window.innerHeight}px`, padding: "1rem" }}>
+          <h3>Explore Fractions</h3>
+          <iframe
+            src="https://www.visnos.com/demos/fraction-wall?utm_source=chatgpt.com"
+            title="Fraction Wall Demo"
+            width="100%"
+            height="600px"
+            style={{ border: "1px solid #ccc", borderRadius: "8px" }}
+            allowFullScreen
+          />
+        </div>
       </div>
 
       {/* Tools Panel */}
@@ -120,6 +133,5 @@ const PdfViewer = () => {
     </div>
   );
 };
-
 
 export default PdfViewer;
