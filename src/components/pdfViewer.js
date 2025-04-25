@@ -50,9 +50,12 @@ const PdfViewer = () => {
     const canvas = document.getElementById(canvasId);
     if (canvas.dataset.drawing !== "true") return;
     const ctx = canvas.getContext("2d");
-    ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-    ctx.strokeStyle = isErasing ? "#fff" : drawColor;
+
+    // ✅ Proper eraser logic
+    ctx.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
+    ctx.strokeStyle = drawColor;
     ctx.lineWidth = isErasing ? 20 : 2;
+    ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
     ctx.stroke();
   }
 
