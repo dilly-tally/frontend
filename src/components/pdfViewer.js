@@ -42,6 +42,7 @@ const PdfViewer = () => {
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext("2d");
     canvas.dataset.drawing = "true";
+    canvas.style.pointerEvents = "auto"; // Enable drawing interaction
     ctx.beginPath();
     ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
   }
@@ -51,7 +52,6 @@ const PdfViewer = () => {
     if (canvas.dataset.drawing !== "true") return;
     const ctx = canvas.getContext("2d");
 
-    // ✅ Proper eraser logic
     ctx.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
     ctx.strokeStyle = drawColor;
     ctx.lineWidth = isErasing ? 20 : 2;
@@ -62,6 +62,7 @@ const PdfViewer = () => {
   function stopDrawing() {
     document.querySelectorAll("canvas").forEach((canvas) => {
       canvas.dataset.drawing = "false";
+      canvas.style.pointerEvents = "none"; // Revert to scroll mode
     });
   }
 
@@ -87,9 +88,9 @@ const PdfViewer = () => {
                 position: "absolute",
                 top: "100px",
                 left: "20px",
-                pointerEvents: "auto",
                 zIndex: 10,
                 backgroundColor: "transparent",
+                pointerEvents: "none", // Default to allow scroll
               }}
               onMouseDown={(e) => startDrawing(e, "pdf-canvas")}
               onMouseMove={(e) => draw(e, "pdf-canvas")}
