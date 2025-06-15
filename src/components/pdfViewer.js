@@ -11,6 +11,7 @@ const PdfViewer = () => {
   const [error, setError] = useState(null);
   const [drawColor, setDrawColor] = useState("#000");
   const [isErasing, setIsErasing] = useState(false);
+  const [activeTab, setActiveTab] = useState("content");
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -65,70 +66,83 @@ const PdfViewer = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="topic-detail-container" style={{ display: "flex" }}>
-      <div className="left-panel" style={{ flex: 3, position: "relative", height: "100vh", overflowY: "auto" }}>
-        <h3 style={{ padding: "10px" }}>{topicTitle}</h3>
-
-        {/* PDF iframe */}
-        <iframe
-          src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-          title="PDF Viewer"
-          className="pdf-iframe"
-          style={{
-            width: "100%",
-            height: "calc(100% - 60px)",
-            position: "absolute",
-            top: "60px",
-            left: 0,
-            zIndex: 1,
-            border: "none",
-          }}
-        />
-
-        {/* Drawing Canvas */}
-        <canvas
-          ref={canvasRef}
-          width={window.innerWidth * 0.6}
-          height={window.innerHeight - 60}
-          style={{
-            position: "absolute",
-            top: "60px",
-            left: 0,
-            zIndex: 2,
-            backgroundColor: "transparent",
-            pointerEvents: "auto",
-            cursor: isErasing ? "cell" : "crosshair",
-          }}
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={stopDrawing}
-          onMouseLeave={stopDrawing}
-        />
-
-        {/* Embedded Interactive Tool */}
-        <div style={{ marginTop: `${window.innerHeight}px`, padding: "1rem" }}>
-          <h3>Explore Fractions</h3>
-          <iframe
-            src="https://www.visnos.com/demos/fraction-wall?utm_source=chatgpt.com"
-            title="Fraction Wall Demo"
-            width="100%"
-            height="600px"
-            style={{ border: "1px solid #ccc", borderRadius: "8px" }}
-            allowFullScreen
-          />
+    <div className="on-boarding-screen">
+      <div className="div">
+        <div className="frame">
+          <img className="logo" alt="Logo" src="https://cdn.animaapp.com/projects/67dde619fa923ddb4432e99b/releases/682bf5f2f8d416f983b09342/img/logo.png" />
+          <p className="simplify-teaching">
+            <span className="text-wrapper">Simplify </span>
+            <span className="span">Teaching</span>
+            <span className="text-wrapper">, Inspiring </span>
+            <span className="span">Learning</span>
+          </p>
+          <img className="ellipse" alt="Ellipse" src="https://cdn.animaapp.com/projects/67dde619fa923ddb4432e99b/releases/682bf5f2f8d416f983b09342/img/ellipse-35.svg" />
         </div>
-      </div>
 
-      {/* Tools Panel */}
-      <div className="right-panel" style={{ flex: 1, padding: "1rem" }}>
-        <h3>Drawing Tools</h3>
-        <button onClick={() => setDrawColor("#000")}>Black</button>
-        <button onClick={() => setDrawColor("red")}>Red</button>
-        <button onClick={() => setDrawColor("green")}>Green</button>
-        <button onClick={() => setDrawColor("blue")}>Blue</button>
-        <button onClick={() => setIsErasing((prev) => !prev)}>
-          {isErasing ? "Switch to Pen" : "Eraser"}
-        </button>
+        <div className="text-wrapper-2">{topicTitle}</div>
+
+        <div className="frame-2">
+          <div className={`div-wrapper ${activeTab === "content" ? "active" : ""}`} onClick={() => setActiveTab("content")}>Content</div>
+          <div className={`div-wrapper ${activeTab === "resources" ? "active" : ""}`} onClick={() => setActiveTab("resources")}>Additional Resources</div>
+          <div className={`div-wrapper ${activeTab === "test" ? "active" : ""}`} onClick={() => setActiveTab("test")}>Test</div>
+        </div>
+
+        <div className="main-content">
+          <div className="pdf-container">
+            {(activeTab === "content" || activeTab === "test") && (
+              <iframe
+                src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                title="PDF Viewer"
+                className="pdf-iframe"
+              />
+            )}
+            {activeTab === "resources" && (
+              <div className="resources-iframe-container">
+              <iframe
+                src="https://www.visnos.com/demos/fraction-wall"
+                title="External Resource"
+                className="resources-iframe"
+              />
+            </div>
+            )}
+          </div>
+
+          {activeTab === "content" && (
+            <div className="group-wrapper">
+              <div className="group">
+                <div className="overlap-group">
+                  <div className="rectangle" />
+                  <div className="group-2">
+                    <div className="text-wrapper-5">[Whiteboard]</div>
+                    <div className="frame-3">
+                      <img className="img" alt="Undo" src="https://cdn.animaapp.com/projects/67dde619fa923ddb4432e99b/releases/682bf5f2f8d416f983b09342/img/material-symbols-undo.svg" />
+                      <img className="img" alt="Redo" src="https://cdn.animaapp.com/projects/67dde619fa923ddb4432e99b/releases/682bf5f2f8d416f983b09342/img/material-symbols-redo.svg" />
+                    </div>
+                    <div className="frame-4">
+                      <img className="img" alt="Pen" src="https://cdn.animaapp.com/projects/67dde619fa923ddb4432e99b/releases/682bf5f2f8d416f983b09342/img/famicons-text-outline.svg" onClick={() => setIsErasing(false)} />
+                      <img className="img" alt="Eraser" src="https://cdn.animaapp.com/projects/67dde619fa923ddb4432e99b/releases/682bf5f2f8d416f983b09342/img/jam-rubber.svg" onClick={() => setIsErasing(true)} />
+                      <img className="img" alt="Black" src="https://dummyimage.com/24x24/000/fff&text=B" onClick={() => { setDrawColor("#000"); setIsErasing(false); }} />
+                      <img className="img" alt="Red" src="https://dummyimage.com/24x24/f00/fff&text=R" onClick={() => { setDrawColor("red"); setIsErasing(false); }} />
+                      <img className="img" alt="Green" src="https://dummyimage.com/24x24/0f0/fff&text=G" onClick={() => { setDrawColor("green"); setIsErasing(false); }} />
+                      <img className="img" alt="Blue" src="https://dummyimage.com/24x24/00f/fff&text=B" onClick={() => { setDrawColor("blue"); setIsErasing(false); }} />
+                    </div>
+                  </div>
+                  <canvas
+                    ref={canvasRef}
+                    width={500}
+                    height={591}
+                    className="whiteboard-canvas"
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
       </div>
     </div>
   );

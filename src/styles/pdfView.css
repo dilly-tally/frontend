@@ -1,63 +1,235 @@
-/* pdfView.css */
-
-.topic-detail-container {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  background-color: #f5f5f5;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.left-panel {
-  flex: 7;
+.on-boarding-screen {
   background-color: #ffffff;
-  border-right: 1px solid #ddd;
-  padding: 0;
-  box-sizing: border-box;
-  overflow-y: auto;
-}
-
-.right-panel {
-  flex: 3;
-  background-color: #fff;
-  position: relative;
-  padding: 20px;
-  box-sizing: border-box;
-  overflow-y: auto;
-}
-
-.right-panel h3 {
-  margin-top: 0;
-}
-
-/* PDF Document display */
-.react-pdf__Document {
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  flex-direction: column;
+  width: 100%;
+}
+
+.on-boarding-screen .div {
+  background-color: #ffffff;
+  height: 1017px;
+  position: relative;
+  width: 1440px;
+}
+
+.frame {
   align-items: center;
-}
-
-.react-pdf__Page {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-/* Placeholder for whiteboard */
-.right-panel::before {
+  border-bottom: 0.95px solid #f4f4f4;
+  display: flex;
+  justify-content: space-between;
   position: absolute;
-  top: 10px;
-  left: 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #aaa;
+  top: 26px;
+  left: 56px;
+  width: 1328px;
+}
+
+.logo {
+  height: 96px;
+  width: 100.06px;
+  object-fit: cover;
+}
+
+.simplify-teaching {
+  font-family: "Poppins", Helvetica;
+  font-size: 18.3px;
+  font-weight: 600;
+  color: transparent;
+  letter-spacing: -0.27px;
+  text-align: center;
+  width: fit-content;
+}
+
+.text-wrapper {
+  color: #000000;
+  letter-spacing: -0.05px;
+}
+
+.span {
+  color: #a1caac;
+  letter-spacing: -0.05px;
+}
+
+.ellipse {
+  width: 65.23px;
+  height: 65.23px;
+  object-fit: cover;
+}
+
+.text-wrapper-2 {
+  color: #000000;
+  font-family: "Nunito", Helvetica;
+  font-size: 26px;
+  font-weight: 600;
+  position: absolute;
+  top: 264px;
+  left: 56px;
+}
+
+.frame-2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  top: 312px;
+  left: 56px;
+  width: 462px;
+}
+
+.div-wrapper {
+  background-color: #ffffff;
+  border-radius: 6.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.div-wrapper.active {
+  background-color: #A1CAAC; /* green */
+  color: white;
+}
+
+.text-wrapper-3 {
+  color: #ffffff;
+  font-family: "Poppins", Helvetica;
+  font-size: 19.8px;
+  font-weight: 500;
+}
+
+.text-wrapper-4 {
+  color: #000000;
+  font-family: "Poppins", Helvetica;
+  font-size: 19.8px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.main-content {
+  display: flex;
+  position: absolute;
+  top: 379px;
+  left: 56px;
+}
+
+.pdf-container {
+  width: 783px;
+  height: 591px;
+  margin-right: 24px;
+  background: #fff;
+  border: 1px solid #00000033;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .pdf-iframe {
   width: 100%;
   height: 100%;
   border: none;
-  display: block;
-  background-color: white;
 }
+
+.group-wrapper {
+  width: 504px;
+  height: 591px;
+  box-shadow: 2px 5px 5px #0000002b, 0 0 6px #0000002b;
+}
+
+.group {
+  height: 645px;
+  margin-top: -54px;
+}
+
+.overlap-group {
+  position: relative;
+  width: 505px;
+  height: 645px;
+}
+
+.rectangle {
+  background-color: #fcfcfc;
+  border-radius: 8px;
+  position: absolute;
+  top: 54px;
+  width: 502px;
+  height: 591px;
+}
+
+.group-2 {
+  position: absolute;
+  width: 505px;
+  top: 0;
+  left: 0;
+  height: 374px;
+}
+
+.text-wrapper-5 {
+  position: absolute;
+  top: 326px;
+  left: 149px;
+  color: #b9b9b9;
+  font-family: "Poppins", Helvetica;
+  font-size: 32px;
+  font-weight: 200;
+}
+
+.frame-3 {
+  display: inline-flex;
+  gap: 7px;
+  position: absolute;
+  top: 10px;
+  left: 0;
+}
+
+.frame-4 {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 8px;
+  position: absolute;
+  top: 0;
+  left: 104px;
+  width: 399px;
+}
+
+.img {
+  height: 24px;
+  width: 24px;
+  cursor: pointer;
+}
+
+.group-3 {
+  height: 21px;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+}
+
+.whiteboard-canvas {
+  position: absolute;
+  top: 54px;
+  left: 0;
+  width: 502px;
+  height: 591px;
+  z-index: 2;
+  background-color: transparent;
+}
+
+.resources-iframe-container {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.resources-iframe {
+  width: 80%;
+  height: 600px;
+  border: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+
