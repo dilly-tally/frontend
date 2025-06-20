@@ -139,87 +139,136 @@
 // export default TeacherResource;
 
 
+// import React from "react";
+// import { StateHoverWrapper } from "./stateHoverWrapper";
+// import { TabBar } from "./tabBar";
+// import "../styles/teacherResource.css";
+
+// export const TeacherResource = () => {
+//   return (
+//     <div className="teacher-resource" data-model-id="114:112">
+//       <div className="group-wrapper">
+//         <div className="group">
+//           <div className="on-boarding-screen">
+//             <div className="div">
+//               <img
+//                 className="logo"
+//                 alt="Logo"
+//                 src="https://c.animaapp.com/8sQwfhRM/img/logo@2x.png"
+//               />
+
+//               <p className="simplify-teaching">
+//                 <span className="span">Simplify </span>
+//                 <span className="text-wrapper-2">Teaching</span>
+//                 <span className="span">, Inspiring </span>
+//                 <span className="text-wrapper-3">Learning</span>
+//               </p>
+
+//               <img
+//                 className="ellipse"
+//                 alt="Ellipse"
+//                 src="https://c.animaapp.com/8sQwfhRM/img/ellipse-35.svg"
+//               />
+//             </div>
+
+//             <div className="text-wrapper-4">Hi, Uzma</div>
+
+//             <TabBar
+//               className="tab-bar-instance"
+//               override={
+//                 <StateHoverWrapper
+//                   className="tab-3"
+//                   stateProp="hover"
+//                   text="Teacher Resources"
+//                 />
+//               }
+//             />
+
+//             <img
+//               className="line"
+//               alt="Line"
+//               src="https://c.animaapp.com/8sQwfhRM/img/line-71.svg"
+//             />
+
+//             <div className="text-wrapper-5">Teacher Resource</div>
+
+//             <div className="frame-2">
+//               <div className="frame-3">
+//                 <div className="text-wrapper-6">Search resource...</div>
+//                 <img
+//                   className="img"
+//                   alt="Iconamoon search"
+//                   src="https://c.animaapp.com/8sQwfhRM/img/iconamoon-search-light.svg"
+//                 />
+//               </div>
+
+//               <div className="frame-4">
+//                 <div className="text-wrapper-7">Grade 7</div>
+//                 <img
+//                   className="img"
+//                   alt="Ri arrow drop down"
+//                   src="https://c.animaapp.com/8sQwfhRM/img/ri-arrow-drop-down-line.svg"
+//                 />
+//               </div>
+
+//               <div className="frame-5">
+//                 <div className="text-wrapper-7">CBSE</div>
+//                 <img
+//                   className="img"
+//                   alt="Ri arrow drop down"
+//                   src="https://c.animaapp.com/8sQwfhRM/img/ri-arrow-drop-down-line-1.svg"
+//                 />
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+
 import React from "react";
+import "../styles/teacherResource.css";
 import { StateHoverWrapper } from "./stateHoverWrapper";
 import { TabBar } from "./tabBar";
-import "../styles/teacherResource.css";
 
 export const TeacherResource = () => {
   return (
-    <div className="teacher-resource" data-model-id="114:112">
-      <div className="group-wrapper">
+    <div className="teacher-resource-container">
+      <div className="box" data-model-id="114:113-frame">
         <div className="group">
           <div className="on-boarding-screen">
-            <div className="div">
+            <div className="frame">
               <img
                 className="logo"
                 alt="Logo"
-                src="https://c.animaapp.com/8sQwfhRM/img/logo@2x.png"
-              />
+                src="https://c.animaapp.com/wFl7rcHz/img/logo@2x.png" />
 
-              <p className="simplify-teaching">
-                <span className="span">Simplify </span>
-                <span className="text-wrapper-2">Teaching</span>
-                <span className="span">, Inspiring </span>
-                <span className="text-wrapper-3">Learning</span>
-              </p>
+              <div className="simplify-teaching">
+                <span className="text-wrapper">Simplify </span>
+                <span className="span">Teaching</span>
+                <span className="text-wrapper">, Inspiring </span>
+                <span className="span"> Learning</span>
+              </div>
 
               <img
                 className="ellipse"
                 alt="Ellipse"
-                src="https://c.animaapp.com/8sQwfhRM/img/ellipse-35.svg"
-              />
+                src="https://c.animaapp.com/wFl7rcHz/img/ellipse-35.svg" />
             </div>
 
-            <div className="text-wrapper-4">Hi, Uzma</div>
-
-            <TabBar
-              className="tab-bar-instance"
-              override={
-                <StateHoverWrapper
+            <div className="content-section">
+              <h1 className="greeting">Hi, Uzma</h1>
+              <TabBar
+                className="tab-bar-instance1"
+                override={<StateHoverWrapper
                   className="tab-3"
                   stateProp="hover"
-                  text="Teacher Resources"
-                />
-              }
-            />
-
-            <img
-              className="line"
-              alt="Line"
-              src="https://c.animaapp.com/8sQwfhRM/img/line-71.svg"
-            />
-
-            <div className="text-wrapper-5">Teacher Resource</div>
-
-            <div className="frame-2">
-              <div className="frame-3">
-                <div className="text-wrapper-6">Search resource...</div>
-                <img
-                  className="img"
-                  alt="Iconamoon search"
-                  src="https://c.animaapp.com/8sQwfhRM/img/iconamoon-search-light.svg"
-                />
-              </div>
-
-              <div className="frame-4">
-                <div className="text-wrapper-7">Grade 7</div>
-                <img
-                  className="img"
-                  alt="Ri arrow drop down"
-                  src="https://c.animaapp.com/8sQwfhRM/img/ri-arrow-drop-down-line.svg"
-                />
-              </div>
-
-              <div className="frame-5">
-                <div className="text-wrapper-7">CBSE</div>
-                <img
-                  className="img"
-                  alt="Ri arrow drop down"
-                  src="https://c.animaapp.com/8sQwfhRM/img/ri-arrow-drop-down-line-1.svg"
-                />
-              </div>
+                  text="Teacher Resources" />} />
             </div>
+
+            <img className="line" alt="Line" src="/img/line-71.svg" />
           </div>
         </div>
       </div>
