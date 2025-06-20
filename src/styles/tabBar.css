@@ -1,0 +1,27 @@
+.tab-bar {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .tab-bar .frame {
+    display: flex;
+    align-items: center;
+    gap: 75px;
+  }
+  
+  .tab-bar .tab-instance {
+    height: 51px;
+    width: 161.66px;
+  }
+  
+  .tab-bar .design-component-instance-node {
+    margin-left: -9.17px;
+    margin-right: -9.17px;
+  }
+  
+  .tab-bar .tab-2 {
+    height: 51px;
+    width: 252.03px;
+  }
+  

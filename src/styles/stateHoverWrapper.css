@@ -1,0 +1,44 @@
+.state-hover-wrapper {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    padding: 8px 16px;
+    position: relative;
+    width: 161px;
+  }
+  
+  .state-hover-wrapper .text-wrapper {
+    font-family: "Poppins", Helvetica;
+    font-size: 23.6px;
+    font-weight: 400;
+    letter-spacing: -0.35px;
+    line-height: normal;
+    margin-top: -1.00px;
+    position: relative;
+    text-align: center;
+    width: fit-content;
+  }
+  
+  .state-hover-wrapper .rectangle {
+    background-color: #000000;
+    height: 2px;
+    left: 39px;
+    position: absolute;
+    top: 41px;
+    width: 84px;
+  }
+  
+  .state-hover-wrapper.hover {
+    background-color: #a1caac29;
+    border-radius: 8px;
+  }
+  
+  .state-hover-wrapper.variant-3 .text-wrapper {
+    color: #a1caac;
+  }
+  
+  .state-hover-wrapper.hover .text-wrapper {
+    color: #000000;
+  }
+  

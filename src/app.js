@@ -6,7 +6,7 @@ import Onboarding2 from "./components/onboarding2";
 import Onboarding3 from "./components/onboarding3";
 import Onboarding4 from "./components/onboarding4";
 import Dashboard from "./components/dashboard";
-import TeacherResource from "./components/teacherResource";
+import {TeacherResource }from "./components/teacherResource";
 import LessonTopics from "./components/topic";
 import PdfViewer from "./components/pdfViewer";
 
