@@ -1,13 +1,17 @@
 .tab-bar {
     height: 51px;
     width: 962px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   
   .tab-bar .frame {
     align-items: center;
     display: inline-flex;
-    gap: 30px;
+    gap: 10px;
     position: relative;
+    justify-content: center;
   }
   
   .tab-bar .tab-instance {

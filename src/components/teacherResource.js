@@ -266,6 +266,37 @@ export const TeacherResource = () => {
                   className="tab-3"
                   stateProp="hover"
                   text="Teacher Resources" />} />
+              
+              {/* Teacher Resource Section */}
+              <div className="teacher-resource-section">
+                <div className="resource-title">Teacher Resource</div>
+                <div className="resource-frame">
+                  <div className="search-div">
+                    <div className="search-text">Search resource...</div>
+                    <img
+                      className="search-img"
+                      alt="Iconamoon search"
+                      src="https://c.animaapp.com/q996k3pa/img/iconamoon-search-light.svg"
+                    />
+                  </div>
+                  <div className="grade-frame">
+                    <div className="dropdown-text">Grade 7</div>
+                    <img
+                      className="search-img"
+                      alt="Ri arrow drop down"
+                      src="https://c.animaapp.com/q996k3pa/img/ri-arrow-drop-down-line-1.svg"
+                    />
+                  </div>
+                  <div className="curriculum-frame">
+                    <div className="dropdown-text">CBSE</div>
+                    <img
+                      className="search-img"
+                      alt="Ri arrow drop down"
+                      src="https://c.animaapp.com/q996k3pa/img/ri-arrow-drop-down-line-1.svg"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
             <img className="line" alt="Line" src="/img/line-71.svg" />
