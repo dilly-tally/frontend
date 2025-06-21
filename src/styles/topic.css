@@ -1,49 +1,60 @@
-.TR {
-  background-color: transparent;
+.teacher-resource-container {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  flex-direction: column;
   width: 100%;
+  min-height: 100vh;
 }
 
-.group-wrapper {
+.box {
+  min-height: 1017px;
   width: 1440px;
 }
 
 .group {
-  height: auto;
+  position: relative;
+  width: 100%;
+  padding-top: 80px;
 }
 
 .on-boarding-screen {
   background-color: #ffffff;
-  padding-bottom: 100px;
+  min-height: 1253px;
+  padding: 20px 0;
   position: relative;
-  width: 100%;
 }
 
-.div {
-  align-items: center;
+.frame {
   display: flex;
-  justify-content: space-between;
-  padding: 56px;
+  align-items: center;
+  position: absolute;
+  top: 76px;
+  left: 56px;
+  width: 1328px;
 }
 
 .logo {
+  width: 158px;
   height: 151.59px;
   object-fit: cover;
-  width: 158px;
+  flex-shrink: 0;
 }
 
 .simplify-teaching {
-  color: transparent;
   font-family: "Poppins", Helvetica;
   font-size: 31px;
   font-weight: 600;
   text-align: center;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-grow: 1;
+  margin: 0 20px;
+  white-space: nowrap;
 }
 
 .text-wrapper {
   color: #000000;
+  font-size: 31px;
 }
 
 .span {
@@ -51,163 +62,282 @@
   font-size: 36px;
 }
 
-.text-wrapper-2 {
-  color: #a1caac;
-  font-size: 37px;
-}
-
 .ellipse {
+  width: 103px;
   height: 103px;
   object-fit: cover;
-  width: 103px;
+  flex-shrink: 0;
 }
 
-.text-wrapper-3 {
-  color: #000000;
+.line {
+  position: absolute;
+  top: 4944px;
+  left: 1441px;
+  width: 1067px;
+  height: 1px;
+  object-fit: cover;
+}
+
+.content-section {
+  position: absolute;
+  left: 56px;
+  top: 280px;
+  width: 1328px;
+}
+
+.greeting {
   font-family: "Poppins", Helvetica;
   font-size: 36px;
   font-weight: 600;
-  text-align: center;
-  margin-left: 56px;
+  color: #000000;
+  margin-bottom: 12px;
 }
 
-.text-wrapper-4 {
-  color: #000000;
+.teacher-resource-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.resource-title {
   font-family: "Poppins", Helvetica;
   font-size: 32px;
   font-weight: 600;
+  color: #000000;
+  margin: 40px 0;
   text-align: center;
-  margin: 24px auto;
 }
 
-.frame-2 {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px;
-  margin: 20px auto;
-  width: 90%;
-  max-width: 800px;
-}
-
-.frame-3,
-.frame-4,
-.frame-5 {
+.resource-frame {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
+
+.search-div {
+  display: flex;
+  align-items: center;
+  gap: 207px;
+  padding: 10px;
   border: 1px solid #b6b6b6;
   border-radius: 8px;
-  padding: 10px;
-  min-width: 120px;
-  flex: 1 1 auto;
+  width: 427px;
+  height: 48px;
+  box-sizing: border-box;
 }
 
-.frame-3 {
-  justify-content: space-between;
-  min-width: 240px;
-}
-
-.frame-4,
-.frame-5 {
-  justify-content: space-between;
-}
-
-.text-wrapper-5 {
+.search-text {
   color: #d9d9d9;
   font-family: "Nunito", Helvetica;
   font-size: 22px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.img {
-  height: 24px;
+.search-img {
   width: 24px;
+  height: 24px;
 }
 
-.text-wrapper-6 {
-  color: #000000;
+.grade-frame,
+.curriculum-frame {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #b6b6b6;
+  border-radius: 8px;
+  height: 48px;
+  box-sizing: border-box;
+  position: relative;
+  min-width: 180px;
+  max-width: 250px;
+}
+
+.curriculum-frame {
+  min-width: 200px;
+  max-width: 280px;
+}
+
+.dropdown-text {
   font-family: "Nunito", Helvetica;
   font-size: 18px;
+  color: #000000;
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.algebra-sub-topics-wrapper {
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+/* Lesson Section Styles */
+.lesson-section {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 50px;
+  width: 100%;
+}
+
+.lesson-frame {
   background-color: #ffffff;
   box-shadow: 1px 2px 4px #00000040;
+  padding: 10px 20px;
+  height: 60px; /* Fixed height */
+  width: fit-content; /* Expands based on content */
   display: flex;
-  justify-content: center;
   align-items: center;
-  margin: 20px auto;
-  padding: 10px;
-  width: fit-content;
+  justify-content: center;
+  white-space: nowrap; /* Prevents text from wrapping */
+  border-radius: 8px;
 }
 
-.algebra-sub-topics {
+.lesson-sub-topics {
   color: #000000;
+  font-family: "Nunito", Helvetica;
+  font-size: 24px;
+  font-weight: 400;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lesson-text-wrapper {
+  font-weight: 500;
   font-family: "Nunito", Helvetica;
   font-size: 24px;
 }
 
-.text-wrapper-7 {
-  font-weight: 500;
-}
-
-.text-wrapper-8 {
+.lesson-span {
+  font-family: "Nunito", Helvetica;
   font-size: 18px;
+  font-weight: 400;
 }
 
-.frame-6 {
-  display: flex;
-  flex-wrap: wrap;
+/* Topics Cards Section */
+.topics-container {
+  margin-top: 40px;
+  width: 100%;
+}
+
+.topics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 427px);
   gap: 24px;
-  justify-content: center;
-  padding: 0 56px;
-  margin-top: 32px;
+  justify-content: flex-start;
 }
 
-.frame-wrapper {
-  width: 427px;
-}
-
-.frame-7 {
+.topic-card {
+  border: 1px solid #d9d9d9;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  border: 1px solid #d9d9d9;
-  padding: 16px;
   height: 198px;
-  justify-content: space-between;
-  align-items: center;
+  padding: 8px;
+  position: relative;
+  width: 427px;
+  box-sizing: border-box;
 }
 
-.div-wrapper {
-  width: 100%;
+.topic-title-frame {
+  flex: 0 0 auto;
+}
+
+.topic-title {
+  color: #000000;
+  font-family: "Nunito", Helvetica;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: normal;
+  text-align: center;
+  padding: 8px;
+}
+
+.topic-description {
   height: 62px;
+  position: relative;
+  width: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.p {
+.description-text {
   color: #b9b9b9;
   font-family: "PT Sans", Helvetica;
-  font-size: 20px;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
   text-align: center;
-}
-
-.frame-8 {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f7f7f7;
-  border-radius: 8px;
-  padding: 10px;
+  margin: 0;
   width: 100%;
-  cursor: pointer;
 }
 
-.text-wrapper-9 {
+.view-more-frame {
+  align-items: center;
+  background-color: #f7f7f7;
+  border-radius: 7.57px;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 9.47px;
+  padding: 9.47px;
+  position: relative;
+  width: calc(100% - 18.94px);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.view-more-frame:hover {
+  background-color: #e8e8e8;
+}
+
+.view-more-text {
   color: #a1caac;
   font-family: "Poppins", Helvetica;
   font-size: 16px;
   font-weight: 600;
+  letter-spacing: 0;
+  line-height: normal;
   text-decoration: underline;
+  width: fit-content;
+  margin: 0 auto;
 }
