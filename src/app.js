@@ -8,7 +8,7 @@ import Onboarding4 from "./components/onboarding4";
 import Dashboard from "./components/dashboard";
 import {TeacherResource }from "./components/teacherResource";
 import {LessonTopics} from "./components/topic";
-import PdfViewer from "./components/pdfViewer";
+import {PdfViewer} from "./components/pdfViewer";
 
 function App() {
   return (

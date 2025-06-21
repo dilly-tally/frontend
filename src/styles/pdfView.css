@@ -1,4 +1,4 @@
-.on-boarding-screen {
+ /* .on-boarding-screen {
   background-color: #ffffff;
   display: flex;
   flex-direction: row;
@@ -88,7 +88,7 @@
 }
 
 .div-wrapper.active {
-  background-color: #A1CAAC; /* green */
+  background-color: #A1CAAC; 
   color: white;
 }
 
@@ -230,6 +230,352 @@
   border: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+ */
 
 
 
+ .model {
+  background-color: transparent;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.model .group-wrapper {
+  height: 1017px;
+  width: 1440px;
+}
+
+.model .group {
+  height: 1017px;
+}
+
+.model .on-boarding-screen {
+  background-color: #ffffff;
+  height: 1017px;
+  position: relative;
+  width: 1440px;
+}
+
+/* Exact Anima Drawing Toolbar Styles - Positioned above right content box */
+.model .div {
+  height: 40px;
+  left: 880px;
+  position: absolute;
+  top: 230px;
+  width: 466px;
+}
+.model .div .frame {
+  background-color: #000000;
+  border-radius: 2px;
+  height: 40px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 40px;
+}
+.model .div .text-wrapper {
+  color: #ffffff;
+  font-family: "Poppins", Helvetica;
+  font-size: 19.8px;
+  font-weight: 500;
+  left: 14px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 4px;
+}
+.model .div-wrapper {
+  background-color: #0008fb;
+  border-radius: 2px;
+  height: 40px;
+  left: 71px;
+  position: absolute;
+  top: 0;
+  width: 40px;
+}
+.model .div .frame-2 {
+  background-color: #ff0000;
+  border-radius: 2px;
+  height: 40px;
+  left: 142px;
+  position: absolute;
+  top: 0;
+  width: 40px;
+}
+.model .div .frame-3 {
+  background-color: #0ca50f;
+  border-radius: 2px;
+  height: 40px;
+  left: 213px;
+  position: absolute;
+  top: 0;
+  width: 40px;
+}
+.model .div .solar-pen-bold-wrapper {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  border-radius: 2px;
+  height: 40px;
+  left: 284px;
+  position: absolute;
+  top: 0;
+  width: 40px;
+}
+.model .div .img {
+  height: 24px;
+  left: 8px;
+  position: absolute;
+  top: 8px;
+  width: 24px;
+}
+.model .div .solar-eraser-bold-wrapper {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  border-radius: 2px;
+  height: 40px;
+  left: 355px;
+  position: absolute;
+  top: 0;
+  width: 40px;
+}
+.model .div .fa-solid-highlighter-wrapper {
+  background-color: #ffffff;
+  border: 1px solid;
+  border-color: #000000;
+  border-radius: 2px;
+  height: 40px;
+  left: 426px;
+  position: absolute;
+  top: 0;
+  width: 40px;
+}
+
+/* Header Styles */
+.model .on-boarding-screen > .frame {
+  align-items: center;
+  border-bottom-style: solid;
+  border-bottom-width: 0.95px;
+  border-color: #f4f4f4;
+  display: flex;
+  justify-content: space-between;
+  left: 56px;
+  position: absolute;
+  top: 26px;
+  width: 1328px;
+}
+
+.model .logo {
+  height: 96px;
+  object-fit: cover;
+  position: relative;
+  width: 100.06px;
+}
+
+.model .simplify-teaching {
+  color: transparent;
+  font-family: "Poppins", Helvetica;
+  font-size: 18.3px;
+  font-weight: 600;
+  letter-spacing: -0.27px;
+  line-height: normal;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.model .simplify-teaching .text-wrapper {
+  color: #000000;
+  letter-spacing: -0.05px;
+}
+
+.model .simplify-teaching .span {
+  color: #a1caac;
+  letter-spacing: -0.05px;
+}
+
+.model .ellipse {
+  height: 65.23px;
+  object-fit: cover;
+  position: relative;
+  width: 65.23px;
+}
+
+/* Content Section Styles */
+.model .content-title {
+  color: #000000;
+  font-family: "Nunito-SemiBold", Helvetica;
+  font-size: 26px;
+  font-weight: 600;
+  left: 56px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 180px;
+}
+
+.model .content-tabs {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
+  left: 56px;
+  position: absolute;
+  top: 230px;
+  width: 462px;
+}
+
+.model .tab-wrapper {
+  align-items: center;
+  background-color: #a1caac;
+  border-radius: 6.5px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8.13px;
+  justify-content: center;
+  padding: 8.13px 16px;
+  position: relative;
+}
+
+.model .tab-active {
+  color: #ffffff;
+  font-family: "Poppins-Medium", Helvetica;
+  font-size: 19.8px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: normal;
+  position: relative;
+  width: fit-content;
+}
+
+.model .tab-inactive {
+  color: #000000;
+  font-family: "Poppins-Regular", Helvetica;
+  font-size: 19.8px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  position: relative;
+  width: fit-content;
+  cursor: pointer;
+}
+
+/* Drawing Toolbar Styles */
+.model .drawing-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  height: 40px;
+  left: 880px;
+  position: absolute;
+  top: 230px;
+  width: 466px;
+}
+
+.model .color-frame {
+  align-items: center;
+  background-color: #000000;
+  border-radius: 2px;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+  cursor: pointer;
+}
+
+.model .color-frame-blue {
+  align-items: center;
+  background-color: #0008fb;
+  border-radius: 2px;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+  cursor: pointer;
+}
+
+.model .color-frame-red {
+  align-items: center;
+  background-color: #ff0000;
+  border-radius: 2px;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+  cursor: pointer;
+}
+
+.model .color-frame-green {
+  align-items: center;
+  background-color: #0ca50f;
+  border-radius: 2px;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+  cursor: pointer;
+}
+
+.model .color-text {
+  color: #ffffff;
+  font-family: "Poppins", Helvetica;
+  font-size: 19.8px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.model .tool-frame {
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 2px;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+  cursor: pointer;
+}
+
+.model .tool-icon {
+  height: 24px;
+  width: 24px;
+}
+
+/* Content Areas */
+.model .content-frame {
+  align-items: flex-end;
+  box-shadow: 2px 5px 5px #0000002b, 0px 0px 6px #0000002b;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 16px;
+  height: 591px;
+  justify-content: center;
+  left: 880px;
+  position: absolute;
+  top: 280px;
+  width: 504px;
+}
+
+.model .content-box {
+  background-color: #fcfcfc;
+  border-radius: 8px;
+  height: 591px;
+  position: relative;
+  width: 502.5px;
+}
+
+.model .pdf-iframe {
+  background-color: #fcfcfc;
+  border: none;
+  border-radius: 0px;
+  box-shadow: 2px 5px 5px #0000002b, 0px 0px 6px #0000002b;
+  height: 591px;
+  left: 56px;
+  position: absolute;
+  top: 280px;
+  width: 798px;
+}
