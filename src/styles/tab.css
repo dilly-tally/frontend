@@ -1,28 +1,51 @@
 .tab {
-    align-items: center;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    padding: 8px 16px;
-    position: relative;
-    width: 161px;
-  }
-  
-  .tab .dashboard {
-    color: #000000;
-    font-family: "Poppins", Helvetica;
-    font-size: 23.6px;
-    font-weight: 400;
-    letter-spacing: -0.35px;
-    line-height: normal;
-    margin-top: -1.00px;
-    position: relative;
-    text-align: center;
-    width: fit-content;
-  }
-  
-  .tab:hover {
-    background-color: #a1caac29;
-    border-radius: 8px;
-  }
-  
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  padding: 8px 16px;
+  position: relative;
+  width: 161px;
+  min-width: 161px;
+}
+
+.tab .dashboard {
+  color: #000000;
+  font-family: "Poppins", Helvetica;
+  font-size: 23.6px;
+  font-weight: 400;
+  letter-spacing: -0.35px;
+  line-height: normal;
+  margin-top: -1.00px;
+  position: relative;
+  text-align: center;
+  width: fit-content;
+}
+
+.tab:hover {
+  background-color: #a1caac29;
+  border-radius: 8px;
+}
+
+/* Active tab styles */
+.tab.active .dashboard {
+  color: #a1caac;
+  font-weight: 500;
+}
+
+.tab .active-underline {
+  background-color: #a1caac;
+  height: 2px;
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  border-radius: 1px;
+}
+
+/* Ensure Teacher Resources tab has proper width */
+.tab.tab-2 {
+  width: 200px;
+  min-width: 200px;
+}

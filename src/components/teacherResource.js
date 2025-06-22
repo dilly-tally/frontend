@@ -66,7 +66,8 @@ export const TeacherResource = () => {
               <h1 className="greeting">Hi, Uzma</h1>
               <TabBar
                 className="tab-bar-instance1"
-                override={<StateHoverWrapper className="tab-3" stateProp="hover" text="Teacher Resources" />}
+                activePage="teacher-resources"
+                onNavigate={navigate}
               />
 
               {/* Teacher Resource Section */}
