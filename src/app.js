@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Signup from "./components/signup";
+import {Signup} from "./components/signup";
 import Onboarding from "./components/onboarding";
 import Onboarding2 from "./components/onboarding2";
 import Onboarding3 from "./components/onboarding3";

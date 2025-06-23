@@ -1,74 +1,86 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "../api/auth";
-import "../styles/signup.css"; 
-import Calendar from "../components/calendar";
+import React, { useState, useEffect } from "react";
+import "../styles/signup.css";
 
-const SignUp = () => {
-  const [userData, setUserData] = useState({
-    email: "",
-  });
-
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
-  };
-
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-    setMessage("");
-
-    try {
-      console.log("hai")
-      await axios.post("https://backend-937324960970.us-central1.run.app/v1/user/signup", { email: userData.email });
-      localStorage.setItem("user", userData.email);
-      navigate("/onboarding"); // Redirect to onboarding
-    } catch (error) {
-      setMessage("Signup failed. Try again.");
-    }
-  };
+export const Signup = () => {
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const fullText = "DILLY TALLY";
+  
+  useEffect(() => {
+    const typeSpeed = 150; // Speed of typing (ms)
+    const deleteSpeed = 100; // Speed of deleting (ms)
+    const pauseTime = 2000; // Pause after complete text (ms)
+    
+    const animateText = () => {
+      if (!isDeleting) {
+        // Typing phase
+        if (displayText.length < fullText.length) {
+          setTimeout(() => {
+            setDisplayText(fullText.substring(0, displayText.length + 1));
+          }, typeSpeed);
+        } else {
+          // Text is complete, pause then start deleting
+          setTimeout(() => {
+            setIsDeleting(true);
+          }, pauseTime);
+        }
+      } else {
+        // Deleting phase
+        if (displayText.length > 0) {
+          setTimeout(() => {
+            setDisplayText(fullText.substring(0, displayText.length - 1));
+          }, deleteSpeed);
+        } else {
+          // Text is fully deleted, start typing again
+          setIsDeleting(false);
+        }
+      }
+    };
+    
+    animateText();
+  }, [displayText, isDeleting, fullText]);
 
   return (
-    <div className="signup-container">
-      {/* Header Section */}
-      <header className="signup-header">
-        <span className="logo">📷 photo</span>
-        <nav>
-          <a href="#">Profile</a>
-          <a href="#">Pricing</a>
-          <a href="#">Community</a>
-          <a href="#">Setting</a>
-        </nav>
-        <button className="login-btn">Log in</button>
-      </header>
-
-      {/* Main Content Section */}
-      <div className="signup-content">
-        <h1>More Time <span className="thighlight">Teaching</span>, Less Time <span className="thighlight">Managing</span></h1>
-
-        {/* Feature Cards */}
-        <div className="signup-features">
-          <Calendar />
-          <div className="feature-box">
-            <div className="feature-placeholder">📚</div>
-            <p className="feature-title">Teacher Resource</p>
+    <div className="s" data-model-id="187:680">
+      <div className="frame-wrapper">
+        <div className="frame">
+          <div className="logo-section">
+            <img
+              className="image"
+              alt="Image"
+              src="https://c.animaapp.com/HmlEcmG7/img/image-27@2x.png"
+            />
+            <div className="typewriter-text">
+              <div className="letters-container">
+                {fullText.split('').map((letter, index) => (
+                  <span 
+                    key={index} 
+                    className={`letter ${index < displayText.length ? 'visible' : 'invisible'}`}
+                  >
+                    {letter === ' ' ? '\u00A0' : letter}
+                  </span>
+                ))}
+              </div>
+              <span 
+                className="cursor" 
+                style={{left: `${displayText.length * 22}px`}}
+              >
+                |
+              </span>
+            </div>
           </div>
-          <div className="feature-box">
-            <div className="feature-placeholder">📖</div>
-            <p className="feature-title">Student Task</p>
+
+          <div className="div">
+            <div className="div-wrapper">
+              <div className="text-wrapper">Log In</div>
+            </div>
+
+            <div className="frame-2">
+              <div className="text-wrapper-2">Sign Up</div>
+            </div>
           </div>
         </div>
-
-        {/* Signup Form */}
-        <form onSubmit={handleSignUp} className="signup-form">
-          <input type="email" name="email" placeholder="Enter your email ID" value={userData.email} onChange={handleChange} required />
-          <button type="submit">Get Started ➜</button>
-        </form>
       </div>
     </div>
   );
 };
-
-export default SignUp;
