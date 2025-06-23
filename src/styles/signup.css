@@ -1,4 +1,3 @@
-/* Reset for better consistency */
 * {
   margin: 0;
   padding: 0;
@@ -18,29 +17,37 @@ html, body {
   flex-direction: row;
   justify-content: center;
   width: 100%;
-  overflow-x: hidden;
 }
 
-/* Frame wrapper */
-.s .frame-wrapper {
+.s .overlap-wrapper {
   background-color: #ffffff;
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
-  padding: 20px 80px 43px 80px;
-  box-sizing: border-box;
+  max-width: 1440px;
+  position: relative;
 }
 
-/* Frame container */
-.s .frame {
-  align-items: center;
+.s .overlap {
+  height: 504px;
+  left: 24px;
+  position: relative;
+  top: 260px;
+  width: 1393px;
+}
+
+/* Header section styling */
+.s .header-section {
+  position: absolute;
+  top: -220px;
+  left: 50px;
+  right: 50px;
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
+  align-items: center;
+  z-index: 100;
 }
 
-/* Logo section with image and typewriter text */
+/* Logo section */
 .s .logo-section {
   display: flex;
   flex-direction: column;
@@ -48,7 +55,6 @@ html, body {
   gap: 10px;
 }
 
-/* Logo image */
 .s .image {
   height: 151.59px;
   object-fit: cover;
@@ -70,13 +76,11 @@ html, body {
   position: relative;
 }
 
-/* Letters container */
 .s .letters-container {
   display: flex;
   width: 220px;
 }
 
-/* Individual letter styling */
 .s .letter {
   display: inline-block;
   width: 22px;
@@ -92,7 +96,6 @@ html, body {
   opacity: 0;
 }
 
-/* Blinking cursor */
 .s .cursor {
   animation: blink 1s infinite;
   color: #a1caac;
@@ -101,14 +104,13 @@ html, body {
   transition: left 0.1s ease;
 }
 
-/* Cursor blink animation */
 @keyframes blink {
   0%, 50% { opacity: 1; }
   51%, 100% { opacity: 0; }
 }
 
-/* Button container */
-.s .div {
+/* Button section */
+.s .button-section {
   align-items: center;
   display: flex;
   justify-content: space-between;
@@ -118,7 +120,6 @@ html, body {
   flex-shrink: 0;
 }
 
-/* Log In button wrapper */
 .s .div-wrapper {
   align-items: center;
   background-color: #a1caac;
@@ -128,9 +129,15 @@ html, body {
   justify-content: center;
   padding: 10px;
   width: 134px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-/* Log In button text */
+.s .div-wrapper:hover {
+  background-color: #8bb894;
+  transform: translateY(-2px);
+}
+
 .s .text-wrapper {
   color: #fcfcfc;
   font-family: "Poppins", Helvetica;
@@ -141,20 +148,25 @@ html, body {
   width: fit-content;
 }
 
-/* Sign Up button wrapper */
 .s .frame-2 {
   align-items: center;
   background-color: #a1caac;
-  border: 1px solid;
+  
   border-radius: 8px;
   display: flex;
   gap: 10px;
   justify-content: center;
   padding: 10px;
   width: 134px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-/* Sign Up button text */
+.s .frame-2:hover {
+  background-color: #8bb894;
+  transform: translateY(-2px);
+}
+
 .s .text-wrapper-2 {
   color: #ffffff;
   font-family: "Poppins", Helvetica;
@@ -165,29 +177,612 @@ html, body {
   width: fit-content;
 }
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  .s .frame {
+/* Floating math components */
+.s .frame {
+  height: 495px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 1393px;
+}
+
+/* Component hover effects - THIS IS THE IMPORTANT PART FOR HOVER */
+.component {
+  height: 61px;
+  position: relative;
+  width: 157px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.component .geometry {
+  color: #e2e2e2;
+  font-family: "Poppins", Helvetica;
+  font-size: 27.2px;
+  font-weight: 400;
+  left: 10px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 14px;
+  transition: all 0.3s ease;
+}
+
+.component:hover {
+  height: 57px;
+  width: 190px;
+}
+
+.component:hover .geometry {
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent;
+  background: linear-gradient(
+    90deg,
+    rgba(7, 33, 178, 1) 0%,
+    rgba(174, 255, 11, 1) 100%
+  );
+  background-clip: text;
+  color: transparent;
+  font-size: 37.7px;
+  font-weight: 500;
+  left: 0;
+  text-fill-color: transparent;
+  top: -1px;
+}
+
+/* Component positioning */
+.s .component-4 {
+  left: 136px !important;
+  position: absolute !important;
+  top: 99px !important;
+}
+
+.s .component-instance {
+  left: 761px !important;
+  position: absolute !important;
+  top: 1px !important;
+  width: 282px !important;
+}
+
+.s .component-4-instance {
+  left: 1032px !important;
+  position: absolute !important;
+  top: 74px !important;
+  width: 282px !important;
+}
+
+.s .design-component-instance-node {
+  font-size: 14.2px !important;
+  left: 5px !important;
+  top: 7px !important;
+}
+
+.s .component-2 {
+  height: 32px !important;
+  left: 1218px !important;
+  position: absolute !important;
+  top: 165px !important;
+  width: 147px !important;
+}
+
+.s .component-3 {
+  height: 69px !important;
+  left: 1076px !important;
+  position: absolute !important;
+  top: 301px !important;
+  width: 317px !important;
+}
+
+.s .component-5 {
+  font-size: 30.5px !important;
+  left: 11px !important;
+  top: 16px !important;
+}
+
+.s .component-6 {
+  height: 44px !important;
+  left: 318px !important;
+  position: absolute !important;
+  top: 425px !important;
+  width: 204px !important;
+}
+
+.s .component-7 {
+  font-size: 19.6px !important;
+  left: 7px !important;
+  top: 10px !important;
+}
+
+.s .component-8 {
+  height: 44px !important;
+  left: 39px !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  top: 350px !important;
+  width: 257px !important;
+}
+
+.s .component-9 {
+  font-size: 26.8px !important;
+  font-weight: 600 !important;
+  left: 7px !important;
+  top: 10px !important;
+}
+
+.s .component-10 {
+  left: 359px !important;
+  position: absolute !important;
+  top: 278px !important;
+}
+
+.s .component-11 {
+  height: 35px !important;
+  left: 416px !important;
+  position: absolute !important;
+  top: 27px !important;
+  width: 91px !important;
+}
+
+.s .component-12 {
+  font-size: 15.7px !important;
+  left: 6px !important;
+  top: 8px !important;
+}
+
+.s .component-13 {
+  height: 55px !important;
+  left: 30px !important;
+  position: absolute !important;
+  top: 29px !important;
+  width: 142px !important;
+}
+
+.s .component-14 {
+  font-size: 24.6px !important;
+  left: 9px !important;
+  top: 13px !important;
+}
+
+.s .component-15 {
+  height: 70px !important;
+  left: 539px !important;
+  position: absolute !important;
+  top: 90px !important;
+  width: 325px !important;
+}
+
+.s .component-16 {
+  font-size: 31.3px !important;
+  left: 12px !important;
+  top: 16px !important;
+}
+
+/* Main content area */
+.s .div {
+  height: 504px;
+  left: 13px;
+  position: absolute;
+  top: 0;
+  width: 1367px;
+}
+
+/* Title section */
+.s .group {
+  height: 97px;
+  left: 122px;
+  position: absolute;
+  top: 173px;
+  width: 1076px;
+}
+
+.s .simplified-teaching {
+  color: transparent;
+  font-family: "Poppins", Helvetica;
+  font-size: 48.3px;
+  font-weight: 400;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+}
+
+.s .text-wrapper-title {
+  color: #000000;
+}
+
+.s .span {
+  color: #000000;
+  font-weight: 500;
+}
+
+.s .text-wrapper-highlight {
+  color: #a1caac;
+  font-size: 64.6px;
+  font-weight: 600;
+}
+
+.s .inspiring-learning {
+  color: transparent;
+  font-family: "Poppins", Helvetica;
+  font-size: 48.3px;
+  font-weight: 400;
+  left: 566px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 0;
+}
+
+/* Character and illustration styles */
+.s .character {
+  height: 128px;
+  left: 537px;
+  position: absolute;
+  top: 345px;
+  width: 87px;
+}
+
+.s .overlap-group {
+  height: 128px;
+  position: relative;
+}
+
+.s .img {
+  height: 52px;
+  left: 26px;
+  position: absolute;
+  top: 38px;
+  width: 11px;
+}
+
+.s .img-2 {
+  height: 52px;
+  left: 3px;
+  position: absolute;
+  top: 38px;
+  width: 11px;
+}
+
+.s .vector {
+  height: 38px;
+  left: 31px;
+  position: absolute;
+  top: 90px;
+  width: 7px;
+}
+
+.s .vector-2 {
+  height: 12px;
+  left: 31px;
+  position: absolute;
+  top: 90px;
+  width: 7px;
+}
+
+.s .vector-3 {
+  height: 37px;
+  left: 50px;
+  position: absolute;
+  top: 91px;
+  width: 8px;
+}
+
+.s .vector-4 {
+  height: 6px;
+  left: 50px;
+  position: absolute;
+  top: 91px;
+  width: 6px;
+}
+
+.s .vector-5 {
+  height: 37px;
+  left: 11px;
+  position: absolute;
+  top: 91px;
+  width: 8px;
+}
+
+.s .vector-6 {
+  height: 6px;
+  left: 13px;
+  position: absolute;
+  top: 91px;
+  width: 6px;
+}
+
+.s .vector-7 {
+  height: 8px;
+  left: 10px;
+  position: absolute;
+  top: 85px;
+  width: 48px;
+}
+
+.s .vector-8 {
+  height: 20px;
+  left: 0;
+  position: absolute;
+  top: 36px;
+  width: 34px;
+}
+
+.s .vector-9 {
+  height: 4px;
+  left: 8px;
+  position: absolute;
+  top: 89px;
+  width: 53px;
+}
+
+.s .group-2 {
+  height: 128px;
+  left: 15px;
+  position: absolute;
+  top: 0;
+  width: 60px;
+}
+
+.s .vector-10 {
+  height: 4px;
+  left: 50px;
+  position: absolute;
+  top: 53px;
+  width: 32px;
+}
+
+.s .vector-11 {
+  height: 12px;
+  left: 8px;
+  position: absolute;
+  top: 57px;
+  width: 45px;
+}
+
+.s .vector-12 {
+  height: 3px;
+  left: 35px;
+  position: absolute;
+  top: 55px;
+  width: 52px;
+}
+
+.s .vector-13 {
+  height: 3px;
+  left: 61px;
+  position: absolute;
+  top: 55px;
+  width: 26px;
+}
+
+/* Blackboard section */
+.s .overlap-2 {
+  height: 202px;
+  left: 624px;
+  position: absolute;
+  top: 278px;
+  width: 189px;
+}
+
+.s .blackboard {
+  height: 175px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 132px;
+}
+
+.s .overlap-3 {
+  height: 175px;
+  position: relative;
+}
+
+.s .vector-14 {
+  height: 93px;
+  left: 15px;
+  position: absolute;
+  top: 82px;
+  width: 14px;
+}
+
+.s .vector-15 {
+  height: 93px;
+  left: 102px;
+  position: absolute;
+  top: 82px;
+  width: 14px;
+}
+
+.s .group-3 {
+  height: 93px;
+  left: 15px;
+  position: absolute;
+  top: 82px;
+  width: 101px;
+}
+
+.s .vector-16 {
+  height: 88px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 132px;
+}
+
+.s .vector-17 {
+  height: 82px;
+  left: 3px;
+  position: absolute;
+  top: 3px;
+  width: 125px;
+}
+
+.s .vector-18 {
+  height: 77px;
+  left: 13px;
+  position: absolute;
+  top: 6px;
+  width: 110px;
+}
+
+.s .vector-19 {
+  height: 77px;
+  left: 9px;
+  position: absolute;
+  top: 6px;
+  width: 110px;
+}
+
+.s .group-4 {
+  height: 68px;
+  left: 13px;
+  position: absolute;
+  top: 12px;
+  width: 104px;
+}
+
+.s .character-2 {
+  height: 190px;
+  left: 112px;
+  position: absolute;
+  top: 12px;
+  width: 77px;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .s .overlap-wrapper {
+    width: 100%;
+    padding: 0 20px;
+  }
+  
+  .s .overlap {
+    width: 100%;
+    left: 0;
+    transform: scale(0.8);
+    transform-origin: top left;
+  }
+
+  .s .header-section {
+    left: 20px;
+    right: 20px;
     flex-direction: column;
     gap: 20px;
-    text-align: center;
+    align-items: center;
   }
-  
+
   .s .logo-section {
-    flex-direction: column;
-    gap: 10px;
+    align-items: center;
   }
-  
-  .s .div {
-    justify-content: center;
-    width: 100%;
-  }
-  
-  .s .frame-wrapper {
-    padding: 20px 15px;
-  }
-  
+
   .s .typewriter-text {
     font-size: 24px;
+    width: 250px;
+  }
+
+  .s .letter {
+    width: 18px;
+  }
+
+  .s .group {
+    left: 20px;
+    width: calc(100% - 40px);
+    text-align: center;
+  }
+
+  .s .simplified-teaching,
+  .s .inspiring-learning {
+    font-size: 36px;
+    position: static;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .s .text-wrapper-highlight {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 768px) {
+  .s .overlap-wrapper {
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .s .overlap {
+    height: auto;
+    top: 150px;
+    transform: scale(0.6);
+  }
+
+  .s .header-section {
+    top: -100px;
+    position: relative;
+    margin-bottom: 50px;
+  }
+
+  .s .typewriter-text {
+    font-size: 20px;
+    width: 200px;
+  }
+
+  .s .letter {
+    width: 16px;
+  }
+
+  .s .button-section {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .s .div-wrapper,
+  .s .frame-2 {
+    width: 200px;
+  }
+
+  .s .text-wrapper,
+  .s .text-wrapper-2 {
+    font-size: 20px;
+  }
+
+  .s .simplified-teaching,
+  .s .inspiring-learning {
+    font-size: 28px;
+  }
+
+  .s .text-wrapper-highlight {
+    font-size: 36px;
+  }
+
+  .s .image {
+    height: 120px;
+    width: 125px;
+  }
+}
+
+@media (max-width: 480px) {
+  .s .overlap {
+    transform: scale(0.4);
+    top: 100px;
+  }
+
+  .s .header-section {
+    top: -50px;
+  }
+
+  .s .typewriter-text {
+    font-size: 18px;
+    width: 180px;
+  }
+
+  .s .simplified-teaching,
+  .s .inspiring-learning {
+    font-size: 24px;
+  }
+
+  .s .text-wrapper-highlight {
+    font-size: 30px;
   }
 }
