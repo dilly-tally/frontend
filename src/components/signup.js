@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/signup.css";
 
 // Component for the floating math topics
@@ -14,7 +15,9 @@ export const Signup = () => {
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const fullText = "DILLY TALLY";
+  const navigate = useNavigate();
   
+  // Typewriter effect
   useEffect(() => {
     const typeSpeed = 150;
     const deleteSpeed = 100;
@@ -44,6 +47,15 @@ export const Signup = () => {
     
     animateText();
   }, [displayText, isDeleting, fullText]);
+
+  // Handle button clicks
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
+  const handleSignupClick = () => {
+    navigate("/dashboard");
+  };
 
   return (
     <div className="s" data-model-id="187:680">
@@ -126,10 +138,10 @@ export const Signup = () => {
               </div>
 
               <div className="button-section">
-                <div className="div-wrapper">
+                <div className="div-wrapper" onClick={handleLoginClick}>
                   <div className="text-wrapper">Log In</div>
                 </div>
-                <div className="frame-2">
+                <div className="frame-2" onClick={handleSignupClick}>
                   <div className="text-wrapper-2">Sign Up</div>
                 </div>
               </div>
