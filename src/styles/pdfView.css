@@ -22,6 +22,104 @@
   width: 1440px;
 }
 
+/* Editing Tools Overlay - Positioned vertically on the right */
+.model .editing-tools-overlay {
+  position: absolute;
+  top: 310px;
+  right: 60px;
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  z-index: 10;
+  background-color: #FFFFFF;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.model .tool-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.model .tool-label {
+  font-family: "Poppins", Helvetica;
+  font-size: 12px;
+  font-weight: 500;
+  color: #666666;
+  text-align: center;
+}
+
+.model .color-picker-tool {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 6px !important;
+  border: 2px solid #e0e0e0 !important;
+  cursor: pointer !important;
+  background-color: transparent !important;
+  outline: none !important;
+}
+
+.model .tool-button {
+  align-items: center;
+  border-radius: 6px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  justify-content: center;
+  padding: 10px 16px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 40px;
+  min-width: 80px;
+  border: 2px solid #e0e0e0;
+  background-color: #ffffff;
+}
+
+.model .tool-button:hover {
+  background-color: #f5f5f5;
+  border-color: #a1caac;
+}
+
+.model .tool-button.tool-active {
+  background-color: #a1caac;
+  border-color: #a1caac;
+}
+
+.model .tool-button.tool-clear {
+  background-color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.model .tool-button.tool-clear:hover {
+  background-color: #ff5252;
+  border-color: #ff5252;
+}
+
+.model .tool-text {
+  font-family: "Poppins", Helvetica;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: normal;
+  position: relative;
+  width: fit-content;
+  color: #333333;
+}
+
+.model .tool-button.tool-active .tool-text {
+  color: #ffffff;
+}
+
+.model .tool-button.tool-clear .tool-text {
+  color: #ffffff;
+}
+
 /* Exact Anima Drawing Toolbar Styles - Positioned above right content box */
 .model .div {
   height: 40px;

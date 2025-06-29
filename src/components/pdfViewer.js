@@ -13,8 +13,10 @@ export const PdfViewer = () => {
   // const [isErasing, setIsErasing] = useState(false);
   const [activeTab, setActiveTab] = useState("content");
   const [showAnswers, setShowAnswers] = useState(false);
-  // const canvasRef = useRef(null);
-  // const pdfCanvasRef = useRef(null);
+  const [drawColor, setDrawColor] = useState("#000000");
+  const [activeTool, setActiveTool] = useState("pen");
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
 
   // Placeholder URL for PDF with answers - update this later
   const answersUrl = "PLACEHOLDER_ANSWERS_PDF_URL";
@@ -43,7 +45,77 @@ export const PdfViewer = () => {
     fetchPDF();
   }, [tid]);
 
-  // COMMENTED OUT - Drawing functions
+  // Drawing functions
+  const startDrawing = (e) => {
+    if (activeTool === "none") return;
+    setIsDrawing(true);
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    
+    if (activeTool === "dot") {
+      drawDot(ctx, x, y);
+      setIsDrawing(false);
+    }
+  };
+
+  const draw = (e) => {
+    if (!isDrawing || activeTool === "none" || activeTool === "dot") return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    ctx.globalCompositeOperation = activeTool === "eraser" ? "destination-out" : "source-over";
+    ctx.strokeStyle = drawColor;
+    ctx.lineWidth = activeTool === "eraser" ? 20 : (activeTool === "pen" ? 2 : 1);
+    ctx.lineCap = "round";
+    
+    if (activeTool === "line") {
+      // For line tool, we'll draw from start to current position
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.beginPath();
+      ctx.moveTo(canvas.startX, canvas.startY);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    } else {
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    }
+  };
+
+  const stopDrawing = () => {
+    setIsDrawing(false);
+  };
+
+  const drawDot = (ctx, x, y) => {
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = drawColor;
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, 2 * Math.PI);
+    ctx.fill();
+  };
+
+  const handleToolChange = (tool) => {
+    setActiveTool(tool);
+  };
+
+  const handleColorChange = (color) => {
+    setDrawColor(color);
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
   // const startDrawing = (e) => {
   //   const canvas = canvasRef.current;
   //   const ctx = canvas.getContext("2d");
@@ -233,28 +305,61 @@ export const PdfViewer = () => {
             {/* Content Areas */}
             {activeTab === "content" && (
               <>
-                {/* COMMENTED OUT - Drawing Canvas */}
-                {/* <div className="content-frame">
-                  <div className="content-box">
-                    <canvas
-                      ref={canvasRef}
-                      width={500}
-                      height={591}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        zIndex: 2,
-                        backgroundColor: "transparent"
-                      }}
-                      onMouseDown={startDrawing}
-                      onMouseMove={draw}
-                      onMouseUp={stopDrawing}
-                      onMouseLeave={stopDrawing}
+                {/* Editing Tools - Positioned as vertical row */}
+                <div className="editing-tools-overlay">
+                  <div className="tool-section">
+                    <div className="tool-label">Color</div>
+                    <input
+                      type="color"
+                      value={drawColor}
+                      onChange={(e) => handleColorChange(e.target.value)}
+                      className="color-picker-tool"
                     />
                   </div>
-                </div> */}
-                
+                  
+                  <div 
+                    className={`tool-button ${activeTool === "pen" ? "tool-active" : ""}`}
+                    onClick={() => handleToolChange("pen")}
+                  >
+                    <div className="tool-text">Pen</div>
+                  </div>
+                  
+                  <div 
+                    className={`tool-button ${activeTool === "eraser" ? "tool-active" : ""}`}
+                    onClick={() => handleToolChange("eraser")}
+                  >
+                    <div className="tool-text">Eraser</div>
+                  </div>
+                  
+                  <div 
+                    className={`tool-button ${activeTool === "text" ? "tool-active" : ""}`}
+                    onClick={() => handleToolChange("text")}
+                  >
+                    <div className="tool-text">Text</div>
+                  </div>
+                  
+                  <div 
+                    className={`tool-button ${activeTool === "line" ? "tool-active" : ""}`}
+                    onClick={() => handleToolChange("line")}
+                  >
+                    <div className="tool-text">Line</div>
+                  </div>
+                  
+                  <div 
+                    className={`tool-button ${activeTool === "dot" ? "tool-active" : ""}`}
+                    onClick={() => handleToolChange("dot")}
+                  >
+                    <div className="tool-text">Dot</div>
+                  </div>
+                  
+                  <div 
+                    className="tool-button tool-clear"
+                    onClick={clearCanvas}
+                  >
+                    <div className="tool-text">Clear</div>
+                  </div>
+                </div>
+
                 {/* Updated iframe to match test tab size */}
                 <div className="content-iframe-container" style={{
                   position: "absolute",
@@ -276,6 +381,26 @@ export const PdfViewer = () => {
                       border: "none",
                       boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
                     }}
+                  />
+                  
+                  {/* Drawing Canvas Overlay */}
+                  <canvas
+                    ref={canvasRef}
+                    width={1064}
+                    height={600}
+                    style={{
+                      position: "absolute",
+                      top: "32px",
+                      left: "132px",
+                      zIndex: 2,
+                      backgroundColor: "transparent",
+                      pointerEvents: "auto",
+                      cursor: activeTool === "eraser" ? "crosshair" : "default"
+                    }}
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
                   />
                 </div>
                 
