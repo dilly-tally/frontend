@@ -9,11 +9,15 @@ export const PdfViewer = () => {
   const [topicTitle, setTopicTitle] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [drawColor, setDrawColor] = useState("#000");
-  const [isErasing, setIsErasing] = useState(false);
+  // const [drawColor, setDrawColor] = useState("#000");
+  // const [isErasing, setIsErasing] = useState(false);
   const [activeTab, setActiveTab] = useState("content");
-  const canvasRef = useRef(null);
-  const pdfCanvasRef = useRef(null);
+  const [showAnswers, setShowAnswers] = useState(false);
+  // const canvasRef = useRef(null);
+  // const pdfCanvasRef = useRef(null);
+
+  // Placeholder URL for PDF with answers - update this later
+  const answersUrl = "PLACEHOLDER_ANSWERS_PDF_URL";
 
   useEffect(() => {
     const fetchPDF = async () => {
@@ -39,69 +43,78 @@ export const PdfViewer = () => {
     fetchPDF();
   }, [tid]);
 
-  const startDrawing = (e) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    canvas.dataset.drawing = "true";
-    ctx.beginPath();
-    ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+  // COMMENTED OUT - Drawing functions
+  // const startDrawing = (e) => {
+  //   const canvas = canvasRef.current;
+  //   const ctx = canvas.getContext("2d");
+  //   canvas.dataset.drawing = "true";
+  //   ctx.beginPath();
+  //   ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+  // };
+
+  // const draw = (e) => {
+  //   const canvas = canvasRef.current;
+  //   if (canvas.dataset.drawing !== "true") return;
+  //   const ctx = canvas.getContext("2d");
+  //   ctx.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
+  //   ctx.strokeStyle = drawColor;
+  //   ctx.lineWidth = isErasing ? 20 : 2;
+  //   ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+  //   ctx.stroke();
+  // };
+
+  // const stopDrawing = () => {
+  //   const canvas = canvasRef.current;
+  //   canvas.dataset.drawing = "false";
+  // };
+
+  // const startPdfDrawing = (e) => {
+  //   const canvas = pdfCanvasRef.current;
+  //   const ctx = canvas.getContext("2d");
+  //   canvas.dataset.drawing = "true";
+  //   ctx.beginPath();
+  //   ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+  // };
+
+  // const drawOnPdf = (e) => {
+  //   const canvas = pdfCanvasRef.current;
+  //   if (canvas.dataset.drawing !== "true") return;
+  //   const ctx = canvas.getContext("2d");
+  //   ctx.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
+  //   ctx.strokeStyle = drawColor;
+  //   ctx.lineWidth = isErasing ? 20 : 2;
+  //   ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+  //   ctx.stroke();
+  // };
+
+  // const stopPdfDrawing = () => {
+  //   const canvas = pdfCanvasRef.current;
+  //   canvas.dataset.drawing = "false";
+  // };
+
+  // const handleColorChange = (color) => {
+  //   setDrawColor(color);
+  //   setIsErasing(false);
+  // };
+
+  // const handleToolChange = (tool) => {
+  //   if (tool === "eraser") {
+  //     setIsErasing(true);
+  //   } else if (tool === "highlighter") {
+  //     setIsErasing(false);
+  //     // You can add specific highlighter logic here if needed
+  //     // For now, it will just use the selected color with normal drawing
+  //   } else {
+  //     setIsErasing(false);
+  //   }
+  // };
+
+  const handleShowAnswers = () => {
+    setShowAnswers(true);
   };
 
-  const draw = (e) => {
-    const canvas = canvasRef.current;
-    if (canvas.dataset.drawing !== "true") return;
-    const ctx = canvas.getContext("2d");
-    ctx.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
-    ctx.strokeStyle = drawColor;
-    ctx.lineWidth = isErasing ? 20 : 2;
-    ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-    ctx.stroke();
-  };
-
-  const stopDrawing = () => {
-    const canvas = canvasRef.current;
-    canvas.dataset.drawing = "false";
-  };
-
-  const startPdfDrawing = (e) => {
-    const canvas = pdfCanvasRef.current;
-    const ctx = canvas.getContext("2d");
-    canvas.dataset.drawing = "true";
-    ctx.beginPath();
-    ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-  };
-
-  const drawOnPdf = (e) => {
-    const canvas = pdfCanvasRef.current;
-    if (canvas.dataset.drawing !== "true") return;
-    const ctx = canvas.getContext("2d");
-    ctx.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
-    ctx.strokeStyle = drawColor;
-    ctx.lineWidth = isErasing ? 20 : 2;
-    ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-    ctx.stroke();
-  };
-
-  const stopPdfDrawing = () => {
-    const canvas = pdfCanvasRef.current;
-    canvas.dataset.drawing = "false";
-  };
-
-  const handleColorChange = (color) => {
-    setDrawColor(color);
-    setIsErasing(false);
-  };
-
-  const handleToolChange = (tool) => {
-    if (tool === "eraser") {
-      setIsErasing(true);
-    } else if (tool === "highlighter") {
-      setIsErasing(false);
-      // You can add specific highlighter logic here if needed
-      // For now, it will just use the selected color with normal drawing
-    } else {
-      setIsErasing(false);
-    }
+  const handleResetAnswers = () => {
+    setShowAnswers(false);
   };
 
   if (loading) return <div>Loading PDF...</div>;
@@ -163,8 +176,8 @@ export const PdfViewer = () => {
               </div>
             </div>
 
-            {/* Drawing Toolbar - With Backend Integration */}
-            {activeTab === "content" && (
+            {/* COMMENTED OUT - Drawing Toolbar */}
+            {/* {activeTab === "content" && (
               <div className="div">
                 <div 
                   className="solar-pen-bold-wrapper"
@@ -215,12 +228,13 @@ export const PdfViewer = () => {
                   />
                 </div>
               </div>
-            )}
+            )} */}
 
             {/* Content Areas */}
             {activeTab === "content" && (
               <>
-                <div className="content-frame">
+                {/* COMMENTED OUT - Drawing Canvas */}
+                {/* <div className="content-frame">
                   <div className="content-box">
                     <canvas
                       ref={canvasRef}
@@ -239,14 +253,34 @@ export const PdfViewer = () => {
                       onMouseLeave={stopDrawing}
                     />
                   </div>
+                </div> */}
+                
+                {/* Updated iframe to match test tab size */}
+                <div className="content-iframe-container" style={{
+                  position: "absolute",
+                  top: "280px",
+                  left: "56px",
+                  width: "1328px",
+                  height: "591px",
+                  backgroundColor: "#ffffff",
+                  padding: "2rem",
+                  display: "flex",
+                  justifyContent: "center"
+                }}>
+                  <iframe 
+                    src={pdfUrl ? `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0` : ""}
+                    title="PDF Viewer"
+                    style={{
+                      width: "80%",
+                      height: "600px",
+                      border: "none",
+                      boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
+                    }}
+                  />
                 </div>
-                <iframe 
-                  className="pdf-iframe"
-                  src={pdfUrl ? `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0` : ""}
-                  title="PDF Viewer"
-                  frameBorder="0"
-                />
-                <canvas
+                
+                {/* COMMENTED OUT - PDF Drawing Canvas */}
+                {/* <canvas
                   ref={pdfCanvasRef}
                   width={798}
                   height={591}
@@ -262,7 +296,7 @@ export const PdfViewer = () => {
                   onMouseMove={drawOnPdf}
                   onMouseUp={stopPdfDrawing}
                   onMouseLeave={stopPdfDrawing}
-                />
+                /> */}
               </>
             )}
 
@@ -294,28 +328,46 @@ export const PdfViewer = () => {
 
             {/* Test Tab */}
             {activeTab === "test" && pdfUrl && (
-              <div className="test-iframe-container" style={{
-                position: "absolute",
-                top: "280px",
-                left: "56px",
-                width: "1328px",
-                height: "591px",
-                backgroundColor: "#ffffff",
-                padding: "2rem",
-                display: "flex",
-                justifyContent: "center"
-              }}>
-                <iframe 
-                  src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                  title="PDF Test Viewer"
-                  style={{
-                    width: "80%",
-                    height: "600px",
-                    border: "none",
-                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
-                  }}
-                />
-              </div>
+              <>
+                {/* Test Tab Buttons - Positioned over the PDF content */}
+                <div className="test-buttons-overlay">
+                  <div 
+                    className="test-button-wrapper show-button"
+                    onClick={handleShowAnswers}
+                  >
+                    <div className="test-button-text">Show</div>
+                  </div>
+                  <div 
+                    className="test-button-wrapper reset-button"
+                    onClick={handleResetAnswers}
+                  >
+                    <div className="test-button-text">Reset</div>
+                  </div>
+                </div>
+
+                <div className="test-iframe-container" style={{
+                  position: "absolute",
+                  top: "280px",
+                  left: "56px",
+                  width: "1328px",
+                  height: "591px",
+                  backgroundColor: "#ffffff",
+                  padding: "2rem",
+                  display: "flex",
+                  justifyContent: "center"
+                }}>
+                  <iframe 
+                    src={showAnswers ? answersUrl : `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                    title="PDF Test Viewer"
+                    style={{
+                      width: "80%",
+                      height: "600px",
+                      border: "none",
+                      boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
+                    }}
+                  />
+                </div>
+              </>
             )}
           </div>
         </div>

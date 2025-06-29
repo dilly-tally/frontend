@@ -86,6 +86,79 @@
   width: 24px;
 }
 
+/* Fixed Test Tab Buttons Styles - Positioned to float over PDF content */
+.model .test-buttons-overlay {
+  position: absolute;
+  top: 310px;
+  right: 60px;
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 15px;
+  z-index: 10;
+  background-color: #FFFFFF;
+  padding: 15px;
+  border-radius: 8px;
+  
+}
+
+.model .test-button-wrapper {
+  align-items: center;
+  border-radius: 6px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  justify-content: center;
+  padding: 10px 20px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 40px;
+  min-width: 80px;
+  border: none;
+}
+
+.model .test-button-wrapper.show-button {
+  background-color: #a1caac;
+}
+
+.model .test-button-wrapper.show-button:hover {
+  background-color: #8bb896;
+}
+
+.model .test-button-wrapper.reset-button {
+  background-color: #a1caac;
+
+}
+
+.model .test-button-wrapper.reset-button:hover {
+  background-color: #8bb896;
+}
+
+.model .test-button-text {
+  font-family: "Poppins", Helvetica;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: normal;
+  position: relative;
+  width: fit-content;
+}
+
+.model .test-button-wrapper.show-button .test-button-text {
+  color: #ffffff;
+}
+
+.model .test-button-wrapper.reset-button .test-button-text {
+  color: #ffffff;
+}
+
+/* Remove old test-buttons styles that were conflicting */
+.model .test-buttons {
+  display: none;
+}
+
 /* Header Styles */
 .model .on-boarding-screen > .frame {
   align-items: center;
