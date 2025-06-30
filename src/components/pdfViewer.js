@@ -9,16 +9,22 @@ export const PdfViewer = () => {
   const [topicTitle, setTopicTitle] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [drawColor, setDrawColor] = useState("#000");
-  // const [isErasing, setIsErasing] = useState(false);
   const [activeTab, setActiveTab] = useState("content");
   const [showAnswers, setShowAnswers] = useState(false);
   const [drawColor, setDrawColor] = useState("#000000");
   const [activeTool, setActiveTool] = useState("pen");
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  
+  // PDF Book specific states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pdfDoc, setPdfDoc] = useState(null);
+  const [pageImageUrl, setPageImageUrl] = useState(null);
+  const [pageLoading, setPageLoading] = useState(false);
+  const pdfCanvasRef = useRef(null);
 
-  // Placeholder URL for PDF with answers - update this later
+  // Placeholder URL for PDF with answers
   const answersUrl = "PLACEHOLDER_ANSWERS_PDF_URL";
 
   useEffect(() => {
@@ -45,7 +51,97 @@ export const PdfViewer = () => {
     fetchPDF();
   }, [tid]);
 
-  // Drawing functions
+  // Initialize PDF.js and load first page
+  useEffect(() => {
+    if (pdfUrl && window.pdfjsLib) {
+      loadPdfDocument();
+    }
+  }, [pdfUrl]);
+
+  // Load PDF document and render first page
+  const loadPdfDocument = async () => {
+    try {
+      const loadingTask = window.pdfjsLib.getDocument(pdfUrl);
+      const pdf = await loadingTask.promise;
+      setPdfDoc(pdf);
+      setTotalPages(pdf.numPages);
+      
+      // Render the first page
+      await renderPage(pdf, 1);
+    } catch (error) {
+      console.error("Error loading PDF document:", error);
+    }
+  };
+
+  // Render a specific page to canvas and return as image URL
+  const renderPage = async (pdf, pageNumber) => {
+    setPageLoading(true);
+    try {
+      const page = await pdf.getPage(pageNumber);
+      const canvas = pdfCanvasRef.current;
+      const context = canvas.getContext('2d');
+      
+      // Set canvas size
+      const viewport = page.getViewport({ scale: 1.5 });
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      
+      // Render page
+      const renderContext = {
+        canvasContext: context,
+        viewport: viewport
+      };
+      
+      await page.render(renderContext).promise;
+      
+      // Convert canvas to image URL
+      const imageUrl = canvas.toDataURL();
+      setPageImageUrl(imageUrl);
+      setPageLoading(false);
+      
+      return imageUrl;
+    } catch (error) {
+      console.error("Error rendering page:", error);
+      setPageLoading(false);
+      return null;
+    }
+  };
+
+  // Simple page navigation functions
+  const nextPage = async () => {
+    if (currentPage < totalPages && pdfDoc) {
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      await renderPage(pdfDoc, newPage);
+      clearCanvas(); // Clear annotations when changing pages
+    }
+  };
+
+  const prevPage = async () => {
+    if (currentPage > 1 && pdfDoc) {
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      await renderPage(pdfDoc, newPage);
+      clearCanvas(); // Clear annotations when changing pages
+    }
+  };
+
+  const goToPage = async (pageNum) => {
+    if (pageNum >= 1 && pageNum <= totalPages && pageNum !== currentPage && pdfDoc) {
+      setCurrentPage(pageNum);
+      await renderPage(pdfDoc, pageNum);
+      clearCanvas(); // Clear annotations when changing pages
+    }
+  };
+
+  // Update page when currentPage changes (for other tabs)
+  useEffect(() => {
+    if (pdfDoc && currentPage >= 1 && currentPage <= totalPages) {
+      renderPage(pdfDoc, currentPage);
+    }
+  }, [currentPage, pdfDoc]);
+
+  // Drawing functions (keeping your existing drawing functionality)
   const startDrawing = (e) => {
     if (activeTool === "none") return;
     setIsDrawing(true);
@@ -79,7 +175,6 @@ export const PdfViewer = () => {
     ctx.lineCap = "round";
     
     if (activeTool === "line") {
-      // For line tool, we'll draw from start to current position
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
       ctx.moveTo(canvas.startX, canvas.startY);
@@ -113,73 +208,11 @@ export const PdfViewer = () => {
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
   };
-  // const startDrawing = (e) => {
-  //   const canvas = canvasRef.current;
-  //   const ctx = canvas.getContext("2d");
-  //   canvas.dataset.drawing = "true";
-  //   ctx.beginPath();
-  //   ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-  // };
-
-  // const draw = (e) => {
-  //   const canvas = canvasRef.current;
-  //   if (canvas.dataset.drawing !== "true") return;
-  //   const ctx = canvas.getContext("2d");
-  //   ctx.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
-  //   ctx.strokeStyle = drawColor;
-  //   ctx.lineWidth = isErasing ? 20 : 2;
-  //   ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-  //   ctx.stroke();
-  // };
-
-  // const stopDrawing = () => {
-  //   const canvas = canvasRef.current;
-  //   canvas.dataset.drawing = "false";
-  // };
-
-  // const startPdfDrawing = (e) => {
-  //   const canvas = pdfCanvasRef.current;
-  //   const ctx = canvas.getContext("2d");
-  //   canvas.dataset.drawing = "true";
-  //   ctx.beginPath();
-  //   ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-  // };
-
-  // const drawOnPdf = (e) => {
-  //   const canvas = pdfCanvasRef.current;
-  //   if (canvas.dataset.drawing !== "true") return;
-  //   const ctx = canvas.getContext("2d");
-  //   ctx.globalCompositeOperation = isErasing ? "destination-out" : "source-over";
-  //   ctx.strokeStyle = drawColor;
-  //   ctx.lineWidth = isErasing ? 20 : 2;
-  //   ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-  //   ctx.stroke();
-  // };
-
-  // const stopPdfDrawing = () => {
-  //   const canvas = pdfCanvasRef.current;
-  //   canvas.dataset.drawing = "false";
-  // };
-
-  // const handleColorChange = (color) => {
-  //   setDrawColor(color);
-  //   setIsErasing(false);
-  // };
-
-  // const handleToolChange = (tool) => {
-  //   if (tool === "eraser") {
-  //     setIsErasing(true);
-  //   } else if (tool === "highlighter") {
-  //     setIsErasing(false);
-  //     // You can add specific highlighter logic here if needed
-  //     // For now, it will just use the selected color with normal drawing
-  //   } else {
-  //     setIsErasing(false);
-  //   }
-  // };
 
   const handleShowAnswers = () => {
     setShowAnswers(true);
@@ -226,81 +259,27 @@ export const PdfViewer = () => {
                 className={`tab-wrapper ${activeTab === "content" ? "tab-active" : "tab-inactive"}`}
                 onClick={() => setActiveTab("content")}
               >
-                <div className="tab-text">
-                  Content
-                </div>
+                <div className="tab-text">Content</div>
               </div>
               <div 
                 className={`tab-wrapper ${activeTab === "resources" ? "tab-active" : "tab-inactive"}`}
                 onClick={() => setActiveTab("resources")}
               >
-                <div className="tab-text">
-                  Additional Resources
-                </div>
+                <div className="tab-text">Additional Resources</div>
               </div>
               <div 
                 className={`tab-wrapper ${activeTab === "test" ? "tab-active" : "tab-inactive"}`}
                 onClick={() => setActiveTab("test")}
               >
-                <div className="tab-text">
-                  Test
-                </div>
+                <div className="tab-text">Test</div>
               </div>
             </div>
 
-            {/* COMMENTED OUT - Drawing Toolbar */}
-            {/* {activeTab === "content" && (
-              <div className="div">
-                <div 
-                  className="solar-pen-bold-wrapper"
-                  onClick={() => handleToolChange("pen")}
-                  style={{ cursor: "pointer" }}
-                >
-                  <img
-                    className="img"
-                    alt="Solar pen bold"
-                    src="https://c.animaapp.com/CJmPfwmA/img/solar-pen-bold.svg"
-                  />
-                </div>
-                <input
-                  type="color"
-                  value={drawColor}
-                  onChange={(e) => handleColorChange(e.target.value)}
-                  className="color-picker"
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "2px",
-                    border: "none",
-                    cursor: "pointer",
-                    backgroundColor: "transparent",
-                    outline: "none"
-                  }}
-                />
-                <div 
-                  className="solar-eraser-bold-wrapper"
-                  onClick={() => handleToolChange("eraser")}
-                  style={{ cursor: "pointer" }}
-                >
-                  <img
-                    className="img"
-                    alt="Solar eraser bold"
-                    src="https://c.animaapp.com/CJmPfwmA/img/solar-eraser-bold.svg"
-                  />
-                </div>
-                <div 
-                  className="fa-solid-highlighter-wrapper"
-                  onClick={() => handleToolChange("highlighter")}
-                  style={{ cursor: "pointer" }}
-                >
-                  <img
-                    className="img"
-                    alt="Fa solid highlighter"
-                    src="https://c.animaapp.com/CJmPfwmA/img/fa-solid-highlighter.svg"
-                  />
-                </div>
-              </div>
-            )} */}
+            {/* Hidden canvas for PDF rendering */}
+            <canvas 
+              ref={pdfCanvasRef} 
+              style={{ display: 'none' }}
+            />
 
             {/* Content Areas */}
             {activeTab === "content" && (
@@ -360,68 +339,60 @@ export const PdfViewer = () => {
                   </div>
                 </div>
 
-                {/* Updated iframe to match test tab size */}
-                <div className="content-iframe-container" style={{
-                  position: "absolute",
-                  top: "280px",
-                  left: "56px",
-                  width: "1328px",
-                  height: "591px",
-                  backgroundColor: "#ffffff",
-                  padding: "2rem",
-                  display: "flex",
-                  justifyContent: "center"
-                }}>
-                  <iframe 
-                    src={pdfUrl ? `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0` : ""}
-                    title="PDF Viewer"
-                    style={{
-                      width: "80%",
-                      height: "600px",
-                      border: "none",
-                      boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
-                    }}
-                  />
-                  
-                  {/* Drawing Canvas Overlay */}
-                  <canvas
-                    ref={canvasRef}
-                    width={1064}
-                    height={600}
-                    style={{
-                      position: "absolute",
-                      top: "32px",
-                      left: "132px",
-                      zIndex: 2,
-                      backgroundColor: "transparent",
-                      pointerEvents: "auto",
-                      cursor: activeTool === "eraser" ? "crosshair" : "default"
-                    }}
-                    onMouseDown={startDrawing}
-                    onMouseMove={draw}
-                    onMouseUp={stopDrawing}
-                    onMouseLeave={stopDrawing}
-                  />
+                {/* PDF Book Container */}
+                <div className="pdf-book-container">
+                  {/* PDF Book Pages */}
+                  <div className="book-wrapper">
+                    <div className="book-page">
+                      {/* Loading indicator */}
+                      {pageLoading && (
+                        <div className="page-loading">
+                          Loading page {currentPage}...
+                        </div>
+                      )}
+                      
+                      {/* Current page image */}
+                      {pageImageUrl && !pageLoading && (
+                        <img 
+                          src={pageImageUrl}
+                          alt={`Page ${currentPage}`}
+                          className="pdf-page-image"
+                        />
+                      )}
+                      
+                      {/* Drawing Canvas Overlay */}
+                      <canvas
+                        ref={canvasRef}
+                        width={800}
+                        height={600}
+                        className="drawing-canvas"
+                        onMouseDown={startDrawing}
+                        onMouseMove={draw}
+                        onMouseUp={stopDrawing}
+                        onMouseLeave={stopDrawing}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Simple Arrow Navigation Below PDF */}
+                  <div className="page-controls">
+                    <button 
+                      className="page-arrow-btn" 
+                      onClick={prevPage}
+                      disabled={currentPage === 1 || pageLoading}
+                    >
+                      &lt;
+                    </button>
+                    
+                    <button 
+                      className="page-arrow-btn" 
+                      onClick={nextPage}
+                      disabled={currentPage === totalPages || pageLoading}
+                    >
+                      &gt;
+                    </button>
+                  </div>
                 </div>
-                
-                {/* COMMENTED OUT - PDF Drawing Canvas */}
-                {/* <canvas
-                  ref={pdfCanvasRef}
-                  width={798}
-                  height={591}
-                  style={{
-                    position: "absolute",
-                    top: "280px",
-                    left: "56px",
-                    zIndex: 3,
-                    backgroundColor: "transparent",
-                    pointerEvents: "auto"
-                  }}
-                  onMouseDown={startPdfDrawing}
-                  onMouseMove={drawOnPdf}
-                  onMouseUp={stopPdfDrawing}
-                  onMouseLeave={stopPdfDrawing}
-                /> */}
               </>
             )}
 
@@ -452,9 +423,9 @@ export const PdfViewer = () => {
             )}
 
             {/* Test Tab */}
-            {activeTab === "test" && pdfUrl && (
+            {activeTab === "test" && (
               <>
-                {/* Test Tab Buttons - Positioned over the PDF content */}
+                {/* Test Tab Buttons */}
                 <div className="test-buttons-overlay">
                   <div 
                     className="test-button-wrapper show-button"
@@ -481,16 +452,24 @@ export const PdfViewer = () => {
                   display: "flex",
                   justifyContent: "center"
                 }}>
-                  <iframe 
-                    src={showAnswers ? answersUrl : `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                    title="PDF Test Viewer"
-                    style={{
-                      width: "80%",
-                      height: "600px",
-                      border: "none",
-                      boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
-                    }}
-                  />
+                  {/* Use rendered page image for test tab too */}
+                  <div className="book-wrapper">
+                    <div className="book-page">
+                      {pageLoading && (
+                        <div className="page-loading">
+                          Loading page {currentPage}...
+                        </div>
+                      )}
+                      
+                      {pageImageUrl && !pageLoading && (
+                        <img 
+                          src={showAnswers ? answersUrl : pageImageUrl}
+                          alt={`Test Page ${currentPage}`}
+                          className="pdf-page-image"
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </>
             )}
