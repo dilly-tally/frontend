@@ -43,6 +43,7 @@
   gap: 20px;
   width: 100%;
   z-index: 5;
+  top: 120px;
 }
 
 .page-arrow-btn {
@@ -715,4 +716,28 @@
   .model .tab-text {
     font-size: 16px;
   }
+}
+
+.book-page {
+  position: relative;
+  display: inline-block;
+}
+
+.pdf-page-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.drawing-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.page-info {
+  margin: 0 1rem;
+  font-size: 14px;
+  color: #666;
 }
