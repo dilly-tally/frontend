@@ -2,6 +2,16 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "../api/auth";
 import "../styles/pdfView.css";
+import { 
+  Pen, 
+  Eraser, 
+  Type, 
+  Minus, 
+  Circle, 
+  Trash2, 
+  Ban,
+  Palette
+} from "lucide-react";
 
 export const PdfViewer = () => {
   const { tid } = useParams();
@@ -12,7 +22,7 @@ export const PdfViewer = () => {
   const [activeTab, setActiveTab] = useState("content");
   const [showAnswers, setShowAnswers] = useState(false);
   const [drawColor, setDrawColor] = useState("#000000");
-  const [activeTool, setActiveTool] = useState("none"); // Start with "none" tool
+  const [activeTool, setActiveTool] = useState("none");
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   
@@ -28,6 +38,9 @@ export const PdfViewer = () => {
   // Store drawing start position for line tool
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
 
+  // Placeholder URL for PDF with answers
+  const answersUrl = "PLACEHOLDER_ANSWERS_PDF_URL";
+
   // Check PDF.js availability
   useEffect(() => {
     if (typeof window !== 'undefined' && !window.pdfjsLib) {
@@ -37,9 +50,6 @@ export const PdfViewer = () => {
       setError("PDF.js library not loaded. Please include PDF.js script in your HTML file.");
     }
   }, []);
-
-  // Placeholder URL for PDF with answers
-  const answersUrl = "PLACEHOLDER_ANSWERS_PDF_URL";
 
   useEffect(() => {
     const fetchPDF = async () => {
@@ -68,7 +78,6 @@ export const PdfViewer = () => {
   // Initialize PDF.js and load first page
   useEffect(() => {
     if (pdfUrl) {
-      // Add debugging
       console.log("PDF URL:", pdfUrl);
       if (window.pdfjsLib) {
         console.log("PDF.js loaded, attempting to load document");
@@ -84,7 +93,6 @@ export const PdfViewer = () => {
     try {
       console.log("Loading PDF document from:", pdfUrl);
       
-      // Set PDF.js worker if not already set
       if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = 
           `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${window.pdfjsLib.version}/pdf.worker.min.js`;
@@ -93,7 +101,6 @@ export const PdfViewer = () => {
       const loadingTask = window.pdfjsLib.getDocument({
         url: pdfUrl,
         withCredentials: false,
-        // Add CORS settings if needed
         httpHeaders: {
           'Accept': 'application/pdf'
         }
@@ -104,7 +111,6 @@ export const PdfViewer = () => {
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
       
-      // Render the first page
       await renderPage(pdf, 1);
     } catch (error) {
       console.error("Error loading PDF document:", error);
@@ -118,19 +124,16 @@ export const PdfViewer = () => {
     try {
       console.log("Rendering page:", pageNumber);
       
-      // Create a new canvas for each render to avoid conflicts
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
       
       const page = await pdf.getPage(pageNumber);
       
-      // Set canvas size with higher resolution for better quality
       const scale = 1.5;
       const viewport = page.getViewport({ scale });
       canvas.width = viewport.width;
       canvas.height = viewport.height;
       
-      // Render page
       const renderContext = {
         canvasContext: context,
         viewport: viewport
@@ -139,7 +142,6 @@ export const PdfViewer = () => {
       await page.render(renderContext).promise;
       console.log("Page rendered successfully");
       
-      // Convert canvas to image URL
       const imageUrl = canvas.toDataURL('image/png');
       setPageImageUrl(imageUrl);
       setPageLoading(false);
@@ -159,16 +161,12 @@ export const PdfViewer = () => {
     const pdfImage = pdfImageRef.current;
     
     if (canvas && pdfImage) {
-      // Wait for image to be fully loaded and rendered
       setTimeout(() => {
         const rect = pdfImage.getBoundingClientRect();
         console.log("Resizing canvas to match image:", rect.width, "x", rect.height);
         
-        // Set the canvas internal resolution
         canvas.width = rect.width;
         canvas.height = rect.height;
-        
-        // Set the canvas CSS size to match exactly
         canvas.style.width = `${rect.width}px`;
         canvas.style.height = `${rect.height}px`;
         canvas.style.position = 'absolute';
@@ -196,11 +194,9 @@ export const PdfViewer = () => {
         handleImageLoad();
       } else {
         img.onload = handleImageLoad;
-        // Also listen for when the image is actually displayed
         setTimeout(resizeCanvas, 200);
       }
       
-      // Resize on window resize
       const handleResize = () => {
         setTimeout(resizeCanvas, 100);
       };
@@ -213,14 +209,14 @@ export const PdfViewer = () => {
     }
   }, [pageImageUrl]);
 
-  // Simple page navigation functions
+  // Page navigation functions
   const nextPage = async () => {
     console.log("Next page clicked. Current:", currentPage, "Total:", totalPages, "Loading:", pageLoading);
     if (currentPage < totalPages && pdfDoc && !pageLoading) {
       const newPage = currentPage + 1;
       console.log("Navigating to page:", newPage);
       setCurrentPage(newPage);
-      clearCanvas(); // Clear annotations when changing pages
+      clearCanvas();
       await renderPage(pdfDoc, newPage);
     } else {
       console.log("Cannot go to next page - at end or loading");
@@ -233,7 +229,7 @@ export const PdfViewer = () => {
       const newPage = currentPage - 1;
       console.log("Navigating to page:", newPage);
       setCurrentPage(newPage);
-      clearCanvas(); // Clear annotations when changing pages
+      clearCanvas();
       await renderPage(pdfDoc, newPage);
     } else {
       console.log("Cannot go to previous page - at beginning or loading");
@@ -249,13 +245,6 @@ export const PdfViewer = () => {
     }
   };
 
-  // Update page when currentPage changes (for other tabs) - remove this to avoid double rendering
-  // useEffect(() => {
-  //   if (pdfDoc && currentPage >= 1 && currentPage <= totalPages) {
-  //     renderPage(pdfDoc, currentPage);
-  //   }
-  // }, [currentPage, pdfDoc]);
-
   // Drawing functions
   const startDrawing = (e) => {
     if (activeTool === "none") return;
@@ -267,13 +256,11 @@ export const PdfViewer = () => {
     const ctx = canvas.getContext("2d");
     const rect = canvas.getBoundingClientRect();
     
-    // Calculate coordinates relative to canvas
     const x = (e.clientX - rect.left) * (canvas.width / rect.width);
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
     
     console.log("Drawing at coordinates:", x, y);
     
-    // Store start position for line tool
     setStartPos({ x, y });
     
     ctx.beginPath();
@@ -292,7 +279,6 @@ export const PdfViewer = () => {
     const ctx = canvas.getContext("2d");
     const rect = canvas.getBoundingClientRect();
     
-    // Calculate coordinates relative to canvas
     const x = (e.clientX - rect.left) * (canvas.width / rect.width);
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
     
@@ -303,14 +289,12 @@ export const PdfViewer = () => {
     ctx.lineJoin = "round";
     
     if (activeTool === "line") {
-      // For line tool, clear and redraw the line from start to current position
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.beginPath();
       ctx.moveTo(startPos.x, startPos.y);
       ctx.lineTo(x, y);
       ctx.stroke();
     } else {
-      // For pen and eraser, continue drawing
       ctx.lineTo(x, y);
       ctx.stroke();
     }
@@ -430,19 +414,16 @@ export const PdfViewer = () => {
               </div>
             </div>
 
-            {/* Hidden canvas for PDF rendering - Remove this since we create canvases dynamically */}
-            {/* <canvas 
-              ref={pdfCanvasRef} 
-              style={{ display: 'none' }}
-            /> */}
-
             {/* Content Areas */}
             {activeTab === "content" && (
               <>
-                {/* Editing Tools - Positioned as vertical row */}
+                {/* Editing Tools - Positioned as vertical row with icons */}
                 <div className="editing-tools-overlay">
                   <div className="tool-section">
-                    <div className="tool-label">Color</div>
+                    <div className="tool-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {/* <Palette size={14} style={{ marginRight: '2px' }} />
+                      Color */}
+                    </div>
                     <input
                       type="color"
                       value={drawColor}
@@ -454,51 +435,58 @@ export const PdfViewer = () => {
                   <div 
                     className={`tool-button ${activeTool === "none" ? "tool-active" : ""}`}
                     onClick={() => handleToolChange("none")}
+                    title="None - Disable Drawing"
                     style={{ backgroundColor: activeTool === "none" ? "#a1caac" : "" }}
                   >
-                    <div className="tool-text">None</div>
+                    <Ban size={18} />
                   </div>
                   
                   <div 
                     className={`tool-button ${activeTool === "pen" ? "tool-active" : ""}`}
                     onClick={() => handleToolChange("pen")}
+                    title="Pen Tool"
                   >
-                    <div className="tool-text">Pen</div>
+                    <Pen size={18} />
                   </div>
                   
                   <div 
                     className={`tool-button ${activeTool === "eraser" ? "tool-active" : ""}`}
                     onClick={() => handleToolChange("eraser")}
+                    title="Eraser Tool"
                   >
-                    <div className="tool-text">Eraser</div>
+                    <Eraser size={18} />
                   </div>
                   
                   <div 
                     className={`tool-button ${activeTool === "text" ? "tool-active" : ""}`}
                     onClick={() => handleToolChange("text")}
+                    title="Text Tool"
                   >
-                    <div className="tool-text">Text</div>
+                    <Type size={18} />
                   </div>
                   
                   <div 
                     className={`tool-button ${activeTool === "line" ? "tool-active" : ""}`}
                     onClick={() => handleToolChange("line")}
+                    title="Line Tool"
                   >
-                    <div className="tool-text">Line</div>
+                    <Minus size={18} />
                   </div>
                   
                   <div 
                     className={`tool-button ${activeTool === "dot" ? "tool-active" : ""}`}
                     onClick={() => handleToolChange("dot")}
+                    title="Dot Tool"
                   >
-                    <div className="tool-text">Dot</div>
+                    <Circle size={18} />
                   </div>
                   
                   <div 
                     className="tool-button tool-clear"
                     onClick={clearCanvas}
+                    title="Clear Canvas"
                   >
-                    <div className="tool-text">Clear</div>
+                    <Trash2 size={18} />
                   </div>
                 </div>
 
@@ -725,7 +713,6 @@ export const PdfViewer = () => {
                   display: "flex",
                   justifyContent: "center"
                 }}>
-                  {/* Use rendered page image for test tab too */}
                   <div className="book-wrapper">
                     <div className="book-page">
                       {pageLoading && (

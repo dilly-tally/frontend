@@ -118,11 +118,7 @@
   cursor: crosshair;
 }
 
-/* Remove page thumbnails styles */
-
-/* Remove all book effect styling */
-
-/* Editing Tools Overlay - Positioned vertically on the right */
+/* Editing Tools Overlay - Positioned vertically on the right with fixed alignment */
 .model .editing-tools-overlay {
   position: absolute;
   top: 310px;
@@ -130,7 +126,7 @@
   width: 120px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   gap: 12px;
   z-index: 10;
   background-color: #FFFFFF;
@@ -144,6 +140,7 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
+  width: 100%;
 }
 
 .model .tool-label {
@@ -152,6 +149,7 @@
   font-weight: 500;
   color: #666666;
   text-align: center;
+  width: 100%;
 }
 
 .model .color-picker-tool {
@@ -162,23 +160,25 @@
   cursor: pointer !important;
   background-color: transparent !important;
   outline: none !important;
+  display: block;
+  margin: 0 auto;
 }
 
 .model .tool-button {
   align-items: center;
   border-radius: 6px;
-  display: inline-flex;
-  flex: 0 0 auto;
-  gap: 8px;
+  display: flex;
   justify-content: center;
-  padding: 10px 16px;
+  padding: 8px;
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
   height: 40px;
-  min-width: 80px;
+  width: 40px;
+  min-width: 40px;
   border: 2px solid #e0e0e0;
   background-color: #ffffff;
+  margin: 0 auto;
 }
 
 .model .tool-button:hover {
