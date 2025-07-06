@@ -759,7 +759,6 @@ export const PdfViewer = () => {
                                     activeTool === "line" ? "crosshair" : 
                                     activeTool === "dot" ? "pointer" :
                                     activeTool === "text" ? "text" : "default",
-                            border: '2px solid rgba(0,123,255,0.3)',
                             borderRadius: '8px'
                           }}
                           onMouseDown={startDrawing}
@@ -880,8 +879,10 @@ export const PdfViewer = () => {
                         width: '50px',
                         height: '35px',
                         fontSize: '18px',
-                        backgroundColor: (currentPage === 1 || pageLoading) ? '#f5f5f5' : '#ffffff',
-                        color: (currentPage === 1 || pageLoading) ? '#bbb' : '#666',
+                        backgroundColor: (currentPage === 1 || pageLoading) ? '#f5f5f5' : '#a8d5a8',
+                        color: (currentPage === 1 || pageLoading) ? '#bbb' : '#ffffff',
+                        border: (currentPage === 1 || pageLoading) ? '0px solid #e0e0e0' : '0px solid #28a745',
+                        borderRadius: '6px',
                         cursor: (currentPage === 1 || pageLoading) ? 'not-allowed' : 'pointer',
                         fontWeight: 'normal',
                         zIndex: 100,
@@ -893,14 +894,16 @@ export const PdfViewer = () => {
                       }}
                       onMouseEnter={(e) => {
                         if (!e.target.disabled) {
-                          e.target.style.backgroundColor = '#f8f9fa';
-                          e.target.style.borderColor = '#ccc';
+                          e.target.style.backgroundColor = '#8bb896';
+                          e.target.style.borderColor = '#8bb896';
+                          e.target.style.color = '#ffffff';
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (!e.target.disabled) {
-                          e.target.style.backgroundColor = '#ffffff';
-                          e.target.style.borderColor = '#e0e0e0';
+                          e.target.style.backgroundColor = '#a8d5a8';
+                          e.target.style.borderColor = '#28a745';
+                          e.target.style.color = '#ffffff';
                         }
                       }}
                     >
@@ -930,7 +933,7 @@ export const PdfViewer = () => {
                       }}
                       onMouseEnter={(e) => {
                         if (!e.target.disabled) {
-                          e.target.style.backgroundColor = '#28a745';
+                          e.target.style.backgroundColor = '#8bb896';
                         }
                       }}
                       onMouseLeave={(e) => {
@@ -991,33 +994,138 @@ export const PdfViewer = () => {
                   </div>
                 </div>
 
-                <div className="test-iframe-container" style={{
-                  position: "absolute",
-                  top: "280px",
-                  left: "56px",
-                  width: "1328px",
-                  height: "591px",
-                  backgroundColor: "#ffffff",
-                  padding: "2rem",
-                  display: "flex",
-                  justifyContent: "center"
-                }}>
-                  <div className="book-wrapper">
-                    <div className="book-page">
+                {/* PDF Book Container - Same as Content Tab but without editing */}
+                <div className="pdf-book-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  {/* PDF Book Pages */}
+                  <div className="book-wrapper" style={{ position: 'relative' }}>
+                    <div className="book-page" style={{ position: 'relative', display: 'inline-block' }}>
+                      {/* Loading indicator */}
                       {pageLoading && (
-                        <div className="page-loading">
-                          Loading page {currentPage}...
+                        <div className="page-loading" style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)',
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                          padding: '30px',
+                          borderRadius: '12px',
+                          boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                          zIndex: 50,
+                          textAlign: 'center',
+                          border: '2px solid #28a745'
+                        }}>
+                          <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
+                            Loading page {currentPage}...
+                          </div>
+                          <div style={{ fontSize: '14px', color: '#666' }}>
+                            Please wait while the page renders
+                          </div>
                         </div>
                       )}
                       
+                      {/* Current page image - Show answers PDF if showAnswers is true */}
                       {pageImageUrl && !pageLoading && (
                         <img 
                           src={showAnswers ? answersUrl : pageImageUrl}
                           alt={`Test Page ${currentPage}`}
                           className="pdf-page-image"
+                          style={{
+                            display: 'block',
+                            maxWidth: '100%',
+                            height: 'auto',
+                            userSelect: 'none',
+                            pointerEvents: 'none',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                            borderRadius: '8px'
+                          }}
                         />
                       )}
                     </div>
+                  </div>
+
+                  {/* Page Navigation Below PDF - Same as Content Tab */}
+                  <div className="page-controls" style={{ 
+                    marginTop: '15px', 
+                    zIndex: 100, 
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '15px'
+                  }}>
+                    <button 
+                      className="page-arrow-btn" 
+                      onClick={prevPage}
+                      disabled={currentPage === 1 || pageLoading}
+                      style={{
+                        width: '50px',
+                        height: '35px',
+                        fontSize: '18px',
+                        backgroundColor: (currentPage === 1 || pageLoading) ? '#f5f5f5' : '#a8d5a8',
+                        color: (currentPage === 1 || pageLoading) ? '#bbb' : '#ffffff',
+                        border: (currentPage === 1 || pageLoading) ? '0px solid #e0e0e0' : '0px solid #28a745',
+                        borderRadius: '6px',
+                        cursor: (currentPage === 1 || pageLoading) ? 'not-allowed' : 'pointer',
+                        fontWeight: 'normal',
+                        zIndex: 100,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!e.target.disabled) {
+                          e.target.style.backgroundColor = '#8bb896';
+                          e.target.style.borderColor = '#8bb896';
+                          e.target.style.color = '#ffffff';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!e.target.disabled) {
+                          e.target.style.backgroundColor = '#a8d5a8';
+                          e.target.style.borderColor = '#28a745';
+                          e.target.style.color = '#ffffff';
+                        }
+                      }}
+                    >
+                      &lt;
+                    </button>
+                    
+                    <button 
+                      className="page-arrow-btn" 
+                      onClick={nextPage}
+                      disabled={currentPage === totalPages || pageLoading}
+                      style={{
+                        width: '50px',
+                        height: '35px',
+                        fontSize: '18px',
+                        backgroundColor: (currentPage === totalPages || pageLoading) ? '#f5f5f5' : '#a8d5a8',
+                        color: (currentPage === totalPages || pageLoading) ? '#bbb' : '#ffffff',
+                        border: (currentPage === totalPages || pageLoading) ? '0px solid #e0e0e0' : '0px solid #28a745',
+                        borderRadius: '6px',
+                        cursor: (currentPage === totalPages || pageLoading) ? 'not-allowed' : 'pointer',
+                        fontWeight: 'normal',
+                        zIndex: 100,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!e.target.disabled) {
+                          e.target.style.backgroundColor = '#8bb896';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!e.target.disabled) {
+                          e.target.style.backgroundColor = '#a8d5a8';
+                        }
+                      }}
+                    >
+                      &gt;
+                    </button>
                   </div>
                 </div>
               </>
