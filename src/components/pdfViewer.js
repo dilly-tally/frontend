@@ -37,6 +37,16 @@ export const PdfViewer = () => {
 
   // Store drawing start position for line tool
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  
+  // New states for text boxes and lines
+  const [textBoxes, setTextBoxes] = useState([]);
+  const [editingTextBox, setEditingTextBox] = useState(null);
+  const [drawnLines, setDrawnLines] = useState([]);
+  const [currentLine, setCurrentLine] = useState(null);
+  
+  // Drag state for text boxes
+  const [draggingTextBox, setDraggingTextBox] = useState(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   // Placeholder URL for PDF with answers
   const answersUrl = "PLACEHOLDER_ANSWERS_PDF_URL";
@@ -175,9 +185,35 @@ export const PdfViewer = () => {
         canvas.style.zIndex = '10';
         canvas.style.pointerEvents = 'auto';
         
+        // Redraw all lines on canvas resize
+        redrawCanvas();
+        
         console.log("Canvas resized successfully");
       }, 100);
     }
+  };
+
+  // Redraw all existing lines on the canvas
+  const redrawCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Redraw all stored lines
+    drawnLines.forEach(line => {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.strokeStyle = line.color;
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      
+      ctx.beginPath();
+      ctx.moveTo(line.startX, line.startY);
+      ctx.lineTo(line.endX, line.endY);
+      ctx.stroke();
+    });
   };
 
   // Resize canvas when PDF image loads
@@ -207,7 +243,7 @@ export const PdfViewer = () => {
         window.removeEventListener('resize', handleResize);
       };
     }
-  }, [pageImageUrl]);
+  }, [pageImageUrl, drawnLines]);
 
   // Page navigation functions
   const nextPage = async () => {
@@ -216,7 +252,7 @@ export const PdfViewer = () => {
       const newPage = currentPage + 1;
       console.log("Navigating to page:", newPage);
       setCurrentPage(newPage);
-      clearCanvas();
+      clearAllDrawings();
       await renderPage(pdfDoc, newPage);
     } else {
       console.log("Cannot go to next page - at end or loading");
@@ -229,7 +265,7 @@ export const PdfViewer = () => {
       const newPage = currentPage - 1;
       console.log("Navigating to page:", newPage);
       setCurrentPage(newPage);
-      clearCanvas();
+      clearAllDrawings();
       await renderPage(pdfDoc, newPage);
     } else {
       console.log("Cannot go to previous page - at beginning or loading");
@@ -240,7 +276,7 @@ export const PdfViewer = () => {
     console.log("Go to page:", pageNum);
     if (pageNum >= 1 && pageNum <= totalPages && pageNum !== currentPage && pdfDoc && !pageLoading) {
       setCurrentPage(pageNum);
-      clearCanvas();
+      clearAllDrawings();
       await renderPage(pdfDoc, pageNum);
     }
   };
@@ -250,7 +286,6 @@ export const PdfViewer = () => {
     if (activeTool === "none") return;
     
     console.log("Starting to draw with tool:", activeTool);
-    setIsDrawing(true);
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -261,6 +296,12 @@ export const PdfViewer = () => {
     
     console.log("Drawing at coordinates:", x, y);
     
+    if (activeTool === "text") {
+      createTextBox(x, y);
+      return;
+    }
+    
+    setIsDrawing(true);
     setStartPos({ x, y });
     
     ctx.beginPath();
@@ -269,11 +310,14 @@ export const PdfViewer = () => {
     if (activeTool === "dot") {
       drawDot(ctx, x, y);
       setIsDrawing(false);
+    } else if (activeTool === "line") {
+      // Start drawing the current line
+      setCurrentLine({ startX: x, startY: y, endX: x, endY: y, color: drawColor });
     }
   };
 
   const draw = (e) => {
-    if (!isDrawing || activeTool === "none" || activeTool === "dot") return;
+    if (!isDrawing || activeTool === "none" || activeTool === "dot" || activeTool === "text") return;
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -282,25 +326,57 @@ export const PdfViewer = () => {
     const x = (e.clientX - rect.left) * (canvas.width / rect.width);
     const y = (e.clientY - rect.top) * (canvas.height / rect.height);
     
-    ctx.globalCompositeOperation = activeTool === "eraser" ? "destination-out" : "source-over";
-    ctx.strokeStyle = drawColor;
-    ctx.lineWidth = activeTool === "eraser" ? 20 : (activeTool === "pen" ? 3 : 2);
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    
     if (activeTool === "line") {
+      // Clear canvas and redraw all existing lines plus current line
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Redraw all stored lines
+      drawnLines.forEach(line => {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = line.color;
+        ctx.lineWidth = 2;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        
+        ctx.beginPath();
+        ctx.moveTo(line.startX, line.startY);
+        ctx.lineTo(line.endX, line.endY);
+        ctx.stroke();
+      });
+      
+      // Draw current line
+      ctx.globalCompositeOperation = "source-over";
+      ctx.strokeStyle = drawColor;
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      
       ctx.beginPath();
       ctx.moveTo(startPos.x, startPos.y);
       ctx.lineTo(x, y);
       ctx.stroke();
+      
+      // Update current line end position
+      setCurrentLine(prev => ({ ...prev, endX: x, endY: y }));
     } else {
+      // Regular pen or eraser drawing
+      ctx.globalCompositeOperation = activeTool === "eraser" ? "destination-out" : "source-over";
+      ctx.strokeStyle = drawColor;
+      ctx.lineWidth = activeTool === "eraser" ? 20 : (activeTool === "pen" ? 3 : 2);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      
       ctx.lineTo(x, y);
       ctx.stroke();
     }
   };
 
   const stopDrawing = () => {
+    if (activeTool === "line" && currentLine && isDrawing) {
+      // Save the completed line
+      setDrawnLines(prev => [...prev, currentLine]);
+      setCurrentLine(null);
+    }
     setIsDrawing(false);
   };
 
@@ -313,8 +389,125 @@ export const PdfViewer = () => {
     console.log("Drew dot at:", x, y);
   };
 
+  // Text box functions
+  const createTextBox = (x, y) => {
+    const newTextBox = {
+      id: Date.now(),
+      x: x,
+      y: y,
+      text: "",
+      color: drawColor,
+      fontSize: 16,
+      isEditing: true
+    };
+    
+    setTextBoxes(prev => [...prev, newTextBox]);
+    setEditingTextBox(newTextBox.id);
+  };
+
+  const updateTextBox = (id, newText) => {
+    setTextBoxes(prev => 
+      prev.map(box => 
+        box.id === id ? { ...box, text: newText } : box
+      )
+    );
+  };
+
+  const finishEditingTextBox = (id) => {
+    setTextBoxes(prev => 
+      prev.map(box => 
+        box.id === id ? { ...box, isEditing: false } : box
+      )
+    );
+    setEditingTextBox(null);
+  };
+
+  const deleteTextBox = (id) => {
+    setTextBoxes(prev => prev.filter(box => box.id !== id));
+    if (editingTextBox === id) {
+      setEditingTextBox(null);
+    }
+  };
+
+  // Drag functions for text boxes
+  const handleTextBoxMouseDown = (e, textBoxId) => {
+    if (activeTool !== 'text') return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    const textBox = textBoxes.find(box => box.id === textBoxId);
+    if (!textBox) return;
+    
+    const textBoxX = (textBox.x / canvas.width) * rect.width;
+    const textBoxY = (textBox.y / canvas.height) * rect.height;
+    
+    setDraggingTextBox(textBoxId);
+    setDragOffset({
+      x: mouseX - textBoxX,
+      y: mouseY - textBoxY
+    });
+  };
+
+  const handleTextBoxMouseMove = (e) => {
+    if (!draggingTextBox || activeTool !== 'text') return;
+    
+    e.preventDefault();
+    
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    const newX = ((mouseX - dragOffset.x) / rect.width) * canvas.width;
+    const newY = ((mouseY - dragOffset.y) / rect.height) * canvas.height;
+    
+    // Constrain to canvas bounds
+    const constrainedX = Math.max(0, Math.min(newX, canvas.width - 50));
+    const constrainedY = Math.max(0, Math.min(newY, canvas.height - 20));
+    
+    setTextBoxes(prev =>
+      prev.map(box =>
+        box.id === draggingTextBox
+          ? { ...box, x: constrainedX, y: constrainedY }
+          : box
+      )
+    );
+  };
+
+  const handleTextBoxMouseUp = () => {
+    setDraggingTextBox(null);
+    setDragOffset({ x: 0, y: 0 });
+  };
+
+  // Add global mouse event listeners for text box dragging
+  useEffect(() => {
+    if (draggingTextBox) {
+      document.addEventListener('mousemove', handleTextBoxMouseMove);
+      document.addEventListener('mouseup', handleTextBoxMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleTextBoxMouseMove);
+        document.removeEventListener('mouseup', handleTextBoxMouseUp);
+      };
+    }
+  }, [draggingTextBox, dragOffset]);
+
   const handleToolChange = (tool) => {
     setActiveTool(tool);
+    // Stop editing any text box when switching tools
+    if (editingTextBox) {
+      finishEditingTextBox(editingTextBox);
+    }
   };
 
   const handleColorChange = (color) => {
@@ -327,6 +520,16 @@ export const PdfViewer = () => {
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
+  };
+
+  const clearAllDrawings = () => {
+    clearCanvas();
+    setTextBoxes([]);
+    setDrawnLines([]);
+    setCurrentLine(null);
+    setEditingTextBox(null);
+    setDraggingTextBox(null);
+    setDragOffset({ x: 0, y: 0 });
   };
 
   const handleShowAnswers = () => {
@@ -421,8 +624,6 @@ export const PdfViewer = () => {
                 <div className="editing-tools-overlay">
                   <div className="tool-section">
                     <div className="tool-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {/* <Palette size={14} style={{ marginRight: '2px' }} />
-                      Color */}
                     </div>
                     <input
                       type="color"
@@ -483,8 +684,8 @@ export const PdfViewer = () => {
                   
                   <div 
                     className="tool-button tool-clear"
-                    onClick={clearCanvas}
-                    title="Clear Canvas"
+                    onClick={clearAllDrawings}
+                    title="Clear All"
                   >
                     <Trash2 size={18} />
                   </div>
@@ -556,7 +757,8 @@ export const PdfViewer = () => {
                             cursor: activeTool === "pen" ? "crosshair" : 
                                     activeTool === "eraser" ? "grab" : 
                                     activeTool === "line" ? "crosshair" : 
-                                    activeTool === "dot" ? "pointer" : "default",
+                                    activeTool === "dot" ? "pointer" :
+                                    activeTool === "text" ? "text" : "default",
                             border: '2px solid rgba(0,123,255,0.3)',
                             borderRadius: '8px'
                           }}
@@ -570,6 +772,93 @@ export const PdfViewer = () => {
                           }}
                         />
                       )}
+                      
+                      {/* Text Boxes Overlay */}
+                      {textBoxes.map(textBox => (
+                        <div
+                          key={textBox.id}
+                          className="text-box-overlay"
+                          style={{
+                            position: 'absolute',
+                            left: `${(textBox.x / (canvasRef.current?.width || 1)) * 100}%`,
+                            top: `${(textBox.y / (canvasRef.current?.height || 1)) * 100}%`,
+                            zIndex: 15,
+                            minWidth: '100px',
+                            minHeight: '25px',
+                            cursor: draggingTextBox === textBox.id ? 'grabbing' : 
+                                   (activeTool === 'text' && !textBox.isEditing ? 'grab' : 'default')
+                          }}
+                          onMouseDown={(e) => {
+                            if (!textBox.isEditing) {
+                              handleTextBoxMouseDown(e, textBox.id);
+                            }
+                          }}
+                        >
+                          {textBox.isEditing ? (
+                            <input
+                              type="text"
+                              value={textBox.text}
+                              onChange={(e) => updateTextBox(textBox.id, e.target.value)}
+                              onBlur={() => finishEditingTextBox(textBox.id)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  finishEditingTextBox(textBox.id);
+                                } else if (e.key === 'Escape') {
+                                  deleteTextBox(textBox.id);
+                                }
+                              }}
+                              onMouseDown={(e) => e.stopPropagation()}
+                              autoFocus
+                              style={{
+                                border: '2px dashed rgba(161, 202, 172, 0.8)',
+                                background: 'transparent',
+                                color: textBox.color,
+                                fontSize: `${textBox.fontSize}px`,
+                                padding: '4px 6px',
+                                outline: 'none',
+                                borderRadius: '3px',
+                                minWidth: '100px',
+                                boxShadow: 'none',
+                                cursor: 'text'
+                              }}
+                              placeholder="Type text..."
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                color: textBox.color,
+                                fontSize: `${textBox.fontSize}px`,
+                                background: 'transparent',
+                                padding: '4px 6px',
+                                borderRadius: '3px',
+                                cursor: activeTool === 'text' ? 'grab' : 'pointer',
+                                border: draggingTextBox === textBox.id ? '2px dashed rgba(161, 202, 172, 1)' : '1px solid transparent',
+                                minHeight: '20px',
+                                textShadow: '1px 1px 2px rgba(255, 255, 255, 0.8)',
+                                userSelect: 'none'
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (activeTool === 'text' && !draggingTextBox) {
+                                  setTextBoxes(prev => 
+                                    prev.map(box => 
+                                      box.id === textBox.id ? { ...box, isEditing: true } : box
+                                    )
+                                  );
+                                  setEditingTextBox(textBox.id);
+                                }
+                              }}
+                              onDoubleClick={(e) => {
+                                e.stopPropagation();
+                                deleteTextBox(textBox.id);
+                              }}
+                              title={draggingTextBox === textBox.id ? "Dragging..." : "Drag to move, click to edit, double-click to delete"}
+                            >
+                              {textBox.text || 'Empty text'}
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
 

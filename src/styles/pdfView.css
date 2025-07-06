@@ -88,6 +88,7 @@
   position: relative;
   background-color: white;
   border: 1px solid #e0e0e0;
+  display: inline-block;
 }
 
 /* Simple PDF Page Image */
@@ -100,6 +101,9 @@
   position: absolute;
   top: 0;
   left: 0;
+  display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 /* Simple Drawing Canvas */
@@ -116,6 +120,34 @@
 
 .drawing-canvas[data-tool="eraser"] {
   cursor: crosshair;
+}
+
+/* Text Box Overlay Styles */
+.text-box-overlay {
+  pointer-events: auto;
+}
+
+.text-box-overlay input {
+  font-family: Arial, sans-serif;
+  resize: none;
+  box-sizing: border-box;
+  background: transparent !important;
+  border: 2px dashed rgba(161, 202, 172, 0.8) !important;
+  outline: none !important;
+}
+
+.text-box-overlay input:focus {
+  background: transparent !important;
+  border: 2px dashed rgba(161, 202, 172, 1) !important;
+  box-shadow: 0 0 0 1px rgba(161, 202, 172, 0.3);
+}
+
+.text-box-overlay div {
+  font-family: Arial, sans-serif;
+  word-wrap: break-word;
+  max-width: 200px;
+  line-height: 1.2;
+  background: transparent !important;
 }
 
 /* Editing Tools Overlay - Positioned vertically on the right with fixed alignment */
@@ -647,6 +679,21 @@
   justify-content: center;
 }
 
+/* Loading indicator styles */
+.page-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  z-index: 50;
+  text-align: center;
+  border: 2px solid #28a745;
+}
+
 /* Responsive Design */
 @media (max-width: 1400px) {
   .pdf-book-container {
@@ -715,6 +762,12 @@
   
   .model .tab-text {
     font-size: 16px;
+  }
+  
+  .text-box-overlay div,
+  .text-box-overlay input {
+    font-size: 14px !important;
+    max-width: 150px !important;
   }
 }
 
