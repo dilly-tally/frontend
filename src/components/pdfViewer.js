@@ -9,8 +9,7 @@ import {
   Minus, 
   Circle, 
   Trash2, 
-  Ban,
-  Palette
+  Ban
 } from "lucide-react";
 
 export const PdfViewer = () => {
@@ -25,6 +24,12 @@ export const PdfViewer = () => {
   const [activeTool, setActiveTool] = useState("none");
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  
+  // NEW: Additional states for resource and test data
+  const [topicData, setTopicData] = useState(null);
+  const [resourceUrl, setResourceUrl] = useState(null);
+  const [testPdfUrl, setTestPdfUrl] = useState(null);
+  const [testPdfAnswersUrl, setTestPdfAnswersUrl] = useState(null); // NEW: For answers PDF
   
   // PDF Book specific states
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,9 +53,6 @@ export const PdfViewer = () => {
   const [draggingTextBox, setDraggingTextBox] = useState(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  // Placeholder URL for PDF with answers
-  const answersUrl = "PLACEHOLDER_ANSWERS_PDF_URL";
-
   // Check PDF.js availability
   useEffect(() => {
     if (typeof window !== 'undefined' && !window.pdfjsLib) {
@@ -61,47 +63,92 @@ export const PdfViewer = () => {
     }
   }, []);
 
+  // UPDATED: Fetch topic data including all fields including testpdfanswers
   useEffect(() => {
-    const fetchPDF = async () => {
+    const fetchTopicData = async () => {
       try {
         if (!tid) throw new Error("Topic ID is missing");
 
         const res = await axios.get(
-          `https://backend-937324960970.us-central1.run.app/v1/teacherResource/topic/${tid}`
+          `https://backend-937324960970.us-central1.run.app/v1/teacherResource/topics/${tid}`
         );
-        const { pdfPath, TNAME } = res.data.topic;
-        if (!pdfPath) throw new Error("PDF path not found in response");
-
-        setPdfUrl(`https://backend-937324960970.us-central1.run.app/${pdfPath}`);
+        
+        const { pdfPath, TNAME, resource, testpdf, testpdfanswers } = res.data.topic;
+        
+        console.log("Fetched topic data:", res.data.topic); // Debug log
+        
+        // Store all topic data
+        setTopicData(res.data.topic);
         setTopicTitle(TNAME || "Untitled Topic");
+        
+        // Set URLs
+        if (pdfPath) {
+          setPdfUrl(`https://backend-937324960970.us-central1.run.app/${pdfPath}`);
+        }
+        
+        if (resource) {
+          setResourceUrl(resource); // This should be a URL from the backend
+        }
+        
+        if (testpdf) {
+          setTestPdfUrl(`https://backend-937324960970.us-central1.run.app/${testpdf}`);
+        }
+        
+        // NEW: Set test PDF answers URL
+        if (testpdfanswers) {
+          setTestPdfAnswersUrl(`https://backend-937324960970.us-central1.run.app/${testpdfanswers}`);
+          console.log("Test PDF answers URL set:", `https://backend-937324960970.us-central1.run.app/${testpdfanswers}`);
+        }
+        
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching PDF:", err);
-        setError(err.message || "Failed to load PDF");
+        console.error("Error fetching topic data:", err);
+        setError(err.message || "Failed to load topic data");
         setLoading(false);
       }
     };
 
-    fetchPDF();
+    fetchTopicData();
   }, [tid]);
 
   // Initialize PDF.js and load first page
   useEffect(() => {
-    if (pdfUrl) {
+    if (pdfUrl && activeTab === "content") {
       console.log("PDF URL:", pdfUrl);
       if (window.pdfjsLib) {
         console.log("PDF.js loaded, attempting to load document");
-        loadPdfDocument();
+        loadPdfDocument(pdfUrl);
       } else {
         console.error("PDF.js not loaded. Make sure to include PDF.js script in your HTML");
       }
     }
-  }, [pdfUrl]);
+  }, [pdfUrl, activeTab]);
 
-  // Load PDF document and render first page
-  const loadPdfDocument = async () => {
+  // UPDATED: Handle tab changes and load appropriate content
+  useEffect(() => {
+    if (activeTab === "test") {
+      // Determine which PDF to load based on showAnswers state
+      const pdfToLoad = showAnswers && testPdfAnswersUrl ? testPdfAnswersUrl : testPdfUrl;
+      
+      if (pdfToLoad && window.pdfjsLib) {
+        console.log("Loading test PDF:", pdfToLoad);
+        loadPdfDocument(pdfToLoad);
+      }
+    } else if (activeTab === "content" && pdfUrl) {
+      // Load main content PDF when switching to content tab
+      if (window.pdfjsLib) {
+        loadPdfDocument(pdfUrl);
+      }
+    }
+    
+    // Clear drawings when switching tabs
+    clearAllDrawings();
+  }, [activeTab, pdfUrl, testPdfUrl, testPdfAnswersUrl, showAnswers]);
+
+  // UPDATED: Load PDF document and render first page
+  const loadPdfDocument = async (documentUrl) => {
     try {
-      console.log("Loading PDF document from:", pdfUrl);
+      console.log("Loading PDF document from:", documentUrl);
       
       if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = 
@@ -109,7 +156,7 @@ export const PdfViewer = () => {
       }
       
       const loadingTask = window.pdfjsLib.getDocument({
-        url: pdfUrl,
+        url: documentUrl,
         withCredentials: false,
         httpHeaders: {
           'Accept': 'application/pdf'
@@ -120,6 +167,7 @@ export const PdfViewer = () => {
       console.log("PDF loaded successfully. Pages:", pdf.numPages);
       setPdfDoc(pdf);
       setTotalPages(pdf.numPages);
+      setCurrentPage(1); // Reset to first page when loading new document
       
       await renderPage(pdf, 1);
     } catch (error) {
@@ -532,24 +580,49 @@ export const PdfViewer = () => {
     setDragOffset({ x: 0, y: 0 });
   };
 
-  const handleShowAnswers = () => {
-    setShowAnswers(true);
+  // UPDATED: Handle tab changes
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setShowAnswers(false); // Reset answers when switching tabs
+    clearAllDrawings(); // Clear any drawings when switching tabs
   };
 
+  // UPDATED: Handle showing answers - now loads the answers PDF
+  const handleShowAnswers = () => {
+    console.log("Show answers clicked");
+    console.log("testPdfAnswersUrl:", testPdfAnswersUrl);
+    
+    if (testPdfAnswersUrl && window.pdfjsLib) {
+      setShowAnswers(true);
+      loadPdfDocument(testPdfAnswersUrl);
+    } else if (!testPdfAnswersUrl) {
+      console.log("No answers PDF available");
+      // You could show a message to the user here
+      alert("No answer sheet available for this test.");
+    }
+  };
+
+  // UPDATED: Handle hiding answers - loads the original test PDF
   const handleResetAnswers = () => {
-    setShowAnswers(false);
+    console.log("Reset answers clicked");
+    console.log("testPdfUrl:", testPdfUrl);
+    
+    if (testPdfUrl && window.pdfjsLib) {
+      setShowAnswers(false);
+      loadPdfDocument(testPdfUrl);
+    }
   };
 
   if (loading) return (
     <div style={{ padding: '2rem', textAlign: 'center' }}>
-      <h3>Loading PDF...</h3>
-      <p>Please wait while we fetch your PDF document.</p>
+      <h3>Loading Topic Data...</h3>
+      <p>Please wait while we fetch your topic information.</p>
     </div>
   );
   
   if (error) return (
     <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>
-      <h3>Error Loading PDF</h3>
+      <h3>Error Loading Topic</h3>
       <p>{error}</p>
       <details style={{ marginTop: '1rem', textAlign: 'left' }}>
         <summary>Troubleshooting Steps:</summary>
@@ -599,19 +672,19 @@ export const PdfViewer = () => {
             <div className="content-tabs">
               <div 
                 className={`tab-wrapper ${activeTab === "content" ? "tab-active" : "tab-inactive"}`}
-                onClick={() => setActiveTab("content")}
+                onClick={() => handleTabChange("content")}
               >
                 <div className="tab-text">Content</div>
               </div>
               <div 
                 className={`tab-wrapper ${activeTab === "resources" ? "tab-active" : "tab-inactive"}`}
-                onClick={() => setActiveTab("resources")}
+                onClick={() => handleTabChange("resources")}
               >
                 <div className="tab-text">Additional Resources</div>
               </div>
               <div 
                 className={`tab-wrapper ${activeTab === "test" ? "tab-active" : "tab-inactive"}`}
-                onClick={() => setActiveTab("test")}
+                onClick={() => handleTabChange("test")}
               >
                 <div className="tab-text">Test</div>
               </div>
@@ -949,7 +1022,7 @@ export const PdfViewer = () => {
               </>
             )}
 
-            {/* Additional Resources Tab */}
+            {/* UPDATED: Additional Resources Tab */}
             {activeTab === "resources" && (
               <div className="resources-iframe-container" style={{
                 position: "absolute",
@@ -960,174 +1033,247 @@ export const PdfViewer = () => {
                 backgroundColor: "#ffffff",
                 padding: "2rem",
                 display: "flex",
-                justifyContent: "center"
+                justifyContent: "center",
+                alignItems: "center"
               }}>
-                <iframe
-                  src="https://www.visnos.com/demos/fraction-wall"
-                  title="External Resource"
-                  style={{
-                    width: "80%",
-                    height: "600px",
-                    border: "none",
-                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)"
-                  }}
-                />
+                {resourceUrl ? (
+                  <iframe
+                    src={resourceUrl}
+                    title="Additional Resource"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      border: "none",
+                      boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+                      borderRadius: "8px"
+                    }}
+                  />
+                ) : (
+                  <div style={{
+                    textAlign: 'center',
+                    color: '#666',
+                    fontSize: '18px',
+                    padding: '2rem'
+                  }}>
+                    <p>No additional resource available for this topic.</p>
+                    <p style={{ fontSize: '14px', marginTop: '1rem' }}>
+                      The resource will be displayed here when available.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Test Tab */}
+            {/* UPDATED: Test Tab with Real PDF Switching */}
             {activeTab === "test" && (
               <>
-                {/* Test Tab Buttons */}
-                <div className="test-buttons-overlay">
-                  <div 
-                    className="test-button-wrapper show-button"
-                    onClick={handleShowAnswers}
-                  >
-                    <div className="test-button-text">Show</div>
-                  </div>
-                  <div 
-                    className="test-button-wrapper reset-button"
-                    onClick={handleResetAnswers}
-                  >
-                    <div className="test-button-text">Reset</div>
-                  </div>
-                </div>
-
-                {/* PDF Book Container - Same as Content Tab but without editing */}
-                <div className="pdf-book-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  {/* PDF Book Pages */}
-                  <div className="book-wrapper" style={{ position: 'relative' }}>
-                    <div className="book-page" style={{ position: 'relative', display: 'inline-block' }}>
-                      {/* Loading indicator */}
-                      {pageLoading && (
-                        <div className="page-loading" style={{
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          transform: 'translate(-50%, -50%)',
-                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                          padding: '30px',
-                          borderRadius: '12px',
-                          boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                          zIndex: 50,
-                          textAlign: 'center',
-                          border: '2px solid #28a745'
-                        }}>
-                          <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
-                            Loading page {currentPage}...
-                          </div>
-                          <div style={{ fontSize: '14px', color: '#666' }}>
-                            Please wait while the page renders
-                          </div>
+                {testPdfUrl ? (
+                  <>
+                    {/* Test Tab Buttons */}
+                    <div className="test-buttons-overlay">
+                      <div 
+                        className="test-button-wrapper show-button"
+                        onClick={handleShowAnswers}
+                        style={{
+                          opacity: testPdfAnswersUrl ? 1 : 0.5,
+                          cursor: testPdfAnswersUrl ? 'pointer' : 'not-allowed'
+                        }}
+                      >
+                        <div className="test-button-text">
+                          {testPdfAnswersUrl ? 'Show Answers' : 'No Answers Available'}
                         </div>
-                      )}
-                      
-                      {/* Current page image - Show answers PDF if showAnswers is true */}
-                      {pageImageUrl && !pageLoading && (
-                        <img 
-                          src={showAnswers ? answersUrl : pageImageUrl}
-                          alt={`Test Page ${currentPage}`}
-                          className="pdf-page-image"
+                      </div>
+                      <div 
+                        className="test-button-wrapper reset-button"
+                        onClick={handleResetAnswers}
+                        style={{
+                          opacity: showAnswers ? 1 : 0.5,
+                          cursor: showAnswers ? 'pointer' : 'not-allowed'
+                        }}
+                      >
+                        <div className="test-button-text">Hide Answers</div>
+                      </div>
+                    </div>
+
+                    {/* PDF Book Container - Same as Content Tab but without editing */}
+                    <div className="pdf-book-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      {/* PDF Book Pages */}
+                      <div className="book-wrapper" style={{ position: 'relative' }}>
+                        <div className="book-page" style={{ position: 'relative', display: 'inline-block' }}>
+                          {/* Loading indicator */}
+                          {pageLoading && (
+                            <div className="page-loading" style={{
+                              position: 'absolute',
+                              top: '50%',
+                              left: '50%',
+                              transform: 'translate(-50%, -50%)',
+                              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                              padding: '30px',
+                              borderRadius: '12px',
+                              boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                              zIndex: 50,
+                              textAlign: 'center',
+                              border: '2px solid #28a745'
+                            }}>
+                              <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>
+                                Loading page {currentPage}...
+                              </div>
+                              <div style={{ fontSize: '14px', color: '#666' }}>
+                                Please wait while the page renders
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Current page image - Shows different PDF based on showAnswers state */}
+                          {pageImageUrl && !pageLoading && (
+                            <img 
+                              src={pageImageUrl}
+                              alt={`Test Page ${currentPage}${showAnswers ? ' (Answers)' : ''}`}
+                              className="pdf-page-image"
+                              style={{
+                                display: 'block',
+                                maxWidth: '100%',
+                                height: 'auto',
+                                userSelect: 'none',
+                                pointerEvents: 'none',
+                                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                                borderRadius: '8px',
+                                border: showAnswers ? '3px solid #28a745' : 'none'
+                              }}
+                            />
+                          )}
+                          
+                          {/* Show visual indicator when answers are displayed */}
+                          {showAnswers && pageImageUrl && !pageLoading && (
+                            <div style={{
+                              position: 'absolute',
+                              top: '10px',
+                              right: '10px',
+                              backgroundColor: 'rgba(40, 167, 69, 0.9)',
+                              color: 'white',
+                              padding: '8px 16px',
+                              borderRadius: '20px',
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                              boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                              zIndex: 5
+                            }}>
+                              ✓ Answer Sheet
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Page Navigation Below PDF - Same as Content Tab */}
+                      <div className="page-controls" style={{ 
+                        marginTop: '15px', 
+                        zIndex: 100, 
+                        position: 'relative',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '15px'
+                      }}>
+                        <button 
+                          className="page-arrow-btn" 
+                          onClick={prevPage}
+                          disabled={currentPage === 1 || pageLoading}
                           style={{
-                            display: 'block',
-                            maxWidth: '100%',
-                            height: 'auto',
-                            userSelect: 'none',
-                            pointerEvents: 'none',
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                            borderRadius: '8px'
+                            width: '50px',
+                            height: '35px',
+                            fontSize: '18px',
+                            backgroundColor: (currentPage === 1 || pageLoading) ? '#f5f5f5' : '#a8d5a8',
+                            color: (currentPage === 1 || pageLoading) ? '#bbb' : '#ffffff',
+                            border: (currentPage === 1 || pageLoading) ? '0px solid #e0e0e0' : '0px solid #28a745',
+                            borderRadius: '6px',
+                            cursor: (currentPage === 1 || pageLoading) ? 'not-allowed' : 'pointer',
+                            fontWeight: 'normal',
+                            zIndex: 100,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            transition: 'all 0.2s ease'
                           }}
-                        />
-                      )}
+                          onMouseEnter={(e) => {
+                            if (!e.target.disabled) {
+                              e.target.style.backgroundColor = '#8bb896';
+                              e.target.style.borderColor = '#8bb896';
+                              e.target.style.color = '#ffffff';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!e.target.disabled) {
+                              e.target.style.backgroundColor = '#a8d5a8';
+                              e.target.style.borderColor = '#28a745';
+                              e.target.style.color = '#ffffff';
+                            }
+                          }}
+                        >
+                          &lt;
+                        </button>
+                        
+                        <button 
+                          className="page-arrow-btn" 
+                          onClick={nextPage}
+                          disabled={currentPage === totalPages || pageLoading}
+                          style={{
+                            width: '50px',
+                            height: '35px',
+                            fontSize: '18px',
+                            backgroundColor: (currentPage === totalPages || pageLoading) ? '#f5f5f5' : '#a8d5a8',
+                            color: (currentPage === totalPages || pageLoading) ? '#bbb' : '#ffffff',
+                            border: (currentPage === totalPages || pageLoading) ? '0px solid #e0e0e0' : '0px solid #28a745',
+                            borderRadius: '6px',
+                            cursor: (currentPage === totalPages || pageLoading) ? 'not-allowed' : 'pointer',
+                            fontWeight: 'normal',
+                            zIndex: 100,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            transition: 'all 0.2s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!e.target.disabled) {
+                              e.target.style.backgroundColor = '#8bb896';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!e.target.disabled) {
+                              e.target.style.backgroundColor = '#a8d5a8';
+                            }
+                          }}
+                        >
+                          &gt;
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div style={{
+                    position: "absolute",
+                    top: "280px",
+                    left: "56px",
+                    width: "1328px",
+                    height: "591px",
+                    backgroundColor: "#ffffff",
+                    padding: "2rem",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: 'center',
+                    color: '#666',
+                    fontSize: '18px'
+                  }}>
+                    <div>
+                      <p>No test PDF available for this topic.</p>
+                      <p style={{ fontSize: '14px', marginTop: '1rem' }}>
+                        The test content will be displayed here when available.
+                      </p>
                     </div>
                   </div>
-
-                  {/* Page Navigation Below PDF - Same as Content Tab */}
-                  <div className="page-controls" style={{ 
-                    marginTop: '15px', 
-                    zIndex: 100, 
-                    position: 'relative',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '15px'
-                  }}>
-                    <button 
-                      className="page-arrow-btn" 
-                      onClick={prevPage}
-                      disabled={currentPage === 1 || pageLoading}
-                      style={{
-                        width: '50px',
-                        height: '35px',
-                        fontSize: '18px',
-                        backgroundColor: (currentPage === 1 || pageLoading) ? '#f5f5f5' : '#a8d5a8',
-                        color: (currentPage === 1 || pageLoading) ? '#bbb' : '#ffffff',
-                        border: (currentPage === 1 || pageLoading) ? '0px solid #e0e0e0' : '0px solid #28a745',
-                        borderRadius: '6px',
-                        cursor: (currentPage === 1 || pageLoading) ? 'not-allowed' : 'pointer',
-                        fontWeight: 'normal',
-                        zIndex: 100,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!e.target.disabled) {
-                          e.target.style.backgroundColor = '#8bb896';
-                          e.target.style.borderColor = '#8bb896';
-                          e.target.style.color = '#ffffff';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!e.target.disabled) {
-                          e.target.style.backgroundColor = '#a8d5a8';
-                          e.target.style.borderColor = '#28a745';
-                          e.target.style.color = '#ffffff';
-                        }
-                      }}
-                    >
-                      &lt;
-                    </button>
-                    
-                    <button 
-                      className="page-arrow-btn" 
-                      onClick={nextPage}
-                      disabled={currentPage === totalPages || pageLoading}
-                      style={{
-                        width: '50px',
-                        height: '35px',
-                        fontSize: '18px',
-                        backgroundColor: (currentPage === totalPages || pageLoading) ? '#f5f5f5' : '#a8d5a8',
-                        color: (currentPage === totalPages || pageLoading) ? '#bbb' : '#ffffff',
-                        border: (currentPage === totalPages || pageLoading) ? '0px solid #e0e0e0' : '0px solid #28a745',
-                        borderRadius: '6px',
-                        cursor: (currentPage === totalPages || pageLoading) ? 'not-allowed' : 'pointer',
-                        fontWeight: 'normal',
-                        zIndex: 100,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!e.target.disabled) {
-                          e.target.style.backgroundColor = '#8bb896';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!e.target.disabled) {
-                          e.target.style.backgroundColor = '#a8d5a8';
-                        }
-                      }}
-                    >
-                      &gt;
-                    </button>
-                  </div>
-                </div>
+                )}
               </>
             )}
           </div>
