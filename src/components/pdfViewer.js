@@ -70,7 +70,7 @@ export const PdfViewer = () => {
         if (!tid) throw new Error("Topic ID is missing");
 
         const res = await axios.get(
-          `https://backend-937324960970.us-central1.run.app/v1/teacherResource/topics/${tid}`
+          `https://backend-937324960970.us-central1.run.app/v1/teacherResource/topic/${tid}`
         );
         
         const { pdfPath, TNAME, resource, testpdf, testpdfanswers } = res.data.topic;
