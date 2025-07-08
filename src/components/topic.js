@@ -5,39 +5,70 @@ import "../styles/topic.css";
 
 export const LessonTopics = () => {
   const [topics, setTopics] = useState([]);
+  const [lesson, setLesson] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const query = searchParams.get("query");
-  const grade = searchParams.get("grade");
-  const curriculum = searchParams.get("curriculum");
+
+  const lid = searchParams.get("lid");
+  const query = searchParams.get("query"); // lesson name
+  const grade = searchParams.get("grade") || "Grade";
+  const curriculum = searchParams.get("curriculum") || "Curriculum";
 
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        const res = await axios.get(
-          "https://backend-937324960970.us-central1.run.app/v1/teacherResource/topics/search",
-          {
-            params: { query, grade, curriculum },
+        setLoading(true);
+        setError(null);
+
+        let apiUrl = "https://backend-937324960970.us-central1.run.app/v1/teacherResource/topics/search";
+        let params = {};
+
+        if (lid) {
+          // If we have lesson ID, use it directly
+          params = { lid };
+        } else if (query && grade && curriculum) {
+          // If we have lesson name, first get lesson ID
+          const lessonRes = await axios.get(
+            "https://backend-937324960970.us-central1.run.app/v1/teacherResource/lessons",
+            {
+              params: { grade, curriculum }
+            }
+          );
+          
+          const lessons = lessonRes.data.lessons || [];
+          const matchedLesson = lessons.find(lesson => lesson.LNAME === query);
+          
+          if (!matchedLesson) {
+            throw new Error(`Lesson "${query}" not found`);
           }
-        );
+          
+          params = { lid: matchedLesson.LID };
+        } else {
+          throw new Error("Either lesson ID (lid) or lesson name (query) with grade and curriculum is required");
+        }
+
+        const res = await axios.get(apiUrl, { params });
         setTopics(res.data.topics || []);
+        setLesson(res.data.lesson || null);
       } catch (err) {
-        setError("Failed to fetch topics");
+        console.error("Error fetching topics:", err);
+        setError(err.message || "Failed to fetch topics");
       } finally {
         setLoading(false);
       }
     };
 
-    if (query && grade && curriculum) {
+    if (lid || (query && grade && curriculum)) {
       fetchTopics();
     } else {
+      setError("Lesson ID or lesson name with grade and curriculum is required");
       setLoading(false);
     }
-  }, [query, grade, curriculum]);
+  }, [lid, query, grade, curriculum]);
 
   if (loading) return <div className="loading">Loading...</div>;
   if (error || !Array.isArray(topics))
@@ -103,7 +134,9 @@ export const LessonTopics = () => {
               <div className="lesson-section">
                 <div className="lesson-frame">
                   <p className="lesson-sub-topics">
-                    <span className="lesson-text-wrapper">{query}</span>
+                    <span className="lesson-text-wrapper">
+                      {lesson?.LNAME || query || "Lesson"}
+                    </span>
                     <span className="lesson-span"> - Sub topics</span>
                   </p>
                 </div>
@@ -113,7 +146,7 @@ export const LessonTopics = () => {
                 <div className="topics-grid">
                   {topics.length > 0 ? (
                     topics.map((topic, index) => (
-                      <div key={index} className="topic-card">
+                      <div key={topic.TID || index} className="topic-card">
                         <div className="topic-title-frame">
                           <div className="topic-title">{topic.TNAME}</div>
                         </div>
