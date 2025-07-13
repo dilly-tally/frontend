@@ -80,6 +80,9 @@ export const PdfViewer = () => {
         // Store all topic data
         setTopicData(res.data.topic);
         setTopicTitle(TNAME || "Untitled Topic");
+
+        console.log("Raw resource from API:", resource);
+        console.log("Final resourceUrl set:", resourceUrl);
         
         // Set URLs
         if (pdfPath) {
