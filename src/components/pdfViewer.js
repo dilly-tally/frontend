@@ -90,6 +90,15 @@ export const PdfViewer = () => {
           const filename = pdfPath.replace('public/uploads/', '');
           setPdfUrl(`https://storage.googleapis.com/dilly-tally-pdfs/${filename}`);
         }
+
+        if (resource) {
+          // For resources, just set it directly since they're external URLs
+          setResourceUrl(resource);
+          console.log("Resource URL set:", resource);
+        } else {
+          setResourceUrl(null);
+          console.log("No resource available");
+        }
         
         if (testpdf) {
           const filename = testpdf.replace('public/uploads/', '');
