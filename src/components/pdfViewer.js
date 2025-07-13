@@ -83,21 +83,19 @@ export const PdfViewer = () => {
         
         // Set URLs
         if (pdfPath) {
-          setPdfUrl(`https://backend-937324960970.us-central1.run.app/${pdfPath}`);
-        }
-        
-        if (resource) {
-          setResourceUrl(resource); // This should be a URL from the backend
+          // Remove the "public/uploads/" prefix and use Cloud Storage URL
+          const filename = pdfPath.replace('public/uploads/', '');
+          setPdfUrl(`https://storage.googleapis.com/dilly-tally-pdfs/${filename}`);
         }
         
         if (testpdf) {
-          setTestPdfUrl(`https://backend-937324960970.us-central1.run.app/${testpdf}`);
+          const filename = testpdf.replace('public/uploads/', '');
+          setTestPdfUrl(`https://storage.googleapis.com/dilly-tally-pdfs/${filename}`);
         }
         
-        // NEW: Set test PDF answers URL
         if (testpdfanswers) {
-          setTestPdfAnswersUrl(`https://backend-937324960970.us-central1.run.app/${testpdfanswers}`);
-          console.log("Test PDF answers URL set:", `https://backend-937324960970.us-central1.run.app/${testpdfanswers}`);
+          const filename = testpdfanswers.replace('public/uploads/', '');
+          setTestPdfAnswersUrl(`https://storage.googleapis.com/dilly-tally-pdfs/${filename}`);
         }
         
         setLoading(false);
