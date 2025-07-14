@@ -286,7 +286,7 @@ const HeroSection = () => {
                           }}
                         >
                           <img
-                            src="/build/images/teacher.png"
+                            src="/images/teacher.png"
                             alt="Teacher"
                             style={{
                               width: "80px",
