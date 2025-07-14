@@ -63,12 +63,13 @@ import { useNavigate } from "react-router-dom";
 import "../styles/dashboard.css";
 import { StateHoverWrapper } from "./stateHoverWrapper";
 import { TabBar } from "./tabBar";
-
+import ScrollHeader from "./Header/ScrollHeader";
 export const Dashboard = () => {
   const navigate = useNavigate();
 
   return (
     <div className="dashboard" data-model-id="171:489">
+      <ScrollHeader/>
       <div className="group-wrapper">
         <div className="group">
           <div className="on-boarding-screen">
