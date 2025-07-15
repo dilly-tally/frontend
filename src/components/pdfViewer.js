@@ -80,34 +80,24 @@ export const PdfViewer = () => {
         // Store all topic data
         setTopicData(res.data.topic);
         setTopicTitle(TNAME || "Untitled Topic");
-
-        console.log("Raw resource from API:", resource);
-        console.log("Final resourceUrl set:", resourceUrl);
         
         // Set URLs
         if (pdfPath) {
-          // Remove the "public/uploads/" prefix and use Cloud Storage URL
-          const filename = pdfPath.replace('public/uploads/', '');
-          setPdfUrl(`https://storage.googleapis.com/dilly-tally-pdfs/${filename}`);
+          setPdfUrl(`https://backend-937324960970.us-central1.run.app/${pdfPath}`);
         }
-
+        
         if (resource) {
-          // For resources, just set it directly since they're external URLs
-          setResourceUrl(resource);
-          console.log("Resource URL set:", resource);
-        } else {
-          setResourceUrl(null);
-          console.log("No resource available");
+          setResourceUrl(resource); // This should be a URL from the backend
         }
         
         if (testpdf) {
-          const filename = testpdf.replace('public/uploads/', '');
-          setTestPdfUrl(`https://storage.googleapis.com/dilly-tally-pdfs/${filename}`);
+          setTestPdfUrl(`https://backend-937324960970.us-central1.run.app/${testpdf}`);
         }
         
+        // NEW: Set test PDF answers URL
         if (testpdfanswers) {
-          const filename = testpdfanswers.replace('public/uploads/', '');
-          setTestPdfAnswersUrl(`https://storage.googleapis.com/dilly-tally-pdfs/${filename}`);
+          setTestPdfAnswersUrl(`https://backend-937324960970.us-central1.run.app/${testpdfanswers}`);
+          console.log("Test PDF answers URL set:", `https://backend-937324960970.us-central1.run.app/${testpdfanswers}`);
         }
         
         setLoading(false);

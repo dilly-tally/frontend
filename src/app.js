@@ -9,24 +9,37 @@ import {Dashboard} from "./components/dashboard";
 import {TeacherResource }from "./components/teacherResource";
 import {LessonTopics} from "./components/topic";
 import {PdfViewer} from "./components/pdfViewer";
+import LandingPage from "./pages/LandingPage";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/signup" replace />} />  
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/onboarding2" element={<Onboarding2 />} />
-        <Route path="/onboarding3" element={<Onboarding3 />} />
-        <Route path="/onboarding4" element={<Onboarding4 />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/teacherResource" element={<TeacherResource />} />
-        <Route path="/topics" element={<LessonTopics />} />
-        <Route path="/viewpdf/:tid" element={<PdfViewer />} />
-        <Route path="*" element={<Navigate to="/signup" replace />} /> 
-      </Routes>
-    </Router>
+    <div style={{ 
+      width: '100%', 
+      minHeight: '100vh', 
+      overflow: 'visible',
+      position: 'relative',
+      margin: 0,
+      padding: 0
+    }}>
+      <Router>
+        <AuthProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/onboarding2" element={<Onboarding2 />} />
+          <Route path="/onboarding3" element={<Onboarding3 />} />
+          <Route path="/onboarding4" element={<Onboarding4 />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/teacherResource" element={<TeacherResource />} />
+          <Route path="/topics" element={<LessonTopics />} />
+          <Route path="/viewpdf/:tid" element={<PdfViewer />} />
+          <Route path="*" element={<Navigate to="/" replace />} /> 
+        </Routes>
+        </AuthProvider>
+      </Router>
+    </div>
   );
 }
 
