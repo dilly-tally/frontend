@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Box, Container, Typography } from "@mui/material"
 import { motion, AnimatePresence } from "framer-motion"
-
+import "../../styles/heroSection.css"
 // Component for the floating math topics (similar to signup.js)
 const MathFormulaComponent = ({ className, text = "Geometry", divClassName }) => {
   return (
@@ -23,7 +23,7 @@ const HeroSection = () => {
       setTimeout(() => setAnimationPhase(2), 2500)
       setTimeout(() => setAnimationPhase(3), 4500)
       setTimeout(() => setAnimationPhase(4), 7000)
-      setTimeout(() => setShowFormulas(true), 8500)
+      setTimeout(() => setShowFormulas(true), 100)
     }
     runAnimation()
   }, [])
@@ -341,6 +341,7 @@ const HeroSection = () => {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1.0, ease: "easeOut" }}
+                        
                       >
                         <Box
                           sx={{
@@ -407,157 +408,7 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* CSS Styles for Math Formulas */}
-      <style jsx>{`
-  .math-formula-component {
-    position: absolute;
-    z-index: 1001;
-    pointer-events: auto;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    animation: glow-scale 3s ease-in-out infinite;
-    animation-delay: calc(var(--i, 1) * 0.5s);
-  }
-
-  @keyframes glow-scale {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.2);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
-
-  /* Fonts */
-.formula-font-1 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-.formula-font-2 {
-  font-family: 'Poppins', sans-serif;
-  font-weight: 500;
-}
-.formula-font-3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 500;
-  font-style: italic;
-}
-
-.formula-text {
-  transition: all 0.3s ease;
-  user-select: none;
-  color: #ccc;
-}
-
-/* Add gradient glow on animation */
-.math-formula-component:not(:hover) .formula-text {
-  animation: gradientText 3s ease-in-out infinite;
-  animation-delay: calc(var(--i, 1) * 0.5s);
-}
-
-@keyframes gradientText {
-  0%, 100% {
-    background: none;
-    color: #ccc;
-  }
-  50% {
-    background: linear-gradient(90deg, #f4e06d, #7fff8a, #ff80bf);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-}
-
-
-  .math-formula-component:hover .formula-text {
-    color: #4CAF50;
-    transform: scale(1.2);
-    text-shadow: 0 0 10px #4CAF5050;
-    background: none;
-    font-weight: 700;
-    -webkit-background-clip: unset;
-    -webkit-text-fill-color: unset;
-  }
-
-  /* Gradient only when animating (not on hover) */
-  .math-formula-component:not(:hover) .formula-text {
-    animation: gradientText 3s ease-in-out infinite;
-    animation-delay: calc(var(--i, 1) * 0.5s);
-  }
-
-  @keyframes gradientText {
-    0%, 100% {
-      background: none;
-      color: #ccc;
-    }
-    50% {
-      background: linear-gradient(90deg, #f4e06d, #7fff8a, #ff80bf);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-  }
-
-  /* Floating formula positions + individual font sizes */
-  .formula-1 { left: 8%; top: 15%; --i: 1; }
-  .formula-2 { left: 80%; top: -2%; --i: 2; }
-  .formula-3 { left: 85%; top: 25%; --i: 3; }
-  .formula-4 { left: 5%; top: 35%; --i: 4; }
-  .formula-5 { left: 85%; top: 55%; --i: 5; }
-  .formula-6 { left: 45%; top: 80%; --i: 6; }
-  .formula-7 { left: 3%; top: 55%; --i: 7; }
-  .formula-8 { left: 15%; top: 70%; --i: 8; }
-  .formula-9 { left: 40%; top: 19%; --i: 9; }
-  .formula-10 { left: 20%; top: 45%; --i: 10; }
-  .formula-11 { left: 88%; top: 75%; --i: 11; }
-
-  .formula-bodmas { font-size: 24px; }
-  .formula-algebra-exp { font-size: 16px; }
-  .formula-area-cone { font-size: 18px; }
-  .formula-geometry { font-size: 22px; }
-  .formula-area-cone-2 { font-size: 18px; }
-  .formula-trapezoid { font-size: 14px; }
-  .formula-trig { font-size: 16px; }
-  .formula-hcf-lcm { font-size: 16px; }
-  .formula-algebra { font-size: 20px; }
-  .formula-boolean { font-size: 18px; }
-  .formula-partial { font-size: 16px; }
-
-  @media (max-width: 768px) {
-    .formula-1 { left: 10%; top: 12%; }
-    .formula-2 { left: 70%; top: 8%; }
-    .formula-3 { left: 80%; top: 30%; }
-    .formula-4 { left: 8%; top: 40%; }
-    .formula-5 { left: 75%; top: 60%; }
-    .formula-6 { left: 40%; top: 75%; }
-    .formula-7 { left: 5%; top: 60%; }
-    .formula-8 { left: 15%; top: 75%; }
-    .formula-9 { left: 45%; top: 5%; }
-    .formula-10 { left: 75%; top: 50%; }
-    .formula-11 { left: 85%; top: 70%; }
-
-    .formula-text {
-      font-size: 14px !important;
-    }
-
-    img[src*="student.png"] {
-      width: 70px !important;
-      height: auto !important;
-    }
-
-    img[src*="teacher.png"] {
-      width: 60px !important;
-      height: auto !important;
-    }
-
-    img[src*="blackboard.png"] {
-      width: 150px !important;
-      height: auto !important;
-    }
-  }
-`}</style>
+      
 
     </Box>
   )
