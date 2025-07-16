@@ -35,10 +35,8 @@ const HeroSection = () => {
       case 1:
         return ["Simplifying", "Teaching"]
       case 2:
-        return ["Simplifying", "Teaching", "Inspiring"]
+        return ["Inspiring","Learning"]
       case 3:
-        return ["Simplifying", "Teaching", "Learning"]
-      case 4:
       default:
         return ["Simplifying", "Teaching", "Inspiring", "Learning"]
     }
@@ -123,7 +121,7 @@ const HeroSection = () => {
         alignItems: "center",
         position: "relative",
         background: "#ffffff",
-        marginTop: "130px",
+        marginTop: "150px",
         py: { xs: 0, md: 3 },
         overflow: "hidden",
       }}
@@ -157,22 +155,6 @@ const HeroSection = () => {
                   {/* Hero Text */}
                   <Box sx={{ position: "relative", zIndex: 100 }}>
                     {renderAnimatedText()}
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        color: "#666",
-                        fontSize: { xs: "1.1rem", md: "1.3rem" },
-                        fontWeight: "400",
-                        maxWidth: "600px",
-                        margin: "0 auto",
-                        lineHeight: 1.5,
-                        position: "relative",
-                        zIndex: 100,
-                        top: "50px",
-                      }}
-                    >
-                      Empowering educators with innovative tools and resources for effective learning
-                    </Typography>
                   </Box>
                 </Box>
 
