@@ -70,7 +70,7 @@ export const PdfViewer = () => {
         if (!tid) throw new Error("Topic ID is missing");
 
         const res = await axios.get(
-          `https://backend-937324960970.us-central1.run.app/v1/teacherResource/topic/${tid}`
+          `https://backend-844313246496.europe-west1.run.app/v1/teacherResource/topic/${tid}`
         );
         
         const { pdfPath, TNAME, resource, testpdf, testpdfanswers } = res.data.topic;
@@ -88,6 +88,15 @@ export const PdfViewer = () => {
         
         if (resource) {
           setResourceUrl(resource); // This should be a URL from the backend
+        }
+
+        if (resource) {
+          // For resources, just set it directly since they're external URLs
+          setResourceUrl(resource);
+          console.log("Resource URL set:", resource);
+        } else {
+          setResourceUrl(null);
+          console.log("No resource available");
         }
         
         if (testpdf) {

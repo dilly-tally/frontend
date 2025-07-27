@@ -29,7 +29,7 @@ const Onboarding4 = () => {
     }
 
     try {
-      await axios.post("https://backend-937324960970.us-central1.run.app/v1/user/onboarding4", {
+      await axios.post("https://backend-844313246496.europe-west1.run.app/v1/user/onboarding4", {
         email,
         preferredResource: formData.preferredResource,
         collaborationPreference: formData.collaborationPreference,
