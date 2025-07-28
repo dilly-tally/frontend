@@ -2,7 +2,7 @@
 
 import { Box, Container } from "@mui/material"
 import { motion } from "framer-motion"
-
+import "../../styles/belowHero.css"
 const BelowHeroSection = () => {
   return (
     <section>
@@ -36,6 +36,7 @@ const BelowHeroSection = () => {
               <img
                 src="/images/below-hero.png"
                 alt="Teaching Challenges"
+                className="below-hero"
                 style={{
                   width: "100%",
                   height: "auto",

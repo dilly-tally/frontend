@@ -1,177 +1,281 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "../api/auth";
-import "../styles/teacherResource.css";
-import { StateHoverWrapper } from "./stateHoverWrapper";
-import { TabBar } from "./tabBar";
+"use client"
+
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import axios from "../api/auth"
+import "../styles/teacherResource.css"
+import { TabBar } from "./tabBar"
+import ScrollHeader from "./Header/ScrollHeader"
 
 export const TeacherResource = () => {
-  const [curriculumList, setCurriculumList] = useState([]);
-  const [gradeList, setGradeList] = useState([]);
-  const [lessons, setLessons] = useState([]);
-  const [selectedCurriculum, setSelectedCurriculum] = useState("");
-  const [selectedGrade, setSelectedGrade] = useState("");
-  const [showGradeDropdown, setShowGradeDropdown] = useState(false);
-  const [showCurriculumDropdown, setShowCurriculumDropdown] = useState(false);
-  const navigate = useNavigate();
+  const [curriculumList, setCurriculumList] = useState([])
+  const [gradeList, setGradeList] = useState([])
+  const [lessons, setLessons] = useState([])
+  const [selectedCurriculum, setSelectedCurriculum] = useState("")
+  const [selectedGrade, setSelectedGrade] = useState("")
+  const [showGradeDropdown, setShowGradeDropdown] = useState(false)
+  const [showCurriculumDropdown, setShowCurriculumDropdown] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchFilters = async () => {
       try {
+        setLoading(true)
         const [curriculaRes, gradesRes] = await Promise.all([
           axios.get("https://backend-844313246496.europe-west1.run.app/v1/teacherResource/curricula"),
           axios.get("https://backend-844313246496.europe-west1.run.app/v1/teacherResource/grades"),
-        ]);
-        setCurriculumList(curriculaRes.data);
-        setGradeList(gradesRes.data.grades);
+        ])
+        setCurriculumList(curriculaRes.data)
+        setGradeList(gradesRes.data.grades)
       } catch (error) {
-        console.error("Error fetching dropdown data:", error);
+        console.error("Error fetching dropdown data:", error)
+      } finally {
+        setLoading(false)
       }
-    };
-    fetchFilters();
-  }, []);
+    }
+    fetchFilters()
+  }, [])
 
   useEffect(() => {
     const fetchLessons = async () => {
-      if (!selectedCurriculum || !selectedGrade) return;
+      if (!selectedCurriculum || !selectedGrade) return
       try {
+        setLoading(true)
         const res = await axios.get("https://backend-844313246496.europe-west1.run.app/v1/teacherResource/lessons", {
           params: { curriculum: selectedCurriculum, grade: selectedGrade },
-        });
-        setLessons(res.data.lessons);
+        })
+        setLessons(res.data.lessons)
       } catch (error) {
-        console.error("Error fetching lessons:", error);
+        console.error("Error fetching lessons:", error)
+      } finally {
+        setLoading(false)
       }
-    };
-    fetchLessons();
-  }, [selectedCurriculum, selectedGrade]);
+    }
+    fetchLessons()
+  }, [selectedCurriculum, selectedGrade])
+
+  const filteredLessons = lessons.filter((lesson) => lesson.LNAME.toLowerCase().includes(searchQuery.toLowerCase()))
 
   return (
-    <div className="teacher-resource-container">
-      <div className="box" data-model-id="114:113-frame">
-        <div className="group">
-          <div className="on-boarding-screen">
-            <div className="frame">
-              <img className="logo" alt="Logo" src="https://c.animaapp.com/wFl7rcHz/img/logo@2x.png" />
-              <div className="simplify-teaching">
-                <span className="text-wrapper">Simplify </span>
-                <span className="span">Teaching</span>
-                <span className="text-wrapper">, Inspiring </span>
-                <span className="span"> Learning</span>
-              </div>
-              <img className="ellipse" alt="Ellipse" src="https://c.animaapp.com/wFl7rcHz/img/ellipse-35.svg" />
+    <div className="modern-teacher-resource">
+      <ScrollHeader />
+
+      {/* Fixed Header Section */}
+      <div className="resource-fixed-header">
+        <div className="resource-hero">
+          <div className="hero-content">
+            <h1 style={{color:"black"}} className="hero-title">
+              Hi, <span style={{color:"#4CAF50"}} className="highlight">Uzma</span>
+            </h1>
+            <p className="hero-subtitle">Discover amazing teaching resources tailored for you</p>
+          </div>
+          <div className="hero-stats">
+            <div className="hero-stat">
+              <span className="stat-number">{curriculumList.length}</span>
+              <span className="stat-label">Curricula</span>
             </div>
+            <div className="hero-stat">
+              <span className="stat-number">{gradeList.length}</span>
+              <span className="stat-label">Grades</span>
+            </div>
+            <div className="hero-stat">
+              <span className="stat-number">{lessons.length}</span>
+              <span className="stat-label">Lessons</span>
+            </div>
+          </div>
+        </div>
 
-            <div className="content-section">
-              <h1 className="greeting">Hi, Uzma</h1>
-              <TabBar
-                className="tab-bar-instance1"
-                activePage="teacher-resources"
-                onNavigate={navigate}
-              />
+        <div className="navigation-section">
+          <TabBar className="modern-tab-bar" activePage="teacher-resources" onNavigate={navigate} />
+        </div>
 
-              {/* Teacher Resource Section */}
-              <div className="teacher-resource-section">
-                <div className="resource-title">Teacher Resource</div>
-                <div className="resource-frame">
-                  <div className="search-div">
-                    <div className="search-text">Search resource...</div>
-                    <img
-                      className="search-img"
-                      alt="Search"
-                      src="https://c.animaapp.com/q996k3pa/img/iconamoon-search-light.svg"
-                    />
-                  </div>
+        <div className="filters-section">
+          <div className="section-header">
+            <h2 className="section-title">Teaching Resources</h2>
+            <p className="section-subtitle">Find the perfect materials for your curriculum</p>
+          </div>
 
-                  <div className="grade-frame">
-                    <div 
-                      className="dropdown-text"
-                      onClick={() => setShowGradeDropdown(!showGradeDropdown)}
-                    >
-                      {selectedGrade || "Select Grade"}
+          <div className="filters-container">
+            <div className="search-and-filters-row">
+              <div className="search-container">
+                <div className="search-wrapper">
+                  <div className="search-icon">🔍</div>
+                  <input
+                    type="text"
+                    placeholder="Search lessons and resources..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="search-input"
+                  />
+                  {searchQuery && (
+                    <button className="clear-search" onClick={() => setSearchQuery("")}>
+                      ✕
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="dropdown-filters">
+                <div className="dropdown-container">
+                  <div
+                    className={`dropdown-select ${showGradeDropdown ? "active" : ""}`}
+                    onClick={() => setShowGradeDropdown(!showGradeDropdown)}
+                  >
+                    <div className="dropdown-content">
+                      <span className="dropdown-label">Grade</span>
+                      <span className="dropdown-value">{selectedGrade || "Select Grade"}</span>
                     </div>
-                    <img
-                      className="search-img"
-                      alt="Dropdown"
-                      src="https://c.animaapp.com/q996k3pa/img/ri-arrow-drop-down-line-1.svg"
-                      onClick={() => setShowGradeDropdown(!showGradeDropdown)}
-                    />
-                    {showGradeDropdown && (
-                      <div className="dropdown-menu">
-                        {gradeList.map((grade, idx) => (
-                          <div
-                            key={idx}
-                            className="dropdown-item"
-                            onClick={() => {
-                              setSelectedGrade(grade);
-                              setShowGradeDropdown(false);
-                            }}
-                          >
-                            {grade}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="curriculum-frame">
-                    <div 
-                      className="dropdown-text"
-                      onClick={() => setShowCurriculumDropdown(!showCurriculumDropdown)}
-                    >
-                      {selectedCurriculum || "Select Curriculum"}
+                    <div className={`dropdown-arrow ${showGradeDropdown ? "rotated" : ""}`}>
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                        <path
+                          d="M1 1.5L6 6.5L11 1.5"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     </div>
-                    <img
-                      className="search-img"
-                      alt="Dropdown"
-                      src="https://c.animaapp.com/q996k3pa/img/ri-arrow-drop-down-line-1.svg"
-                      onClick={() => setShowCurriculumDropdown(!showCurriculumDropdown)}
-                    />
-                    {showCurriculumDropdown && (
-                      <div className="dropdown-menu">
-                        {curriculumList.map((c) => (
-                          <div
-                            key={c.CID}
-                            className="dropdown-item"
-                            onClick={() => {
-                              setSelectedCurriculum(c.CNAME);
-                              setShowCurriculumDropdown(false);
-                            }}
-                          >
-                            {c.CNAME}
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
+                  {showGradeDropdown && (
+                    <div className="dropdown-menu">
+                      {gradeList.map((grade, idx) => (
+                        <div
+                          key={idx}
+                          className={`dropdown-item ${selectedGrade === grade ? "selected" : ""}`}
+                          onClick={() => {
+                            setSelectedGrade(grade)
+                            setShowGradeDropdown(false)
+                          }}
+                        >
+                          {grade}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                <div className="lessons-grid">
-                  {lessons.length > 0 ? (
-                    lessons.map((lesson) => (
-                      <div
-                        key={lesson.LID}
-                        className="lesson-card"
-                        onClick={() =>
-                          navigate(
-                            `/topics?query=${encodeURIComponent(lesson.LNAME)}&grade=${encodeURIComponent(selectedGrade)}&curriculum=${encodeURIComponent(selectedCurriculum)}`
-                          )
-                        }
-                      >
-                        {lesson.LNAME}
-                      </div>
-                    ))
-                  ) : (
-                    <p className="no-lessons-text">No lessons available for this selection.</p>
+                <div className="dropdown-container">
+                  <div
+                    className={`dropdown-select ${showCurriculumDropdown ? "active" : ""}`}
+                    onClick={() => setShowCurriculumDropdown(!showCurriculumDropdown)}
+                  >
+                    <div className="dropdown-content">
+                      <span className="dropdown-label">Curriculum</span>
+                      <span className="dropdown-value">{selectedCurriculum || "Select Curriculum"}</span>
+                    </div>
+                    <div className={`dropdown-arrow ${showCurriculumDropdown ? "rotated" : ""}`}>
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+                        <path
+                          d="M1 1.5L6 6.5L11 1.5"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                  {showCurriculumDropdown && (
+                    <div className="dropdown-menu">
+                      {curriculumList.map((c) => (
+                        <div
+                          key={c.CID}
+                          className={`dropdown-item ${selectedCurriculum === c.CNAME ? "selected" : ""}`}
+                          onClick={() => {
+                            setSelectedCurriculum(c.CNAME)
+                            setShowCurriculumDropdown(false)
+                          }}
+                        >
+                          {c.CNAME}
+                        </div>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
             </div>
-
-            <img className="line" alt="Line" src="/img/line-71.svg" />
           </div>
         </div>
       </div>
+
+      {/* Dedicated Scrollable Lessons Container */}
+      <div className="lessons-container">
+        {loading ? (
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p>Loading resources...</p>
+          </div>
+        ) : filteredLessons.length > 0 ? (
+          <div className="lessons-grid">
+            {filteredLessons.map((lesson, index) => (
+              <div
+                key={lesson.LID}
+                className="lesson-card"
+                style={{ animationDelay: `${index * 0.1}s` }}
+                onClick={() =>
+                  navigate(
+                    `/topics?query=${encodeURIComponent(lesson.LNAME)}&grade=${encodeURIComponent(selectedGrade)}&curriculum=${encodeURIComponent(selectedCurriculum)}`,
+                  )
+                }
+              >
+                <div className="lesson-header">
+                  <div className="lesson-icon">📖</div>
+                  <div className="lesson-badge">Lesson</div>
+                </div>
+                <div className="lesson-content">
+                  <h3 className="lesson-title">{lesson.LNAME}</h3>
+                  <p className="lesson-meta">
+                    {selectedGrade} • {selectedCurriculum}
+                  </p>
+                </div>
+                <div className="lesson-footer">
+                  <span className="explore-text">Explore Topics</span>
+                  <div className="arrow-icon">→</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : selectedCurriculum && selectedGrade ? (
+          <div className="empty-state">
+            <div className="empty-icon">📚</div>
+            <h3>No lessons found</h3>
+            <p>No lessons available for the selected grade and curriculum.</p>
+            <button
+              className="reset-filters-btn"
+              onClick={() => {
+                setSelectedGrade("")
+                setSelectedCurriculum("")
+                setSearchQuery("")
+              }}
+            >
+              Reset Filters
+            </button>
+          </div>
+        ) : (
+          <div className="selection-prompt">
+            <div className="prompt-icon">🎯</div>
+            <h3>Get Started</h3>
+            <p>Please select both grade and curriculum to discover amazing lessons.</p>
+            <div className="prompt-steps">
+              <div className="step">
+                <span className="step-number">1</span>
+                <span>Choose your grade level</span>
+              </div>
+              <div className="step">
+                <span className="step-number">2</span>
+                <span>Select curriculum type</span>
+              </div>
+              <div className="step">
+                <span className="step-number">3</span>
+                <span>Explore available lessons</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
-  );
-};
+  )
+}
