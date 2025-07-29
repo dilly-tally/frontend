@@ -1,31 +1,132 @@
+/* Simple Tab Bar with Underline Style */
+.modern-tab-bar {
+  background: transparent;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.tab-container {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  justify-content: center;
+  
+  padding-bottom: 0;
+}
+
+.modern-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: #4CAF50;
+  position: relative;
+  background: none;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.modern-tab::before {
+  display: none;
+}
+
+.modern-tab:hover {
+  color: #4CAF50;
+  transform: none;
+  background: none;
+}
+
+.modern-tab.active {
+  color: #4CAF50;
+  font-weight: 700;
+  background: none;
+  box-shadow: none;
+  position: relative;
+}
+
+.modern-tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #4CAF50;
+  border-radius: 2px;
+}
+
+.tab-icon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-text {
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .tab-container {
+    gap: 24px;
+  }
+
+  .modern-tab {
+    padding: 12px 0;
+    font-size: 0.8rem;
+  }
+
+  .tab-text {
+    display: none;
+  }
+
+  .tab-icon {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-container {
+    gap: 16px;
+  }
+
+  .modern-tab {
+    padding: 10px 0;
+  }
+}
+
+/* Legacy styles for backward compatibility */
 .tab-bar {
-    height: 51px;
-    width: 962px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .tab-bar .frame {
-    align-items: center;
-    display: inline-flex;
-    gap: 10px;
-    position: relative;
-    justify-content: center;
-  }
-  
-  .tab-bar .tab-instance {
-    height: 51px !important;
-    width: 161.66px !important;
-  }
-  
-  .tab-bar .design-component-instance-node {
-    margin-left: -9.17px !important;
-    margin-right: -9.17px !important;
-  }
-  
-  .tab-bar .tab-2 {
-    height: 51px !important;
-    width: 252.03px !important;
-  }
-  
+  align-items: flex-start;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 0px;
+  position: relative;
+}
+
+.tab-bar .frame {
+  align-items: flex-start;
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 0px;
+  position: relative;
+}
+
+.tab-bar .tab-instance {
+  flex: 0 0 auto !important;
+  position: relative !important;
+}
+
+.tab-bar .tab-2 {
+  width: 252.03px !important;
+}

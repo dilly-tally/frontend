@@ -1,54 +1,48 @@
-import React from "react";
-import { Tab } from "./tab";
-import "../styles/tabBar.css";
+"use client"
+import "../styles/tabBar.css"
 
-export const TabBar = ({
-  className,
-  activePage = "dashboard", // Add prop to know which page is active
-  onNavigate, // Add navigation handler prop
-}) => {
+export const TabBar = ({ className, activePage = "dashboard", onNavigate }) => {
   const handleTabClick = (route, pageName) => {
     if (onNavigate) {
-      onNavigate(route);
+      onNavigate(route)
     }
-  };
+  }
 
   return (
-    <div className={`tab-bar ${className}`}>
-      <div className="frame">
-        <div onClick={() => handleTabClick('/dashboard', 'dashboard')}>
-          <Tab 
-            className="tab-instance" 
-            text="Dashboard" 
-            isActive={activePage === "dashboard"}
-          />
+    <div className={`modern-tab-bar ${className}`}>
+      <div className="tab-container">
+        <div
+          className={`modern-tab ${activePage === "dashboard" ? "active" : ""}`}
+          onClick={() => handleTabClick("/dashboard", "dashboard")}
+        >
+          <span className="tab-icon">🏠</span>
+          <span className="tab-text">Dashboard</span>
         </div>
-        
-        <div onClick={() => handleTabClick('/calendar', 'calendar')}>
-          <Tab 
-            className="tab-instance" 
-            text="Calendar" 
-            isActive={activePage === "calendar"}
-          />
+
+        <div
+          className={`modern-tab ${activePage === "calendar" ? "active" : ""}`}
+          onClick={() => handleTabClick("/calendar", "calendar")}
+        >
+          <span className="tab-icon">📅</span>
+          <span className="tab-text">Calendar</span>
         </div>
-        
-        <div onClick={() => handleTabClick('/teacherResource', 'teacher-resources')}>
-          <Tab 
-            className="tab-instance tab-2" 
-            text="Teacher Resources" 
-            isActive={activePage === "teacher-resources"}
-          />
+
+        <div
+          className={`modern-tab ${activePage === "teacher-resources" ? "active" : ""}`}
+          onClick={() => handleTabClick("/teacherResource", "teacher-resources")}
+        >
+          <span className="tab-icon">📚</span>
+          <span className="tab-text">Resources</span>
         </div>
-        
-        <div onClick={() => handleTabClick('/student-task', 'student-task')}>
-          <Tab
-            className="tab-instance"
-            divClassName="design-component-instance-node"
-            text="Student Task"
-            isActive={activePage === "student-task"}
-          />
+
+        <div
+          className={`modern-tab ${activePage === "student-task" ? "active" : ""}`}
+          onClick={() => handleTabClick("/student-task", "student-task")}
+        >
+          <span className="tab-icon">✏️</span>
+          <span className="tab-text">Student Task</span>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
