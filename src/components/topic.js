@@ -85,7 +85,7 @@ export const LessonTopics = () => {
     return (
       <div className="modern-topics">
         <ScrollHeader />
-        <div className="topics-container">
+        <div className="topics-main-content">
           <div className="loading-state">
             <div className="loading-spinner"></div>
             <p>Loading topics...</p>
@@ -98,7 +98,7 @@ export const LessonTopics = () => {
     return (
       <div className="modern-topics">
         <ScrollHeader />
-        <div className="topics-container">
+        <div className="topics-main-content">
           <div className="error-state">
             <div className="error-icon">⚠️</div>
             <h3>Error Loading Topics</h3>
@@ -115,112 +115,124 @@ export const LessonTopics = () => {
     <div className="modern-topics">
       <ScrollHeader />
 
-      {/* Fixed Header Section */}
+      {/* Fixed Header Section - Clean and Professional */}
       <div className="topics-fixed-header">
+        {/* Hero Section */}
         <div className="topics-hero">
           <div className="hero-content">
-            <div className="breadcrumb">
-              <button className="back-btn" onClick={handleBackClick}>
-                ← Back to Resources
-              </button>
-            </div>
-            <h1 className="hero-title">
-              <span className="lesson-name">{lesson?.LNAME || query || "Lesson"}</span> - Sub topics
-            </h1>
-            <p className="hero-subtitle">
-              {grade} • {curriculum}
-            </p>
-          </div>
-          <div className="hero-stats">
-            <div className="hero-stat">
-              <span className="stat-number">{topics.length}</span>
-              <span className="stat-label">Topics Available</span>
-            </div>
-            <div className="hero-stat">
-              <span className="stat-number">{filteredTopics.length}</span>
-              <span className="stat-label">Filtered Results</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="navigation-section">
-          <TabBar className="modern-tab-bar" activePage="teacher-resources" onNavigate={navigate} />
-        </div>
-
-        <div className="search-section">
-          <div className="section-header">
-            <h2 className="section-title">Available Topics</h2>
-            <p className="section-subtitle">Select a topic to view detailed resources and materials</p>
-          </div>
-
-          <div className="search-container">
-            <div className="search-wrapper">
-              <div className="search-icon">🔍</div>
-              <input
-                type="text"
-                placeholder="Search topics..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-              />
-              {searchQuery && (
-                <button className="clear-search" onClick={() => setSearchQuery("")}>
-                  ✕
+            <div className="hero-text">
+              <div className="breadcrumb">
+                <button className="back-btn" onClick={handleBackClick}>
+                  ← Back to Resources
                 </button>
-              )}
+              </div>
+              <h1 className="hero-title">
+                <span className="lesson-name">{lesson?.LNAME || query || "Lesson"}</span> - Sub topics
+              </h1>
+              <p className="hero-subtitle">
+                {grade} • {curriculum}
+              </p>
+            </div>
+
+            <div className="hero-stats">
+              <div className="hero-stat">
+                <span className="stat-number">{topics.length}</span>
+                <span className="stat-label">Topics Available</span>
+              </div>
+              <div className="hero-stat">
+                <span className="stat-number">{filteredTopics.length}</span>
+                <span className="stat-label">Filtered Results</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Navigation Section */}
+        <div className="tab-navigation-section">
+          <div className="tab-navigation-inline">
+            <TabBar className="modern-tab-bar" activePage="teacher-resources" onNavigate={navigate} />
+          </div>
+        </div>
+
+        {/* Search Section */}
+        <div className="search-section-inline">
+          <div className="search-content">
+            <div className="section-header-inline">
+              <h2 className="section-title">Available Topics</h2>
+              <p className="section-subtitle">Select a topic to view detailed resources and materials</p>
+            </div>
+
+            <div className="search-container-inline">
+              <div className="search-wrapper">
+                <div className="search-icon">🔍</div>
+                <input
+                  type="text"
+                  placeholder="Search topics..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                />
+                {searchQuery && (
+                  <button className="clear-search" onClick={() => setSearchQuery("")}>
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Dedicated Scrollable Topics Container */}
-      <div className="topics-container">
-        {filteredTopics.length > 0 ? (
-          <div className="topics-grid">
-            {filteredTopics.map((topic, index) => (
-              <div
-                key={topic.TID || index}
-                className="topic-card"
-                style={{ animationDelay: `${index * 0.1}s` }}
-                onClick={() => navigate(`/viewpdf/${topic.TID}`)}
-              >
-                <div className="topic-header">
-                  <div className="topic-icon">📄</div>
-                  <div className="topic-badge">PDF Resource</div>
+      {/* Main Content Area - COMPLETELY SEPARATE */}
+      <div className="topics-main-content">
+        <div className="topics-container-fixed">
+          {filteredTopics.length > 0 ? (
+            <div className="topics-grid">
+              {filteredTopics.map((topic, index) => (
+                <div
+                  key={topic.TID || index}
+                  className="topic-card"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                  onClick={() => navigate(`/viewpdf/${topic.TID}`)}
+                >
+                  <div className="topic-header">
+                    <div className="topic-icon">📄</div>
+                    <div className="topic-badge">PDF Resource</div>
+                  </div>
+                  <div className="topic-content">
+                    <h3 className="topic-title">{topic.TNAME}</h3>
+                    <p className="topic-description">{topic.TDESC || "No description available."}</p>
+                    <p className="topic-meta">
+                      {grade} • {curriculum}
+                    </p>
+                  </div>
+                  <div className="topic-footer">
+                    <span className="view-text">View Resource</span>
+                    <div className="arrow-icon">→</div>
+                  </div>
                 </div>
-                <div className="topic-content">
-                  <h3 className="topic-title">{topic.TNAME}</h3>
-                  <p className="topic-description">{topic.TDESC || "No description available."}</p>
-                  <p className="topic-meta">
-                    {grade} • {curriculum}
-                  </p>
-                </div>
-                <div className="topic-footer">
-                  <span className="view-text">View Resource</span>
-                  <div className="arrow-icon">→</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : topics.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">📚</div>
-            <h3>No topics found</h3>
-            <p>No topics available for this lesson. Please try a different lesson or check back later.</p>
-            <button className="back-to-resources-btn" onClick={handleBackClick}>
-              Back to Resources
-            </button>
-          </div>
-        ) : (
-          <div className="no-results-state">
-            <div className="no-results-icon">🔍</div>
-            <h3>No matching topics</h3>
-            <p>No topics match your search criteria. Try adjusting your search terms.</p>
-            <button className="clear-search-btn" onClick={() => setSearchQuery("")}>
-              Clear Search
-            </button>
-          </div>
-        )}
+              ))}
+            </div>
+          ) : topics.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">📚</div>
+              <h3>No topics found</h3>
+              <p>No topics available for this lesson. Please try a different lesson or check back later.</p>
+              <button className="back-to-resources-btn" onClick={handleBackClick}>
+                Back to Resources
+              </button>
+            </div>
+          ) : (
+            <div className="no-results-state">
+              <div className="no-results-icon">🔍</div>
+              <h3>No matching topics</h3>
+              <p>No topics match your search criteria. Try adjusting your search terms.</p>
+              <button className="clear-search-btn" onClick={() => setSearchQuery("")}>
+                Clear Search
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

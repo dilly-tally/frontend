@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom"
 import "../styles/dashboard.css"
 import { TabBar } from "./tabBar"
 import ScrollHeader from "./Header/ScrollHeader"
+import { useAuth } from "../context/AuthContext"
 
 export const Dashboard = () => {
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   return (
     <div className="modern-dashboard">
@@ -15,10 +17,15 @@ export const Dashboard = () => {
       <div className="dashboard-fixed-header">
         <div className="dashboard-hero">
           <div className="hero-content">
-            <h1 style={{color:"black"}} className="hero-title">
-              Hi, <span style={{color:"#4CAF50"}} className="highlight">Uzma</span>
+            <h1 style={{ color: "black" }} className="hero-title">
+              Hi,{" "}
+              <span style={{ color: "#4CAF50" }} className="highlight">
+                {user?.displayName || "User"}
+              </span>
             </h1>
-            <p style={{color:"#4CAF50"}} className="hero-subtitle">Welcome back to your teaching dashboard</p>
+            <p style={{ color: "#4CAF50" }} className="hero-subtitle">
+              Welcome back to your teaching dashboard
+            </p>
           </div>
           <div className="hero-decoration">
             <div className="floating-icon">📚</div>
