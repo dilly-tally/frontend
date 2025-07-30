@@ -1262,7 +1262,7 @@
   font-size: 0.8rem;
 }
 .resources-tab {
-    height: 850px; /* Increased from 500px */
+    height: 660px; /* Increased from 500px */
   }
 /* Mobile Responsive Design - Professional mobile layout */
 @media (max-width: 1200px) {

@@ -2,7 +2,7 @@
 
 import { Box, Container } from "@mui/material"
 import { motion } from "framer-motion"
-
+import "../../styles/belowHero.css"
 const BelowHeroSection = () => {
   return (
     <section>

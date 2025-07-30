@@ -4,119 +4,136 @@
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Fixed Header Section */
+/* Fixed Header Section - Completely restructured */
 .resource-fixed-header {
   position: fixed;
   top: 70px;
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(20px);
+  background: #ffffff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   z-index: 100;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* Hero Section */
+/* Hero Section - Clean single line layout */
 .resource-hero {
+  padding: 1.5rem 2rem;
+  background: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.hero-content {
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
-  background: white;
-
-  color: white;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.hero-content h1.hero-title {
-  font-size: 2rem;
+.hero-text {
+  flex: 1;
+  min-width: 300px;
+}
+
+.hero-title {
+  font-size: 1.8rem;
   font-weight: 700;
-  margin: 0 0 0.5rem 0;
-  color: white;
+  color: #1a202c;
+  margin: 0;
+  line-height: 1.2;
 }
 
-.hero-content .highlight {
-  color: #fff3cd;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.hero-title .highlight {
+  color: #4caf50;
 }
 
 .hero-subtitle {
-  font-size: 1.1rem;
-  margin: 0;
-  opacity: 0.9;
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0.25rem 0 0 0;
+  font-weight: 400;
 }
 
 .hero-stats {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
+  flex-shrink: 0;
 }
 
 .hero-stat {
   text-align: center;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  min-width: 70px;
 }
 
 .stat-number {
   display: block;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: white;
+  color: #4caf50;
+  margin-bottom: 0.25rem;
 }
 
 .stat-label {
-  display: block;
-  font-size: 0.9rem;
-  opacity: 0.9;
-  margin-top: 0.25rem;
-  color: white;
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
 }
 
-/* Navigation Section */
-.navigation-section {
+/* Tab Navigation Section */
+.tab-navigation-section {
   padding: 1rem 2rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.tab-navigation-inline {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* Filters Section */
 .filters-section {
   padding: 1.5rem 2rem;
+  background: #ffffff;
 }
 
-.section-header {
-  text-align: center;
-  margin-bottom: 2rem;
+.filters-single-line {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  flex-wrap: wrap;
 }
 
-.section-title {
-  font-size: 1.8rem;
+.section-header-inline {
+  flex-shrink: 0;
+}
+
+.section-header-inline .section-title {
+  font-size: 1.5rem;
   font-weight: 700;
   color: #1a202c;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.25rem 0;
 }
 
-.section-subtitle {
-  font-size: 1rem;
+.section-header-inline .section-subtitle {
+  font-size: 0.9rem;
   color: #64748b;
   margin: 0;
 }
 
-.filters-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.search-and-filters-row {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-end;
-  flex-wrap: wrap;
-}
-
-/* Modern Search Container */
-.search-container {
+.search-container-inline {
   flex: 1;
   min-width: 300px;
 }
@@ -127,30 +144,23 @@
   align-items: center;
   background: white;
   border: 2px solid #e2e8f0;
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 0;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
 .search-wrapper:focus-within {
   border-color: #4caf50;
-  box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1), 0 8px 25px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
 }
 
 .search-icon {
   margin-left: 1rem;
   margin-right: 0.75rem;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #4caf50;
-  transition: all 0.3s ease;
-}
-
-.search-wrapper:focus-within .search-icon {
-  color: #45a049;
-  transform: scale(1.1);
 }
 
 .search-input {
@@ -160,7 +170,7 @@
   font-size: 1rem;
   color: #1a202c;
   background: transparent;
-  padding: 1rem 0;
+  padding: 0.875rem 0;
   font-weight: 500;
 }
 
@@ -175,7 +185,7 @@
   color: #64748b;
   cursor: pointer;
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: 6px;
   transition: all 0.2s ease;
   margin-right: 0.5rem;
 }
@@ -183,18 +193,17 @@
 .clear-search:hover {
   background: #f1f5f9;
   color: #1a202c;
-  transform: scale(1.1);
 }
 
-/* Dropdown Filters */
-.dropdown-filters {
+.dropdown-filters-inline {
   display: flex;
   gap: 1rem;
+  flex-shrink: 0;
 }
 
 .dropdown-container {
   position: relative;
-  min-width: 180px;
+  min-width: 160px;
 }
 
 .dropdown-select {
@@ -203,11 +212,11 @@
   justify-content: space-between;
   background: white;
   border: 2px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 0.75rem 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .dropdown-select:hover {
@@ -234,7 +243,7 @@
 }
 
 .dropdown-value {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: #1a202c;
   font-weight: 500;
   margin-top: 0.125rem;
@@ -256,8 +265,8 @@
   right: 0;
   background: white;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   max-height: 200px;
   overflow-y: auto;
@@ -268,7 +277,7 @@
   padding: 0.75rem 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f8fafc;
 }
 
 .dropdown-item:last-child {
@@ -284,15 +293,17 @@
   color: white;
 }
 
-/* FIXED: Lessons Container - Proper spacing after fixed header */
-.lessons-container {
-  margin-top: 550px;
-  padding-top: 420px; /* Space for fixed header: 70px (main header) + 120px (hero) + 80px (nav) + 150px (filters) */
-  padding-left: 2rem;
-  padding-right: 2rem;
-  padding-bottom: 2rem;
-  min-height: calc(100vh - 420px);
+/* Main Content Area - COMPLETELY SEPARATE FROM FIXED HEADER */
+.resource-main-content {
+  margin-top: 240px; /* Exact height to clear fixed header */
+  min-height: calc(100vh - 240px);
   background: #ffffff;
+  padding: 2rem;
+}
+
+.lessons-container-fixed {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* Loading State */
@@ -329,15 +340,13 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .lesson-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   cursor: pointer;
   border: 1px solid #f1f5f9;
@@ -355,7 +364,7 @@
 
 .lesson-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
   border-color: #4caf50;
 }
 
@@ -532,101 +541,41 @@
 }
 
 /* Mobile Responsive Design */
-@media (max-width: 1024px) {
-  .resource-hero {
-    flex-direction: column;
-    gap: 1.5rem;
-    text-align: center;
-    padding: 1rem 1.5rem;
-  }
-
-  .hero-stats {
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  .hero-stat {
-    padding: 0.75rem 1rem;
-  }
-
-  .search-and-filters-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .dropdown-filters {
-    justify-content: center;
-  }
-
-  .lessons-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-  }
-
-  .lessons-container {
-    padding-top: 460px; /* Increased for mobile layout changes */
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-}
-
 @media (max-width: 768px) {
   .resource-fixed-header {
-    top: 70px;
+    position: relative;
+    top: 0;
   }
 
-  .resource-hero {
-    padding: 1rem;
+  .resource-main-content {
+    margin-top: 0;
   }
 
-  .hero-content h1.hero-title {
-    font-size: 1.5rem;
+  .hero-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
 
   .hero-stats {
-    flex-direction: column;
-    gap: 1rem;
     width: 100%;
+    justify-content: space-around;
+    gap: 1rem;
   }
 
-  .hero-stat {
-    padding: 0.75rem 1rem;
+  .filters-single-line {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
   }
 
-  .filters-section {
-    padding: 1rem;
-  }
-
-  .section-title {
-    font-size: 1.5rem;
-  }
-
-  .search-container {
+  .search-container-inline {
     min-width: auto;
   }
 
-  .search-wrapper {
-    padding: 0;
-  }
-
-  .search-input {
-    padding: 0.875rem 0;
-    font-size: 0.95rem;
-  }
-
-  .dropdown-filters {
+  .dropdown-filters-inline {
     flex-direction: column;
     gap: 0.75rem;
-  }
-
-  .dropdown-container {
-    min-width: auto;
-  }
-
-  .lessons-container {
-    padding-top: 520px; /* Adjusted for mobile stacked layout */
-    padding-left: 1rem;
-    padding-right: 1rem;
   }
 
   .lessons-grid {
@@ -637,77 +586,146 @@
   .lesson-card {
     padding: 1rem;
   }
+}
 
-  .prompt-steps {
-    max-width: none;
+@media (max-width: 480px) {
+  .resource-fixed-header {
+    padding: 0;
+  }
+
+  .resource-hero {
+    padding: 1rem;
+  }
+
+  .tab-navigation-section {
+    padding: 1rem;
+  }
+
+  .filters-section {
+    padding: 1rem;
+  }
+
+  .resource-main-content {
+    padding: 1rem;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hero-stat {
+    padding: 0.5rem 0.75rem;
+  }
+}
+/* Main Content Area - COMPLETELY SEPARATE FROM FIXED HEADER */
+.resource-main-content {
+  margin-top: 280px; /* Increased from 240px to accommodate all header sections */
+  min-height: calc(100vh - 280px);
+  background: #ffffff;
+  padding: 2rem;
+}
+
+.lessons-container-fixed {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 1024px) {
+  .resource-main-content {
+    margin-top: 320px; /* Increased for tablet */
+  }
+}
+
+@media (max-width: 768px) {
+  .resource-fixed-header {
+    position: relative; /* Remove fixed positioning on mobile */
+    top: 0;
+  }
+
+  .resource-main-content {
+    margin-top: 0; /* Remove margin when header is not fixed */
+    padding: 1rem;
+  }
+
+  .hero-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .hero-stats {
+    width: 100%;
+    justify-content: space-around;
+    gap: 1rem;
+  }
+
+  .filters-single-line {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+
+  .search-container-inline {
+    min-width: auto;
+  }
+
+  .dropdown-filters-inline {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .lessons-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .lesson-card {
+    padding: 1rem;
   }
 }
 
 @media (max-width: 480px) {
-  .resource-hero {
-    padding: 0.75rem;
+  .resource-fixed-header {
+    position: relative; /* Ensure it's not fixed on small screens */
+    padding: 0;
   }
 
-  .hero-content h1.hero-title {
-    font-size: 1.3rem;
+  .resource-hero {
+    padding: 1rem;
+  }
+
+  .tab-navigation-section {
+    padding: 1rem;
   }
 
   .filters-section {
-    padding: 0.75rem;
+    padding: 1rem;
   }
 
-  .search-wrapper {
-    border-radius: 12px;
+  .resource-main-content {
+    padding: 1rem;
+    margin-top: 0; /* No margin needed when header is not fixed */
   }
 
-  .search-input {
-    padding: 0.75rem 0;
-    font-size: 0.9rem;
-  }
-
-  .lessons-container {
-    padding-top: 580px; /* Further adjusted for smaller mobile screens */
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
-
-  .lesson-card {
-    padding: 0.75rem;
-  }
-
-  .lesson-title {
-    font-size: 1.1rem;
-  }
-
-  .selection-prompt {
-    padding: 2rem 1rem;
-  }
-
-  .selection-prompt h3 {
+  .hero-title {
     font-size: 1.5rem;
   }
 
-  .selection-prompt p {
-    font-size: 1rem;
+  .hero-stats {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hero-stat {
+    padding: 0.5rem 0.75rem;
   }
 }
-
-@media (max-width: 320px) {
-  .hero-content h1.hero-title {
-    font-size: 1.2rem;
+ .resource-main-content {
+    margin-top: 840px; /* Increased for tablet */
   }
-
-  .section-title {
-    font-size: 1.3rem;
-  }
-
-  .search-input {
-    font-size: 0.85rem;
-  }
-
-  .lessons-container {
-    padding-top: 620px; /* Maximum adjustment for very small screens */
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-}

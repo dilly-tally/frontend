@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth"
 import { auth, googleProvider } from "../config/firebase"
+import axios from "../api/auth"
 
 const AuthContext = createContext()
 
@@ -19,8 +20,21 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user)
+
+      if (user) {
+        // Track user login in backend
+        try {
+          await axios.post("https://backend-844313246496.europe-west1.run.app/v1/auth/login", {
+            name: user.displayName,
+            firebaseUID: user.uid,
+          })
+        } catch (error) {
+          console.error("Error tracking user login:", error)
+        }
+      }
+
       setLoading(false)
     })
 
@@ -39,6 +53,17 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
+      if (user) {
+        // Track user logout in backend
+        try {
+          await axios.post("https://backend-844313246496.europe-west1.run.app/v1/auth/logout", {
+            firebaseUID: user.uid,
+          })
+        } catch (error) {
+          console.error("Error tracking user logout:", error)
+        }
+      }
+
       await signOut(auth)
     } catch (error) {
       console.error("Error signing out:", error)
