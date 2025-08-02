@@ -90,7 +90,10 @@ export const PdfViewer = () => {
 
         if (testpdfanswers) {
           setTestPdfAnswersUrl(`https://backend-844313246496.europe-west1.run.app/${testpdfanswers}`)
-          console.log("Test PDF answers URL set:", `https://backend-844313246496.europe-west1.run.app/${testpdfanswers}`)
+          console.log(
+            "Test PDF answers URL set:",
+            `https://backend-844313246496.europe-west1.run.app/${testpdfanswers}`,
+          )
         }
 
         setLoading(false)
@@ -209,24 +212,36 @@ export const PdfViewer = () => {
     const pdfImage = pdfImageRef.current
 
     if (canvas && pdfImage) {
-      setTimeout(() => {
-        const rect = pdfImage.getBoundingClientRect()
-        console.log("Resizing canvas to match image:", rect.width, "x", rect.height)
+      // Wait for image to be fully loaded
+      const checkImageLoaded = () => {
+        if (pdfImage.complete && pdfImage.naturalWidth > 0 && pdfImage.naturalHeight > 0) {
+          const rect = pdfImage.getBoundingClientRect()
+          console.log("Resizing canvas to match image:", rect.width, "x", rect.height)
 
-        canvas.width = rect.width
-        canvas.height = rect.height
-        canvas.style.width = `${rect.width}px`
-        canvas.style.height = `${rect.height}px`
-        canvas.style.position = "absolute"
-        canvas.style.top = "0"
-        canvas.style.left = "0"
-        canvas.style.zIndex = "10"
-        canvas.style.pointerEvents = "auto"
+          if (rect.width > 0 && rect.height > 0) {
+            canvas.width = rect.width
+            canvas.height = rect.height
+            canvas.style.width = `${rect.width}px`
+            canvas.style.height = `${rect.height}px`
+            canvas.style.position = "absolute"
+            canvas.style.top = "0"
+            canvas.style.left = "0"
+            canvas.style.zIndex = "10"
+            canvas.style.pointerEvents = "auto"
 
-        redrawCanvas()
+            redrawCanvas()
+            console.log("Canvas resized successfully")
+          } else {
+            // Retry after a short delay if dimensions are still 0
+            setTimeout(checkImageLoaded, 100)
+          }
+        } else {
+          // Retry if image is not loaded yet
+          setTimeout(checkImageLoaded, 100)
+        }
+      }
 
-        console.log("Canvas resized successfully")
-      }, 100)
+      checkImageLoaded()
     }
   }
 
@@ -259,14 +274,20 @@ export const PdfViewer = () => {
 
       const handleImageLoad = () => {
         console.log("PDF image loaded, resizing canvas")
-        resizeCanvas()
+        // Add a small delay to ensure the image is fully rendered
+        setTimeout(() => {
+          resizeCanvas()
+        }, 50)
       }
 
       if (img.complete && img.naturalHeight !== 0) {
         handleImageLoad()
       } else {
         img.onload = handleImageLoad
-        setTimeout(resizeCanvas, 200)
+        // Also add error handling
+        img.onerror = (error) => {
+          console.error("Error loading PDF image:", error)
+        }
       }
 
       const handleResize = () => {
@@ -277,6 +298,8 @@ export const PdfViewer = () => {
 
       return () => {
         window.removeEventListener("resize", handleResize)
+        if (img.onload) img.onload = null
+        if (img.onerror) img.onerror = null
       }
     }
   }, [pageImageUrl, drawnLines])
@@ -631,7 +654,7 @@ export const PdfViewer = () => {
     )
 
   return (
-    <div style={{background: "white"}} className="modern-pdf-viewer">
+    <div style={{ background: "white" }} className="modern-pdf-viewer">
       <ScrollHeader />
 
       {/* Main Content Wrapper - Fixed positioning to start after header */}
