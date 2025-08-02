@@ -75,7 +75,10 @@ export const TeacherResource = () => {
               </h1>
               <p className="hero-subtitle">Discover amazing teaching resources tailored for you</p>
             </div>
-
+            {/* Tab Navigation moved here */}
+            <div className="tab-navigation-inline">
+              <TabBar className="modern-tab-bar" activePage="teacher-resources" onNavigate={navigate} />
+            </div>
             <div className="hero-stats">
               <div className="hero-stat">
                 <span className="stat-number">{curriculumList.length}</span>
@@ -90,15 +93,14 @@ export const TeacherResource = () => {
                 <span className="stat-label">Lessons</span>
               </div>
             </div>
+
+            
+
+            
           </div>
         </div>
 
-        {/* Tab Navigation Section */}
-        <div className="tab-navigation-section">
-          <div className="tab-navigation-inline">
-            <TabBar className="modern-tab-bar" activePage="teacher-resources" onNavigate={navigate} />
-          </div>
-        </div>
+        {/* Remove the separate Tab Navigation Section since it's now in hero-content */}
 
         {/* Filters Section */}
         <div className="filters-section">
