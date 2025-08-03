@@ -660,18 +660,15 @@ export const PdfViewer = () => {
       {/* Main Content Wrapper - Fixed positioning to start after header */}
       <div className="pdf-viewer-wrapper">
         {/* Back Navigation */}
-        <div className="back-navigation">
-          <button className="back-btn" onClick={handleBackClick}>
-            <ArrowLeft size={18} />
-            Back to Topics
-          </button>
-        </div>
+        
 
         {/* Main Content Container - Fixed height to fit viewport */}
         <div className="pdf-viewer-container">
           {/* Header Section - Compact */}
           <div className="pdf-viewer-header">
+            
             <div className="topic-info">
+              
               <h1 className="topic-title">{topicTitle}</h1>
               <p className="topic-subtitle">Interactive Learning Content</p>
             </div>
@@ -680,6 +677,12 @@ export const PdfViewer = () => {
           {/* Tab Navigation - Compact */}
           <div className="tab-navigation">
             <div className="tab-container">
+              <div className="back-navigation">
+          <button className="back-btn" onClick={handleBackClick}>
+            <ArrowLeft size={18} />
+            Back to Topics
+          </button>
+        </div>
               <button
                 className={`tab-button ${activeTab === "content" ? "active" : ""}`}
                 onClick={() => handleTabChange("content")}
