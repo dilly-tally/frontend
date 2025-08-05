@@ -21,6 +21,9 @@ export const PdfViewer = () => {
   const canvasRef = useRef(null)
   const [isDrawing, setIsDrawing] = useState(false)
 
+  // Add after existing state declarations (around line 30)
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
   // Additional states for resource and test data
   const [topicData, setTopicData] = useState(null)
   const [resourceUrl, setResourceUrl] = useState(null)
@@ -44,6 +47,10 @@ export const PdfViewer = () => {
   const [editingTextBox, setEditingTextBox] = useState(null)
   const [drawnLines, setDrawnLines] = useState([])
   const [currentLine, setCurrentLine] = useState(null)
+
+  // NEW: States for connected dots
+  const [connectedDots, setConnectedDots] = useState([])
+  const [lastDotPosition, setLastDotPosition] = useState(null)
 
   // Drag state for text boxes
   const [draggingTextBox, setDraggingTextBox] = useState(null)
@@ -245,7 +252,7 @@ export const PdfViewer = () => {
     }
   }
 
-  // Redraw all existing lines on the canvas
+  // NEW: Redraw all existing lines and connected dots on the canvas
   const redrawCanvas = () => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -253,6 +260,7 @@ export const PdfViewer = () => {
     const ctx = canvas.getContext("2d")
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+    // Draw regular lines
     drawnLines.forEach((line) => {
       ctx.globalCompositeOperation = "source-over"
       ctx.strokeStyle = line.color
@@ -264,6 +272,31 @@ export const PdfViewer = () => {
       ctx.moveTo(line.startX, line.startY)
       ctx.lineTo(line.endX, line.endY)
       ctx.stroke()
+    })
+
+    // Draw connected dots and their connecting lines
+    connectedDots.forEach((dotData, index) => {
+      ctx.globalCompositeOperation = "source-over"
+
+      // Draw the dot
+      ctx.fillStyle = dotData.color
+      ctx.beginPath()
+      ctx.arc(dotData.x, dotData.y, 4, 0, 2 * Math.PI)
+      ctx.fill()
+
+      // Draw line to next dot if it exists
+      if (index < connectedDots.length - 1) {
+        const nextDot = connectedDots[index + 1]
+        ctx.strokeStyle = dotData.color
+        ctx.lineWidth = 2
+        ctx.lineCap = "round"
+        ctx.lineJoin = "round"
+
+        ctx.beginPath()
+        ctx.moveTo(dotData.x, dotData.y)
+        ctx.lineTo(nextDot.x, nextDot.y)
+        ctx.stroke()
+      }
     })
   }
 
@@ -302,7 +335,54 @@ export const PdfViewer = () => {
         if (img.onerror) img.onerror = null
       }
     }
-  }, [pageImageUrl, drawnLines])
+  }, [pageImageUrl, drawnLines, connectedDots]) // Added connectedDots to dependencies
+
+  // Add fullscreen handlers after the existing useEffect hooks
+  const enterFullscreen = () => {
+    setIsFullscreen(true)
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen()
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen()
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen()
+    }
+  }
+
+  const exitFullscreen = () => {
+    setIsFullscreen(false)
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen()
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen()
+    }
+  }
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isCurrentlyFullscreen = !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.msFullscreenElement
+      )
+      if (!isCurrentlyFullscreen && isFullscreen) {
+        setIsFullscreen(false)
+      }
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange)
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange)
+    document.addEventListener("msfullscreenchange", handleFullscreenChange)
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange)
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange)
+      document.removeEventListener("msfullscreenchange", handleFullscreenChange)
+    }
+  }, [isFullscreen])
 
   // Page navigation functions
   const nextPage = async () => {
@@ -360,16 +440,52 @@ export const PdfViewer = () => {
       return
     }
 
+    if (activeTool === "dot") {
+      // NEW: Handle connected dots
+      const newDot = { x, y, color: drawColor }
+
+      // Add the new dot to the connected dots array
+      setConnectedDots((prev) => [...prev, newDot])
+
+      // If there was a previous dot, draw a line to it immediately
+      if (lastDotPosition) {
+        const newLine = {
+          startX: lastDotPosition.x,
+          startY: lastDotPosition.y,
+          endX: x,
+          endY: y,
+          color: drawColor,
+        }
+
+        // Draw the line on canvas immediately
+        ctx.globalCompositeOperation = "source-over"
+        ctx.strokeStyle = drawColor
+        ctx.lineWidth = 2
+        ctx.lineCap = "round"
+        ctx.lineJoin = "round"
+
+        ctx.beginPath()
+        ctx.moveTo(lastDotPosition.x, lastDotPosition.y)
+        ctx.lineTo(x, y)
+        ctx.stroke()
+      }
+
+      // Draw the new dot
+      drawDot(ctx, x, y)
+
+      // Update last dot position for next connection
+      setLastDotPosition({ x, y })
+
+      return
+    }
+
     setIsDrawing(true)
     setStartPos({ x, y })
 
     ctx.beginPath()
     ctx.moveTo(x, y)
 
-    if (activeTool === "dot") {
-      drawDot(ctx, x, y)
-      setIsDrawing(false)
-    } else if (activeTool === "line") {
+    if (activeTool === "line") {
       setCurrentLine({ startX: x, startY: y, endX: x, endY: y, color: drawColor })
     }
   }
@@ -398,6 +514,31 @@ export const PdfViewer = () => {
         ctx.moveTo(line.startX, line.startY)
         ctx.lineTo(line.endX, line.endY)
         ctx.stroke()
+      })
+
+      // Redraw connected dots when drawing lines
+      connectedDots.forEach((dotData, index) => {
+        ctx.globalCompositeOperation = "source-over"
+
+        // Draw the dot
+        ctx.fillStyle = dotData.color
+        ctx.beginPath()
+        ctx.arc(dotData.x, dotData.y, 4, 0, 2 * Math.PI)
+        ctx.fill()
+
+        // Draw line to next dot if it exists
+        if (index < connectedDots.length - 1) {
+          const nextDot = connectedDots[index + 1]
+          ctx.strokeStyle = dotData.color
+          ctx.lineWidth = 2
+          ctx.lineCap = "round"
+          ctx.lineJoin = "round"
+
+          ctx.beginPath()
+          ctx.moveTo(dotData.x, dotData.y)
+          ctx.lineTo(nextDot.x, nextDot.y)
+          ctx.stroke()
+        }
       })
 
       ctx.globalCompositeOperation = "source-over"
@@ -546,6 +687,11 @@ export const PdfViewer = () => {
     if (editingTextBox) {
       finishEditingTextBox(editingTextBox)
     }
+
+    // NEW: Reset dot connection when switching tools
+    if (tool !== "dot") {
+      setLastDotPosition(null)
+    }
   }
 
   const handleColorChange = (color) => {
@@ -560,6 +706,7 @@ export const PdfViewer = () => {
     }
   }
 
+  // NEW: Updated clearAllDrawings to include connected dots
   const clearAllDrawings = () => {
     clearCanvas()
     setTextBoxes([])
@@ -568,6 +715,9 @@ export const PdfViewer = () => {
     setEditingTextBox(null)
     setDraggingTextBox(null)
     setDragOffset({ x: 0, y: 0 })
+    // Clear connected dots and reset last position
+    setConnectedDots([])
+    setLastDotPosition(null)
   }
 
   // Handle tab changes
@@ -666,9 +816,7 @@ export const PdfViewer = () => {
         <div className="pdf-viewer-container">
           {/* Header Section - Compact */}
           <div className="pdf-viewer-header">
-            
             <div className="topic-info">
-              
               <h1 className="topic-title">{topicTitle}</h1>
               <p className="topic-subtitle">Interactive Learning Content</p>
             </div>
@@ -705,263 +853,535 @@ export const PdfViewer = () => {
           </div>
 
           {/* Content Area - Fixed height */}
-          <div className="content-area">
-            {activeTab === "content" && (
+          {activeTab === "content" && (
+            <div className="content-area">
               <div className="content-tab">
-                {/* Drawing Tools Sidebar - Compact */}
-                <div className="tools-sidebar">
-                  <div className="tools-header">
-                    <h3>Tools</h3>
-                  </div>
-
-                  <div className="tool-section">
-                    <label className="tool-label">Color</label>
-                    <input
-                      type="color"
-                      value={drawColor}
-                      onChange={(e) => handleColorChange(e.target.value)}
-                      className="color-picker"
-                    />
-                  </div>
-
-                  <div className="tool-buttons">
-                    <button
-                      className={`tool-btn ${activeTool === "none" ? "active" : ""}`}
-                      onClick={() => handleToolChange("none")}
-                      title="Disable Drawing"
-                    >
-                      <Ban size={16} />
+                {/* Page Navigation - Moved to Top Above PDF Container */}
+                {totalPages > 0 && (
+                  <div className="page-navigation-above-pdf">
+                    <button className="nav-btn prev-btn" onClick={prevPage} disabled={currentPage === 1 || pageLoading}>
+                      <ChevronLeft size={16} />
+                      Previous
                     </button>
 
-                    <button
-                      className={`tool-btn ${activeTool === "pen" ? "active" : ""}`}
-                      onClick={() => handleToolChange("pen")}
-                      title="Pen Tool"
-                    >
-                      <Pen size={16} />
-                    </button>
+                    <div className="page-info">
+                      <span>
+                        Page {currentPage} of {totalPages}
+                      </span>
+                    </div>
 
                     <button
-                      className={`tool-btn ${activeTool === "eraser" ? "active" : ""}`}
-                      onClick={() => handleToolChange("eraser")}
-                      title="Eraser Tool"
+                      className="nav-btn next-btn"
+                      onClick={nextPage}
+                      disabled={currentPage === totalPages || pageLoading}
                     >
-                      <Eraser size={16} />
+                      Next
+                      <ChevronRight size={16} />
                     </button>
 
+                    {/* Fullscreen Button */}
                     <button
-                      className={`tool-btn ${activeTool === "text" ? "active" : ""}`}
-                      onClick={() => handleToolChange("text")}
-                      title="Text Tool"
+                      className="fullscreen-btn"
+                      onClick={isFullscreen ? exitFullscreen : enterFullscreen}
+                      title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
                     >
-                      <Type size={16} />
-                    </button>
-
-                    <button
-                      className={`tool-btn ${activeTool === "line" ? "active" : ""}`}
-                      onClick={() => handleToolChange("line")}
-                      title="Line Tool"
-                    >
-                      <Minus size={16} />
-                    </button>
-
-                    <button
-                      className={`tool-btn ${activeTool === "dot" ? "active" : ""}`}
-                      onClick={() => handleToolChange("dot")}
-                      title="Dot Tool"
-                    >
-                      <Circle size={16} />
-                    </button>
-
-                    <button className="tool-btn clear-btn" onClick={clearAllDrawings} title="Clear All">
-                      <Trash2 size={16} />
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v3" />
+                      </svg>
+                      Fullscreen
                     </button>
                   </div>
-                </div>
+                )}
 
-                {/* PDF Viewer - Optimized height */}
-                <div className="pdf-viewer-main">
-                  <div className="pdf-container">
-                    {pageLoading && (
-                      <div className="page-loading-overlay">
-                        <div className="loading-spinner"></div>
-                        <p>Loading page {currentPage}...</p>
-                      </div>
-                    )}
+                {/* Fullscreen Content */}
+                {isFullscreen ? (
+                  <div className="fullscreen-content">
+                    {/* Fullscreen Header with Exit and Page Navigation */}
+                    <div className="fullscreen-header">
+                      <button className="exit-fullscreen-btn" onClick={exitFullscreen} title="Exit Fullscreen">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0 2-2h3M3 16h3a2 2 0 0 0 2 2v3" />
+                        </svg>
+                        Exit Fullscreen
+                      </button>
 
-                    {pageImageUrl && !pageLoading && (
-                      <div className="pdf-page-wrapper">
-                        <img
-                          ref={pdfImageRef}
-                          src={pageImageUrl || "/placeholder.svg"}
-                          alt={`Page ${currentPage}`}
-                          className="pdf-page-image"
-                          onLoad={() => resizeCanvas()}
-                        />
-
-                        {/* Drawing Canvas Overlay */}
-                        <canvas
-                          ref={canvasRef}
-                          className="drawing-canvas"
-                          style={{
-                            pointerEvents: activeTool === "none" ? "none" : "auto",
-                            cursor:
-                              activeTool === "pen"
-                                ? "crosshair"
-                                : activeTool === "eraser"
-                                  ? "grab"
-                                  : activeTool === "line"
-                                    ? "crosshair"
-                                    : activeTool === "dot"
-                                      ? "pointer"
-                                      : activeTool === "text"
-                                        ? "text"
-                                        : "default",
-                          }}
-                          onMouseDown={startDrawing}
-                          onMouseMove={draw}
-                          onMouseUp={stopDrawing}
-                          onMouseLeave={stopDrawing}
-                        />
-
-                        {/* Text Boxes Overlay */}
-                        {textBoxes.map((textBox) => (
-                          <div
-                            key={textBox.id}
-                            className="text-box-overlay"
-                            style={{
-                              position: "absolute",
-                              left: `${(textBox.x / (canvasRef.current?.width || 1)) * 100}%`,
-                              top: `${(textBox.y / (canvasRef.current?.height || 1)) * 100}%`,
-                              zIndex: 15,
-                              minWidth: "100px",
-                              minHeight: "25px",
-                              cursor:
-                                draggingTextBox === textBox.id
-                                  ? "grabbing"
-                                  : activeTool === "text" && !textBox.isEditing
-                                    ? "grab"
-                                    : "default",
-                            }}
-                            onMouseDown={(e) => {
-                              if (!textBox.isEditing) {
-                                handleTextBoxMouseDown(e, textBox.id)
-                              }
-                            }}
+                      {/* Page Navigation in Fullscreen */}
+                      {totalPages > 0 && (
+                        <div className="fullscreen-page-navigation">
+                          <button
+                            className="nav-btn prev-btn"
+                            onClick={prevPage}
+                            disabled={currentPage === 1 || pageLoading}
                           >
-                            {textBox.isEditing ? (
-                              <input
-                                type="text"
-                                value={textBox.text}
-                                onChange={(e) => updateTextBox(textBox.id, e.target.value)}
-                                onBlur={() => finishEditingTextBox(textBox.id)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter") {
-                                    finishEditingTextBox(textBox.id)
-                                  } else if (e.key === "Escape") {
-                                    deleteTextBox(textBox.id)
-                                  }
-                                }}
-                                onMouseDown={(e) => e.stopPropagation()}
-                                autoFocus
-                                className="text-input"
-                                placeholder="Type text..."
-                              />
-                            ) : (
-                              <div
-                                className="text-display"
-                                style={{
-                                  color: textBox.color,
-                                  fontSize: `${textBox.fontSize}px`,
-                                  border:
-                                    draggingTextBox === textBox.id ? "2px dashed #4CAF50" : "1px solid transparent",
-                                }}
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  if (activeTool === "text" && !draggingTextBox) {
-                                    setTextBoxes((prev) =>
-                                      prev.map((box) => (box.id === textBox.id ? { ...box, isEditing: true } : box)),
-                                    )
-                                    setEditingTextBox(textBox.id)
-                                  }
-                                }}
-                                onDoubleClick={(e) => {
-                                  e.stopPropagation()
-                                  deleteTextBox(textBox.id)
-                                }}
-                                title="Click to edit, double-click to delete"
-                              >
-                                {textBox.text || "Empty text"}
-                              </div>
-                            )}
+                            <ChevronLeft size={16} />
+                            Previous
+                          </button>
+
+                          <div className="page-info">
+                            <span>
+                              Page {currentPage} of {totalPages}
+                            </span>
                           </div>
-                        ))}
-                      </div>
-                    )}
 
-                    {!pageImageUrl && !pageLoading && pdfUrl && (
-                      <div className="no-content">
-                        <h3>Loading PDF Content</h3>
-                        <p>Please wait while the PDF content loads...</p>
-                      </div>
-                    )}
+                          <button
+                            className="nav-btn next-btn"
+                            onClick={nextPage}
+                            disabled={currentPage === totalPages || pageLoading}
+                          >
+                            Next
+                            <ChevronRight size={16} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
 
-                    {!pdfUrl && !pageLoading && (
-                      <div className="no-content">
-                        <h3>No Content Available</h3>
-                        <p>No PDF content available for this topic.</p>
+                    {/* Tools Sidebar - Compact for fullscreen */}
+                    <div className="tools-sidebar-fullscreen">
+                      <div className="tool-section">
+                        <div
+                          className="color-picker-rectangle"
+                          style={{ backgroundColor: drawColor }}
+                          onClick={() => document.getElementById("fullscreen-color-input").click()}
+                          title="Click to change color"
+                        >
+                          <input
+                            id="fullscreen-color-input"
+                            type="color"
+                            value={drawColor}
+                            onChange={(e) => handleColorChange(e.target.value)}
+                            style={{ display: "none" }}
+                          />
+                        </div>
                       </div>
-                    )}
+
+                      <div className="tool-buttons-horizontal">
+                        <button
+                          className={`tool-btn ${activeTool === "none" ? "active" : ""}`}
+                          onClick={() => handleToolChange("none")}
+                          title="Disable Drawing"
+                        >
+                          <Ban size={14} />
+                        </button>
+
+                        <button
+                          className={`tool-btn ${activeTool === "pen" ? "active" : ""}`}
+                          onClick={() => handleToolChange("pen")}
+                          title="Pen Tool"
+                        >
+                          <Pen size={14} />
+                        </button>
+
+                        <button
+                          className={`tool-btn ${activeTool === "eraser" ? "active" : ""}`}
+                          onClick={() => handleToolChange("eraser")}
+                          title="Eraser Tool"
+                        >
+                          <Eraser size={14} />
+                        </button>
+
+                        <button
+                          className={`tool-btn ${activeTool === "text" ? "active" : ""}`}
+                          onClick={() => handleToolChange("text")}
+                          title="Text Tool"
+                        >
+                          <Type size={14} />
+                        </button>
+
+                        <button
+                          className={`tool-btn ${activeTool === "line" ? "active" : ""}`}
+                          onClick={() => handleToolChange("line")}
+                          title="Line Tool"
+                        >
+                          <Minus size={14} />
+                        </button>
+
+                        <button
+                          className={`tool-btn ${activeTool === "dot" ? "active" : ""}`}
+                          onClick={() => handleToolChange("dot")}
+                          title="Connected Dots Tool"
+                        >
+                          <Circle size={14} />
+                        </button>
+
+                        <button className="tool-btn clear-btn" onClick={clearAllDrawings} title="Clear All">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* PDF Viewer - Fullscreen */}
+                    <div className="pdf-viewer-fullscreen">
+                      <div className="pdf-container-fullscreen">
+                        {pageLoading && (
+                          <div className="page-loading-overlay">
+                            <div className="loading-spinner"></div>
+                            <p>Loading page {currentPage}...</p>
+                          </div>
+                        )}
+
+                        {pageImageUrl && !pageLoading && (
+                          <div className="pdf-page-wrapper">
+                            <img
+                              ref={pdfImageRef}
+                              src={pageImageUrl || "/placeholder.svg"}
+                              alt={`Page ${currentPage}`}
+                              className="pdf-page-image-fullscreen"
+                              onLoad={() => resizeCanvas()}
+                            />
+
+                            {/* Drawing Canvas Overlay */}
+                            <canvas
+                              ref={canvasRef}
+                              className="drawing-canvas"
+                              style={{
+                                pointerEvents: activeTool === "none" ? "none" : "auto",
+                                cursor:
+                                  activeTool === "pen"
+                                    ? "crosshair"
+                                    : activeTool === "eraser"
+                                      ? "grab"
+                                      : activeTool === "line"
+                                        ? "crosshair"
+                                        : activeTool === "dot"
+                                          ? "pointer"
+                                          : activeTool === "text"
+                                            ? "text"
+                                            : "default",
+                              }}
+                              onMouseDown={startDrawing}
+                              onMouseMove={draw}
+                              onMouseUp={stopDrawing}
+                              onMouseLeave={stopDrawing}
+                            />
+
+                            {/* Text Boxes Overlay */}
+                            {textBoxes.map((textBox) => (
+                              <div
+                                key={textBox.id}
+                                className="text-box-overlay"
+                                style={{
+                                  position: "absolute",
+                                  left: `${(textBox.x / (canvasRef.current?.width || 1)) * 100}%`,
+                                  top: `${(textBox.y / (canvasRef.current?.height || 1)) * 100}%`,
+                                  zIndex: 15,
+                                  minWidth: "100px",
+                                  minHeight: "25px",
+                                  cursor:
+                                    draggingTextBox === textBox.id
+                                      ? "grabbing"
+                                      : activeTool === "text" && !textBox.isEditing
+                                        ? "grab"
+                                        : "default",
+                                }}
+                                onMouseDown={(e) => {
+                                  if (!textBox.isEditing) {
+                                    handleTextBoxMouseDown(e, textBox.id)
+                                  }
+                                }}
+                              >
+                                {textBox.isEditing ? (
+                                  <input
+                                    type="text"
+                                    value={textBox.text}
+                                    onChange={(e) => updateTextBox(textBox.id, e.target.value)}
+                                    onBlur={() => finishEditingTextBox(textBox.id)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") {
+                                        finishEditingTextBox(textBox.id)
+                                      } else if (e.key === "Escape") {
+                                        deleteTextBox(textBox.id)
+                                      }
+                                    }}
+                                    onMouseDown={(e) => e.stopPropagation()}
+                                    autoFocus
+                                    className="text-input"
+                                    placeholder="Type text..."
+                                  />
+                                ) : (
+                                  <div
+                                    className="text-display"
+                                    style={{
+                                      color: textBox.color,
+                                      fontSize: `${textBox.fontSize}px`,
+                                      border:
+                                        draggingTextBox === textBox.id ? "2px dashed #4CAF50" : "1px solid transparent",
+                                    }}
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      if (activeTool === "text" && !draggingTextBox) {
+                                        setTextBoxes((prev) =>
+                                          prev.map((box) =>
+                                            box.id === textBox.id ? { ...box, isEditing: true } : box,
+                                          ),
+                                        )
+                                        setEditingTextBox(textBox.id)
+                                      }
+                                    }}
+                                    onDoubleClick={(e) => {
+                                      e.stopPropagation()
+                                      deleteTextBox(textBox.id)
+                                    }}
+                                    title="Click to edit, double-click to delete"
+                                  >
+                                    {textBox.text || "Empty text"}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-
-                  {/* Page Navigation - Compact */}
-                  {totalPages > 0 && (
-                    <div className="page-navigation">
-                      <button
-                        className="nav-btn prev-btn"
-                        onClick={prevPage}
-                        disabled={currentPage === 1 || pageLoading}
-                      >
-                        <ChevronLeft size={16} />
-                        Previous
-                      </button>
-
-                      <div className="page-info">
-                        <span>
-                          Page {currentPage} of {totalPages}
-                        </span>
+                ) : (
+                  /* Normal Content Layout */
+                  <div className="content-main">
+                    {/* Tools Sidebar - Compact */}
+                    <div className="tools-sidebar">
+                      <div className="tools-header">
+                        <h3>Tools</h3>
                       </div>
 
-                      <button
-                        className="nav-btn next-btn"
-                        onClick={nextPage}
-                        disabled={currentPage === totalPages || pageLoading}
-                      >
-                        Next
-                        <ChevronRight size={16} />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+                      <div className="tool-section">
+                        <label className="tool-label">Color</label>
+                        <div
+                          className="color-picker-rectangle"
+                          style={{ backgroundColor: drawColor }}
+                          onClick={() => document.getElementById("normal-color-input").click()}
+                          title="Click to change color"
+                        >
+                          <input
+                            id="normal-color-input"
+                            type="color"
+                            value={drawColor}
+                            onChange={(e) => handleColorChange(e.target.value)}
+                            style={{ display: "none" }}
+                          />
+                        </div>
+                      </div>
 
-            {activeTab === "resources" && (
-              <div className="resources-tab">
-                <div className="resources-container">
-                  {resourceUrl ? (
-                    <iframe src={resourceUrl} title="Additional Resource" className="resource-iframe" />
-                  ) : (
-                    <div className="no-content">
-                      <h3>No Additional Resources</h3>
-                      <p>No additional resource available for this topic.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+                      <div className="tool-buttons">
+                        <button
+                          className={`tool-btn ${activeTool === "none" ? "active" : ""}`}
+                          onClick={() => handleToolChange("none")}
+                          title="Disable Drawing"
+                        >
+                          <Ban size={16} />
+                        </button>
 
-            {activeTab === "test" && (
+                        <button
+                          className={`tool-btn ${activeTool === "pen" ? "active" : ""}`}
+                          onClick={() => handleToolChange("pen")}
+                          title="Pen Tool"
+                        >
+                          <Pen size={16} />
+                        </button>
+
+                        <button
+                          className={`tool-btn ${activeTool === "eraser" ? "active" : ""}`}
+                          onClick={() => handleToolChange("eraser")}
+                          title="Eraser Tool"
+                        >
+                          <Eraser size={16} />
+                        </button>
+
+                        <button
+                          className={`tool-btn ${activeTool === "text" ? "active" : ""}`}
+                          onClick={() => handleToolChange("text")}
+                          title="Text Tool"
+                        >
+                          <Type size={16} />
+                        </button>
+
+                        <button
+                          className={`tool-btn ${activeTool === "line" ? "active" : ""}`}
+                          onClick={() => handleToolChange("line")}
+                          title="Line Tool"
+                        >
+                          <Minus size={16} />
+                        </button>
+
+                        <button
+                          className={`tool-btn ${activeTool === "dot" ? "active" : ""}`}
+                          onClick={() => handleToolChange("dot")}
+                          title="Connected Dots Tool"
+                        >
+                          <Circle size={16} />
+                        </button>
+
+                        <button className="tool-btn clear-btn" onClick={clearAllDrawings} title="Clear All">
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* PDF Viewer - Optimized height */}
+                    <div className="pdf-viewer-main">
+                      <div className="pdf-container">
+                        {pageLoading && (
+                          <div className="page-loading-overlay">
+                            <div className="loading-spinner"></div>
+                            <p>Loading page {currentPage}...</p>
+                          </div>
+                        )}
+
+                        {pageImageUrl && !pageLoading && (
+                          <div className="pdf-page-wrapper">
+                            <img
+                              ref={pdfImageRef}
+                              src={pageImageUrl || "/placeholder.svg"}
+                              alt={`Page ${currentPage}`}
+                              className="pdf-page-image"
+                              onLoad={() => resizeCanvas()}
+                            />
+
+                            {/* Drawing Canvas Overlay */}
+                            <canvas
+                              ref={canvasRef}
+                              className="drawing-canvas"
+                              style={{
+                                pointerEvents: activeTool === "none" ? "none" : "auto",
+                                cursor:
+                                  activeTool === "pen"
+                                    ? "crosshair"
+                                    : activeTool === "eraser"
+                                      ? "grab"
+                                      : activeTool === "line"
+                                        ? "crosshair"
+                                        : activeTool === "dot"
+                                          ? "pointer"
+                                          : activeTool === "text"
+                                            ? "text"
+                                            : "default",
+                              }}
+                              onMouseDown={startDrawing}
+                              onMouseMove={draw}
+                              onMouseUp={stopDrawing}
+                              onMouseLeave={stopDrawing}
+                            />
+
+                            {/* Text Boxes Overlay */}
+                            {textBoxes.map((textBox) => (
+                              <div
+                                key={textBox.id}
+                                className="text-box-overlay"
+                                style={{
+                                  position: "absolute",
+                                  left: `${(textBox.x / (canvasRef.current?.width || 1)) * 100}%`,
+                                  top: `${(textBox.y / (canvasRef.current?.height || 1)) * 100}%`,
+                                  zIndex: 15,
+                                  minWidth: "100px",
+                                  minHeight: "25px",
+                                  cursor:
+                                    draggingTextBox === textBox.id
+                                      ? "grabbing"
+                                      : activeTool === "text" && !textBox.isEditing
+                                        ? "grab"
+                                        : "default",
+                                }}
+                                onMouseDown={(e) => {
+                                  if (!textBox.isEditing) {
+                                    handleTextBoxMouseDown(e, textBox.id)
+                                  }
+                                }}
+                              >
+                                {textBox.isEditing ? (
+                                  <input
+                                    type="text"
+                                    value={textBox.text}
+                                    onChange={(e) => updateTextBox(textBox.id, e.target.value)}
+                                    onBlur={() => finishEditingTextBox(textBox.id)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") {
+                                        finishEditingTextBox(textBox.id)
+                                      } else if (e.key === "Escape") {
+                                        deleteTextBox(textBox.id)
+                                      }
+                                    }}
+                                    onMouseDown={(e) => e.stopPropagation()}
+                                    autoFocus
+                                    className="text-input"
+                                    placeholder="Type text..."
+                                  />
+                                ) : (
+                                  <div
+                                    className="text-display"
+                                    style={{
+                                      color: textBox.color,
+                                      fontSize: `${textBox.fontSize}px`,
+                                      border:
+                                        draggingTextBox === textBox.id ? "2px dashed #4CAF50" : "1px solid transparent",
+                                    }}
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      if (activeTool === "text" && !draggingTextBox) {
+                                        setTextBoxes((prev) =>
+                                          prev.map((box) =>
+                                            box.id === textBox.id ? { ...box, isEditing: true } : box,
+                                          ),
+                                        )
+                                        setEditingTextBox(textBox.id)
+                                      }
+                                    }}
+                                    onDoubleClick={(e) => {
+                                      e.stopPropagation()
+                                      deleteTextBox(textBox.id)
+                                    }}
+                                    title="Click to edit, double-click to delete"
+                                  >
+                                    {textBox.text || "Empty text"}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {!pageImageUrl && !pageLoading && pdfUrl && (
+                          <div className="no-content">
+                            <h3>Loading PDF Content</h3>
+                            <p>Please wait while the PDF content loads...</p>
+                          </div>
+                        )}
+
+                        {!pdfUrl && !pageLoading && (
+                          <div className="no-content">
+                            <h3>No Content Available</h3>
+                            <p>No PDF content available for this topic.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "resources" && (
+            <div className="resources-tab">
+              <div className="resources-container">
+                {resourceUrl ? (
+                  <iframe src={resourceUrl} title="Additional Resource" className="resource-iframe" />
+                ) : (
+                  <div className="no-content">
+                    <h3>No Additional Resources</h3>
+                    <p>No additional resource available for this topic.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "test" && (
+            <div className="content-area">
               <div className="test-tab">
                 {testPdfUrl ? (
                   <>
@@ -982,6 +1402,35 @@ export const PdfViewer = () => {
                         Hide Answers
                       </button>
                     </div>
+
+                    {/* Page Navigation for Test - Moved to Top */}
+                    {totalPages > 0 && (
+                      <div className="page-navigation-above-pdf">
+                        <button
+                          className="nav-btn prev-btn"
+                          onClick={prevPage}
+                          disabled={currentPage === 1 || pageLoading}
+                        >
+                          <ChevronLeft size={16} />
+                          Previous
+                        </button>
+
+                        <div className="page-info">
+                          <span>
+                            Page {currentPage} of {totalPages}
+                          </span>
+                        </div>
+
+                        <button
+                          className="nav-btn next-btn"
+                          onClick={nextPage}
+                          disabled={currentPage === totalPages || pageLoading}
+                        >
+                          Next
+                          <ChevronRight size={16} />
+                        </button>
+                      </div>
+                    )}
 
                     {/* PDF Viewer for Test - Optimized height */}
                     <div className="test-pdf-container">
@@ -1013,35 +1462,6 @@ export const PdfViewer = () => {
                           <p>Please wait while the test content loads...</p>
                         </div>
                       )}
-
-                      {/* Page Navigation for Test - Compact */}
-                      {totalPages > 0 && (
-                        <div className="page-navigation">
-                          <button
-                            className="nav-btn prev-btn"
-                            onClick={prevPage}
-                            disabled={currentPage === 1 || pageLoading}
-                          >
-                            <ChevronLeft size={16} />
-                            Previous
-                          </button>
-
-                          <div className="page-info">
-                            <span>
-                              Page {currentPage} of {totalPages}
-                            </span>
-                          </div>
-
-                          <button
-                            className="nav-btn next-btn"
-                            onClick={nextPage}
-                            disabled={currentPage === totalPages || pageLoading}
-                          >
-                            Next
-                            <ChevronRight size={16} />
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </>
                 ) : (
@@ -1051,8 +1471,8 @@ export const PdfViewer = () => {
                   </div>
                 )}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
