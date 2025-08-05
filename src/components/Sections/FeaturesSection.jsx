@@ -53,7 +53,7 @@ const FeaturesSection = () => {
                     alt={feature.name}
                     style={{
                       width: "100%",
-                      height: "auto",
+                      height: "320px",
                       maxWidth: "300px",
                       borderRadius: "12px",
                     }}

@@ -134,7 +134,7 @@ const HeroSection = () => {
               <div className="formula-frame" style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 1000, pointerEvents: "none" }}>
               <MathFormulaComponent className="formula-1" text="BODMAS" divClassName="formula-bodmas formula-font-1" />
               <MathFormulaComponent className="formula-2" text="a²+b² = c² " divClassName="formula-algebra-exp formula-font-2" />
-              <MathFormulaComponent className="formula-3" text="Area of Cone" divClassName="formula-area-cone formula-font-2" />
+              <MathFormulaComponent className="formula-3" text="Area of a Cone" divClassName="formula-area-cone formula-font-2" />
               <MathFormulaComponent className="formula-4" text="Geometry" divClassName="formula-geometry formula-font-2" />
               <MathFormulaComponent className="formula-5" text="Proability" divClassName="formula-area-cone-2 formula-font-1" />
               <MathFormulaComponent className="formula-6" text="1/2*(B+B)*H" divClassName="formula-trapezoid formula-font-2" />

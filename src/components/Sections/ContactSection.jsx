@@ -80,31 +80,33 @@ const ContactSection = () => {
                 </Button>
               </Grid>
               <Grid item xs={12} sm="auto">
-                <Button
-                  variant="outlined"
-                  size="large"
-                  sx={{
-                    borderColor: "white",
-                    color: "white",
-                    px: 4,
-                    py: 1.5,
-                    fontWeight: "600",
-                    borderRadius: "25px",
-                    textTransform: "none",
-                    fontSize: "1rem",
-                    minWidth: "180px",
-                    borderWidth: "2px",
-                    "&:hover": {
-                      backgroundColor: "rgba(255,255,255,0.1)",
+                <a href="tel:+447733491277" style={{ textDecoration: "none" }}>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    sx={{
                       borderColor: "white",
-                      transform: "translateY(-2px)",
-                      boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
-                    },
-                    transition: "all 0.3s ease",
-                  }}
-                >
-                  CALL US
-                </Button>
+                      color: "white",
+                      px: 4,
+                      py: 1.5,
+                      fontWeight: "600",
+                      borderRadius: "25px",
+                      textTransform: "none",
+                      fontSize: "1rem",
+                      minWidth: "180px",
+                      borderWidth: "2px",
+                      "&:hover": {
+                        backgroundColor: "rgba(255,255,255,0.1)",
+                        borderColor: "white",
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
+                      },
+                      transition: "all 0.3s ease",
+                    }}
+                  >
+                    CALL US
+                  </Button>
+                </a>
               </Grid>
             </Grid>
           </Box>
