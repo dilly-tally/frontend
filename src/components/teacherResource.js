@@ -73,7 +73,7 @@ export const TeacherResource = () => {
               <h1 className="hero-title">
                 Hi, <span className="highlight">{user?.displayName || "User"}</span>!
               </h1>
-              <p className="hero-subtitle">Discover amazing teaching resources tailored for you</p>
+              <p className="hero-subtitle">Discover teaching resources tailored for you</p>
             </div>
             {/* Tab Navigation moved here */}
             <div className="tab-navigation-inline">
