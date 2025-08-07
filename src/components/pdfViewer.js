@@ -5,7 +5,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import axios from "../api/auth"
 import "../styles/pdfView.css"
 import ScrollHeader from "./Header/ScrollHeader"
-import { Pen, Eraser, Type, Minus, Circle, Trash2, Ban, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react"
+import { Pen, Eraser, Type, Minus, Circle, Trash2, Ban, ChevronLeft, ChevronRight, ArrowLeft, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react'
 
 export const PdfViewer = () => {
   const { tid } = useParams()
@@ -21,8 +21,15 @@ export const PdfViewer = () => {
   const canvasRef = useRef(null)
   const [isDrawing, setIsDrawing] = useState(false)
 
-  // Add after existing state declarations (around line 30)
+  // Fullscreen states
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [isTestFullscreen, setIsTestFullscreen] = useState(false)
+
+  // Zoom states for fullscreen
+  const [zoomLevel, setZoomLevel] = useState(1)
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 })
+  const [isPanning, setIsPanning] = useState(false)
+  const [lastPanPoint, setLastPanPoint] = useState({ x: 0, y: 0 })
 
   // Additional states for resource and test data
   const [topicData, setTopicData] = useState(null)
@@ -49,7 +56,6 @@ export const PdfViewer = () => {
   const [currentLine, setCurrentLine] = useState(null)
 
   // NEW: States for connected dots
-  const [connectedDots, setConnectedDots] = useState([])
   const [lastDotPosition, setLastDotPosition] = useState(null)
 
   // Drag state for text boxes
@@ -252,7 +258,7 @@ export const PdfViewer = () => {
     }
   }
 
-  // NEW: Redraw all existing lines and connected dots on the canvas
+  // Redraw all existing lines on the canvas
   const redrawCanvas = () => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -260,7 +266,6 @@ export const PdfViewer = () => {
     const ctx = canvas.getContext("2d")
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-    // Draw regular lines
     drawnLines.forEach((line) => {
       ctx.globalCompositeOperation = "source-over"
       ctx.strokeStyle = line.color
@@ -272,31 +277,6 @@ export const PdfViewer = () => {
       ctx.moveTo(line.startX, line.startY)
       ctx.lineTo(line.endX, line.endY)
       ctx.stroke()
-    })
-
-    // Draw connected dots and their connecting lines
-    connectedDots.forEach((dotData, index) => {
-      ctx.globalCompositeOperation = "source-over"
-
-      // Draw the dot
-      ctx.fillStyle = dotData.color
-      ctx.beginPath()
-      ctx.arc(dotData.x, dotData.y, 4, 0, 2 * Math.PI)
-      ctx.fill()
-
-      // Draw line to next dot if it exists
-      if (index < connectedDots.length - 1) {
-        const nextDot = connectedDots[index + 1]
-        ctx.strokeStyle = dotData.color
-        ctx.lineWidth = 2
-        ctx.lineCap = "round"
-        ctx.lineJoin = "round"
-
-        ctx.beginPath()
-        ctx.moveTo(dotData.x, dotData.y)
-        ctx.lineTo(nextDot.x, nextDot.y)
-        ctx.stroke()
-      }
     })
   }
 
@@ -335,11 +315,53 @@ export const PdfViewer = () => {
         if (img.onerror) img.onerror = null
       }
     }
-  }, [pageImageUrl, drawnLines, connectedDots]) // Added connectedDots to dependencies
+  }, [pageImageUrl, drawnLines])
 
-  // Add fullscreen handlers after the existing useEffect hooks
+  // Zoom functions
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 0.25, 3))
+  }
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 0.25, 0.5))
+  }
+
+  const handleZoomReset = () => {
+    setZoomLevel(1)
+    setPanOffset({ x: 0, y: 0 })
+  }
+
+  // Pan functions
+  const handlePanStart = (e) => {
+    if (zoomLevel > 1) {
+      setIsPanning(true)
+      setLastPanPoint({ x: e.clientX, y: e.clientY })
+    }
+  }
+
+  const handlePanMove = (e) => {
+    if (isPanning && zoomLevel > 1) {
+      const deltaX = e.clientX - lastPanPoint.x
+      const deltaY = e.clientY - lastPanPoint.y
+
+      setPanOffset((prev) => ({
+        x: prev.x + deltaX,
+        y: prev.y + deltaY,
+      }))
+
+      setLastPanPoint({ x: e.clientX, y: e.clientY })
+    }
+  }
+
+  const handlePanEnd = () => {
+    setIsPanning(false)
+  }
+
+  // Add fullscreen handlers
   const enterFullscreen = () => {
     setIsFullscreen(true)
+    setZoomLevel(1)
+    setPanOffset({ x: 0, y: 0 })
     if (document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen()
     } else if (document.documentElement.webkitRequestFullscreen) {
@@ -351,6 +373,35 @@ export const PdfViewer = () => {
 
   const exitFullscreen = () => {
     setIsFullscreen(false)
+    setZoomLevel(1)
+    setPanOffset({ x: 0, y: 0 })
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen()
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen()
+    }
+  }
+
+  // Test fullscreen handlers
+  const enterTestFullscreen = () => {
+    setIsTestFullscreen(true)
+    setZoomLevel(1)
+    setPanOffset({ x: 0, y: 0 })
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen()
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen()
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen()
+    }
+  }
+
+  const exitTestFullscreen = () => {
+    setIsTestFullscreen(false)
+    setZoomLevel(1)
+    setPanOffset({ x: 0, y: 0 })
     if (document.exitFullscreen) {
       document.exitFullscreen()
     } else if (document.webkitExitFullscreen) {
@@ -368,8 +419,11 @@ export const PdfViewer = () => {
         document.webkitFullscreenElement ||
         document.msFullscreenElement
       )
-      if (!isCurrentlyFullscreen && isFullscreen) {
+      if (!isCurrentlyFullscreen) {
         setIsFullscreen(false)
+        setIsTestFullscreen(false)
+        setZoomLevel(1)
+        setPanOffset({ x: 0, y: 0 })
       }
     }
 
@@ -382,7 +436,7 @@ export const PdfViewer = () => {
       document.removeEventListener("webkitfullscreenchange", handleFullscreenChange)
       document.removeEventListener("msfullscreenchange", handleFullscreenChange)
     }
-  }, [isFullscreen])
+  }, [])
 
   // Page navigation functions
   const nextPage = async () => {
@@ -440,50 +494,17 @@ export const PdfViewer = () => {
       return
     }
 
-    if (activeTool === "dot") {
-      // NEW: Handle connected dots
-      const newDot = { x, y, color: drawColor }
-
-      // Add the new dot to the connected dots array
-      setConnectedDots((prev) => [...prev, newDot])
-
-      // If there was a previous dot, draw a line to it immediately
-      if (lastDotPosition) {
-        const newLine = {
-          startX: lastDotPosition.x,
-          startY: lastDotPosition.y,
-          endX: x,
-          endY: y,
-          color: drawColor,
-        }
-
-        // Draw the line on canvas immediately
-        ctx.globalCompositeOperation = "source-over"
-        ctx.strokeStyle = drawColor
-        ctx.lineWidth = 2
-        ctx.lineCap = "round"
-        ctx.lineJoin = "round"
-
-        ctx.beginPath()
-        ctx.moveTo(lastDotPosition.x, lastDotPosition.y)
-        ctx.lineTo(x, y)
-        ctx.stroke()
-      }
-
-      // Draw the new dot
-      drawDot(ctx, x, y)
-
-      // Update last dot position for next connection
-      setLastDotPosition({ x, y })
-
-      return
-    }
-
     setIsDrawing(true)
     setStartPos({ x, y })
 
     ctx.beginPath()
     ctx.moveTo(x, y)
+
+    if (activeTool === "dot") {
+      // Simple dot creation without connecting lines
+      drawDot(ctx, x, y)
+      return
+    }
 
     if (activeTool === "line") {
       setCurrentLine({ startX: x, startY: y, endX: x, endY: y, color: drawColor })
@@ -514,31 +535,6 @@ export const PdfViewer = () => {
         ctx.moveTo(line.startX, line.startY)
         ctx.lineTo(line.endX, line.endY)
         ctx.stroke()
-      })
-
-      // Redraw connected dots when drawing lines
-      connectedDots.forEach((dotData, index) => {
-        ctx.globalCompositeOperation = "source-over"
-
-        // Draw the dot
-        ctx.fillStyle = dotData.color
-        ctx.beginPath()
-        ctx.arc(dotData.x, dotData.y, 4, 0, 2 * Math.PI)
-        ctx.fill()
-
-        // Draw line to next dot if it exists
-        if (index < connectedDots.length - 1) {
-          const nextDot = connectedDots[index + 1]
-          ctx.strokeStyle = dotData.color
-          ctx.lineWidth = 2
-          ctx.lineCap = "round"
-          ctx.lineJoin = "round"
-
-          ctx.beginPath()
-          ctx.moveTo(dotData.x, dotData.y)
-          ctx.lineTo(nextDot.x, nextDot.y)
-          ctx.stroke()
-        }
       })
 
       ctx.globalCompositeOperation = "source-over"
@@ -716,7 +712,6 @@ export const PdfViewer = () => {
     setDraggingTextBox(null)
     setDragOffset({ x: 0, y: 0 })
     // Clear connected dots and reset last position
-    setConnectedDots([])
     setLastDotPosition(null)
   }
 
@@ -814,7 +809,7 @@ export const PdfViewer = () => {
 
         {/* Main Content Container - Fixed height to fit viewport */}
         <div className="pdf-viewer-container">
-          {/* Header Section - Compact */}
+          {/* Header Section - Compact and Responsive */}
           <div className="pdf-viewer-header">
             <div className="topic-info">
               <h1 className="topic-title">{topicTitle}</h1>
@@ -961,6 +956,20 @@ export const PdfViewer = () => {
                         </div>
                       </div>
 
+                      {/* Zoom Controls */}
+                      <div className="zoom-controls">
+                        <button className="zoom-btn" onClick={handleZoomOut} title="Zoom Out">
+                          <ZoomOut size={14} />
+                        </button>
+                        <span className="zoom-level">{Math.round(zoomLevel * 100)}%</span>
+                        <button className="zoom-btn" onClick={handleZoomIn} title="Zoom In">
+                          <ZoomIn size={14} />
+                        </button>
+                        <button className="zoom-btn" onClick={handleZoomReset} title="Reset Zoom">
+                          <RotateCcw size={14} />
+                        </button>
+                      </div>
+
                       <div className="tool-buttons-horizontal">
                         <button
                           className={`tool-btn ${activeTool === "none" ? "active" : ""}`}
@@ -1005,7 +1014,7 @@ export const PdfViewer = () => {
                         <button
                           className={`tool-btn ${activeTool === "dot" ? "active" : ""}`}
                           onClick={() => handleToolChange("dot")}
-                          title="Connected Dots Tool"
+                          title="Dot Tool"
                         >
                           <Circle size={14} />
                         </button>
@@ -1016,9 +1025,19 @@ export const PdfViewer = () => {
                       </div>
                     </div>
 
-                    {/* PDF Viewer - Fullscreen */}
+                    {/* PDF Viewer - Fullscreen with Zoom */}
                     <div className="pdf-viewer-fullscreen">
-                      <div className="pdf-container-fullscreen">
+                      <div
+                        className="pdf-container-fullscreen"
+                        onMouseDown={handlePanStart}
+                        onMouseMove={handlePanMove}
+                        onMouseUp={handlePanEnd}
+                        onMouseLeave={handlePanEnd}
+                        style={{
+                          cursor: zoomLevel > 1 ? (isPanning ? "grabbing" : "grab") : "default",
+                          overflow: "hidden",
+                        }}
+                      >
                         {pageLoading && (
                           <div className="page-loading-overlay">
                             <div className="loading-spinner"></div>
@@ -1027,13 +1046,21 @@ export const PdfViewer = () => {
                         )}
 
                         {pageImageUrl && !pageLoading && (
-                          <div className="pdf-page-wrapper">
+                          <div
+                            className="pdf-page-wrapper"
+                            style={{
+                              transform: `scale(${zoomLevel}) translate(${panOffset.x / zoomLevel}px, ${panOffset.y / zoomLevel}px)`,
+                              transformOrigin: "center center",
+                              transition: isPanning ? "none" : "transform 0.2s ease",
+                            }}
+                          >
                             <img
                               ref={pdfImageRef}
                               src={pageImageUrl || "/placeholder.svg"}
                               alt={`Page ${currentPage}`}
                               className="pdf-page-image-fullscreen"
                               onLoad={() => resizeCanvas()}
+                              style={{ userSelect: "none", pointerEvents: "none" }}
                             />
 
                             {/* Drawing Canvas Overlay */}
@@ -1211,7 +1238,7 @@ export const PdfViewer = () => {
                         <button
                           className={`tool-btn ${activeTool === "dot" ? "active" : ""}`}
                           onClick={() => handleToolChange("dot")}
-                          title="Connected Dots Tool"
+                          title="Dot Tool"
                         >
                           <Circle size={16} />
                         </button>
@@ -1429,40 +1456,188 @@ export const PdfViewer = () => {
                           Next
                           <ChevronRight size={16} />
                         </button>
+
+                        {/* Test Fullscreen Button */}
+                        <button
+                          className="fullscreen-btn"
+                          onClick={isTestFullscreen ? exitTestFullscreen : enterTestFullscreen}
+                          title={isTestFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v3" />
+                          </svg>
+                          Fullscreen
+                        </button>
                       </div>
                     )}
 
-                    {/* PDF Viewer for Test - Optimized height */}
-                    <div className="test-pdf-container">
-                      {pageLoading && (
-                        <div className="page-loading-overlay">
-                          <div className="loading-spinner"></div>
-                          <p>Loading page {currentPage}...</p>
-                        </div>
-                      )}
+                    {/* Test Fullscreen Content */}
+                    {isTestFullscreen ? (
+                      <div className="fullscreen-content">
+                        {/* Test Fullscreen Header */}
+                        <div className="fullscreen-header">
+                          <button className="exit-fullscreen-btn" onClick={exitTestFullscreen} title="Exit Fullscreen">
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 0 2-2h3M3 16h3a2 2 0 0 0 2 2v3" />
+                            </svg>
+                            Exit Fullscreen
+                          </button>
 
-                      {pageImageUrl && !pageLoading && (
-                        <div className="pdf-page-wrapper">
-                          <img
-                            src={pageImageUrl || "/placeholder.svg"}
-                            alt={`Test Page ${currentPage}${showAnswers ? " (Answers)" : ""}`}
-                            className="pdf-page-image"
+                          {/* Test Controls in Fullscreen */}
+                          <div className="test-controls-fullscreen">
+                            <button
+                              className={`control-btn show-answers-btn ${!testPdfAnswersUrl ? "disabled" : ""}`}
+                              onClick={handleShowAnswers}
+                              disabled={!testPdfAnswersUrl || showAnswers}
+                            >
+                              {testPdfAnswersUrl ? "Show Answers" : "No Answers Available"}
+                            </button>
+                            <button
+                              className={`control-btn hide-answers-btn ${!showAnswers ? "disabled" : ""}`}
+                              onClick={handleResetAnswers}
+                              disabled={!showAnswers}
+                            >
+                              Hide Answers
+                            </button>
+                          </div>
+
+                          {/* Page Navigation in Test Fullscreen */}
+                          {totalPages > 0 && (
+                            <div className="fullscreen-page-navigation">
+                              <button
+                                className="nav-btn prev-btn"
+                                onClick={prevPage}
+                                disabled={currentPage === 1 || pageLoading}
+                              >
+                                <ChevronLeft size={16} />
+                                Previous
+                              </button>
+
+                              <div className="page-info">
+                                <span>
+                                  Page {currentPage} of {totalPages}
+                                </span>
+                              </div>
+
+                              <button
+                                className="nav-btn next-btn"
+                                onClick={nextPage}
+                                disabled={currentPage === totalPages || pageLoading}
+                              >
+                                Next
+                                <ChevronRight size={16} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Zoom Controls for Test */}
+                        <div className="zoom-controls-test">
+                          <button className="zoom-btn" onClick={handleZoomOut} title="Zoom Out">
+                            <ZoomOut size={16} />
+                          </button>
+                          <span className="zoom-level">{Math.round(zoomLevel * 100)}%</span>
+                          <button className="zoom-btn" onClick={handleZoomIn} title="Zoom In">
+                            <ZoomIn size={16} />
+                          </button>
+                          <button className="zoom-btn" onClick={handleZoomReset} title="Reset Zoom">
+                            <RotateCcw size={16} />
+                          </button>
+                        </div>
+
+                        {/* Test PDF Viewer - Fullscreen with Zoom */}
+                        <div className="pdf-viewer-fullscreen">
+                          <div
+                            className="pdf-container-fullscreen"
+                            onMouseDown={handlePanStart}
+                            onMouseMove={handlePanMove}
+                            onMouseUp={handlePanEnd}
+                            onMouseLeave={handlePanEnd}
                             style={{
-                              border: showAnswers ? "3px solid #4CAF50" : "none",
+                              cursor: zoomLevel > 1 ? (isPanning ? "grabbing" : "grab") : "default",
+                              overflow: "hidden",
                             }}
-                          />
+                          >
+                            {pageLoading && (
+                              <div className="page-loading-overlay">
+                                <div className="loading-spinner"></div>
+                                <p>Loading page {currentPage}...</p>
+                              </div>
+                            )}
 
-                          {showAnswers && <div className="answer-indicator">✓ Answer Sheet</div>}
-                        </div>
-                      )}
+                            {pageImageUrl && !pageLoading && (
+                              <div
+                                className="pdf-page-wrapper"
+                                style={{
+                                  transform: `scale(${zoomLevel}) translate(${panOffset.x / zoomLevel}px, ${panOffset.y / zoomLevel}px)`,
+                                  transformOrigin: "center center",
+                                  transition: isPanning ? "none" : "transform 0.2s ease",
+                                }}
+                              >
+                                <img
+                                  src={pageImageUrl || "/placeholder.svg"}
+                                  alt={`Test Page ${currentPage}${showAnswers ? " (Answers)" : ""}`}
+                                  className="pdf-page-image-fullscreen"
+                                  style={{
+                                    border: showAnswers ? "3px solid #4CAF50" : "none",
+                                    userSelect: "none",
+                                    pointerEvents: "none",
+                                  }}
+                                />
 
-                      {!pageImageUrl && !pageLoading && testPdfUrl && (
-                        <div className="no-content">
-                          <h3>Loading Test Content</h3>
-                          <p>Please wait while the test content loads...</p>
+                                {showAnswers && <div className="answer-indicator">✓ Answer Sheet</div>}
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      /* Normal Test PDF Container */
+                      <div className="test-pdf-container">
+                        {pageLoading && (
+                          <div className="page-loading-overlay">
+                            <div className="loading-spinner"></div>
+                            <p>Loading page {currentPage}...</p>
+                          </div>
+                        )}
+
+                        {pageImageUrl && !pageLoading && (
+                          <div className="pdf-page-wrapper">
+                            <img
+                              src={pageImageUrl || "/placeholder.svg"}
+                              alt={`Test Page ${currentPage}${showAnswers ? " (Answers)" : ""}`}
+                              className="pdf-page-image"
+                              style={{
+                                border: showAnswers ? "3px solid #4CAF50" : "none",
+                              }}
+                            />
+
+                            {showAnswers && <div className="answer-indicator">✓ Answer Sheet</div>}
+                          </div>
+                        )}
+
+                        {!pageImageUrl && !pageLoading && testPdfUrl && (
+                          <div className="no-content">
+                            <h3>Loading Test Content</h3>
+                            <p>Please wait while the test content loads...</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </>
                 ) : (
                   <div className="no-content">

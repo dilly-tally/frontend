@@ -184,6 +184,7 @@ export const LessonTopics = () => {
       </div>
 
       {/* Main Content Area - COMPLETELY SEPARATE */}
+      <div className="topics-complete">
       <div className="topics-main-content">
         <div className="topics-container-fixed">
           {filteredTopics.length > 0 ? (
@@ -234,6 +235,7 @@ export const LessonTopics = () => {
           )}
         </div>
       </div>
+     </div>
     </div>
   )
 }

@@ -32,7 +32,7 @@ body {
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
   z-index: 100;
-  padding: 24px;
+  padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -41,7 +41,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
@@ -52,10 +52,10 @@ body {
 }
 
 .hero-title {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: #1f2937;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .highlight {
@@ -63,26 +63,26 @@ body {
 }
 
 .hero-subtitle {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #6b7280;
   font-weight: 400;
 }
 
 .hero-decoration {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   align-items: center;
 }
 
 .floating-icon {
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   background: #f0fdf4;
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   animation: float 3s ease-in-out infinite;
 }
 
@@ -96,7 +96,7 @@ body {
 
 /* Navigation Section */
 .navigation-section {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: center;
   max-width: 1400px;
@@ -107,8 +107,8 @@ body {
 /* Stats Overview */
 .stats-overview {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
@@ -117,11 +117,11 @@ body {
 .stat-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   transition: all 0.3s ease;
 }
 
@@ -132,33 +132,33 @@ body {
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   background: #ecfdf5;
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .stat-info h3 {
-  font-size: 1.875rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: #1f2937;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .stat-info p {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: #6b7280;
   font-weight: 500;
 }
 
 /* Scrollable Content Section */
 .dashboard-scrollable-content {
-  margin-top: 320px; /* Adjust based on fixed header height */
-  padding: 24px;
+  margin-top: 280px; /* Adjust based on fixed header height */
+  padding: 20px;
   overflow-y: auto;
   flex: 1;
 }
@@ -167,7 +167,7 @@ body {
 .main-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 32px;
+  gap: 28px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -175,21 +175,21 @@ body {
 .primary-cards {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .secondary-cards {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 /* Dashboard Cards */
 .dashboard-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 14px;
+  padding: 20px;
   transition: all 0.3s ease;
 }
 
@@ -202,17 +202,17 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .card-title {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .card-title h3 {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #1f2937;
 }
@@ -220,29 +220,29 @@ body {
 .task-count {
   background: #4CAF50;
   color: white;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  padding: 3px 7px;
+  border-radius: 10px;
+  font-size: 0.7rem;
   font-weight: 600;
 }
 
 .card-icon {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   background: #f0fdf4;
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
 }
 
 /* Task Items */
 .task-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 0;
+  gap: 10px;
+  padding: 10px 0;
   border-bottom: 1px solid #f3f4f6;
 }
 
@@ -251,8 +251,8 @@ body {
 }
 
 .task-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -274,21 +274,21 @@ body {
 }
 
 .task-details h4 {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #1f2937;
   margin-bottom: 2px;
 }
 
 .task-details p {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #6b7280;
 }
 
 .task-status {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
+  padding: 3px 7px;
+  border-radius: 10px;
+  font-size: 0.7rem;
   font-weight: 600;
 }
 
@@ -311,25 +311,25 @@ body {
 .week-overview {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .week-day {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .day {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #6b7280;
 }
 
 .day-indicator {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #e5e7eb;
 }
@@ -341,8 +341,8 @@ body {
 /* Upcoming Events */
 .event-item {
   display: flex;
-  gap: 12px;
-  padding: 8px 0;
+  gap: 10px;
+  padding: 6px 0;
   border-bottom: 1px solid #f3f4f6;
 }
 
@@ -351,40 +351,40 @@ body {
 }
 
 .event-time {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #4CAF50;
-  min-width: 60px;
+  min-width: 55px;
 }
 
 .event-title {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: #1f2937;
 }
 
 /* Progress Chart */
 .chart-container {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .progress-bar {
   width: 100%;
-  height: 8px;
+  height: 7px;
   background: #f3f4f6;
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .progress-fill {
   height: 100%;
   background: #4CAF50;
-  border-radius: 4px;
+  border-radius: 3px;
   transition: width 0.3s ease;
 }
 
 .progress-label {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: #1f2937;
 }
@@ -392,24 +392,24 @@ body {
 .progress-details {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .progress-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .subject {
-  font-size: 0.875rem;
+  font-size: 0.8rem;
   color: #1f2937;
-  min-width: 80px;
+  min-width: 70px;
 }
 
 .mini-progress {
   flex: 1;
-  height: 4px;
+  height: 3px;
   background: #f3f4f6;
   border-radius: 2px;
   overflow: hidden;
@@ -423,10 +423,10 @@ body {
 }
 
 .percentage {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #4CAF50;
-  min-width: 35px;
+  min-width: 30px;
   text-align: right;
 }
 
@@ -434,17 +434,17 @@ body {
 .action-buttons {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .action-btn {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 10px;
+  padding: 10px 14px;
   border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border-radius: 7px;
+  font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -481,7 +481,7 @@ body {
 }
 
 .btn-icon {
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 /* Animations */
@@ -491,7 +491,123 @@ body {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
+  }
+}
+
+/* SPECIFIC VIEWPORT OPTIMIZATIONS FOR 1366x768px */
+@media (min-width: 1200px) and (max-width: 1400px) and (min-height: 700px) and (max-height: 800px) {
+  .dashboard-fixed-header {
+    padding: 16px;
+    top: 60px;
+  }
+  
+  .dashboard-hero {
+    margin-bottom: 16px;
+  }
+  
+  .hero-title {
+    font-size: 1.8rem;
+    margin-bottom: 4px;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .hero-decoration {
+    gap: 12px;
+  }
+  
+  .floating-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+  
+  .navigation-section {
+    margin-bottom: 16px;
+  }
+  
+  .stats-overview {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+  }
+  
+  .stat-card {
+    padding: 14px;
+    gap: 12px;
+  }
+  
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+  
+  .stat-info h3 {
+    font-size: 1.4rem;
+  }
+  
+  .stat-info p {
+    font-size: 0.75rem;
+  }
+  
+  .dashboard-scrollable-content {
+    margin-top: 240px;
+    padding: 16px;
+  }
+  
+  .main-grid {
+    gap: 24px;
+  }
+  
+  .primary-cards,
+  .secondary-cards {
+    gap: 16px;
+  }
+  
+  .dashboard-card {
+    padding: 16px;
+  }
+  
+  .card-header {
+    margin-bottom: 14px;
+  }
+  
+  .card-title h3 {
+    font-size: 1rem;
+  }
+  
+  .card-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+  
+  .task-item {
+    padding: 8px 0;
+  }
+  
+  .task-details h4 {
+    font-size: 0.75rem;
+  }
+  
+  .task-details p {
+    font-size: 0.65rem;
+  }
+  
+  .action-btn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .progress-details {
+    gap: 8px;
+  }
+  
+  .chart-container {
+    margin-bottom: 14px;
   }
 }
 
@@ -502,12 +618,12 @@ body {
   }
 
   .dashboard-fixed-header {
-    padding: 16px;
+    padding: 14px;
   }
 
   .dashboard-scrollable-content {
-    margin-top: 350px;
-    padding: 16px;
+    margin-top: 300px;
+    padding: 14px;
   }
 }
 
@@ -515,29 +631,29 @@ body {
   .dashboard-hero {
     flex-direction: column;
     text-align: center;
-    gap: 16px;
+    gap: 14px;
   }
 
   .hero-title {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .stats-overview {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
   }
 
   .main-grid {
-    gap: 20px;
+    gap: 18px;
   }
 
   .primary-cards,
   .secondary-cards {
-    gap: 16px;
+    gap: 14px;
   }
 
   .dashboard-scrollable-content {
-    margin-top: 380px;
+    margin-top: 320px;
   }
 
   .hero-decoration {
@@ -547,27 +663,28 @@ body {
 
 @media (max-width: 480px) {
   .dashboard-fixed-header {
-    padding: 12px;
+    padding: 10px;
   }
 
   .hero-title {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
 
   .stats-overview {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
   }
 
   .dashboard-card {
-    padding: 16px;
+    padding: 14px;
   }
 
   .dashboard-scrollable-content {
-    margin-top: 420px;
-    padding: 12px;
+    margin-top: 360px;
+    padding: 10px;
   }
 }
+
 .main-grid{
-  margin-top: 120px;
+  margin-top: 100px;
 }

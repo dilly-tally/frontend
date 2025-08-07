@@ -131,7 +131,7 @@ const AuthModal = ({ open, onClose, mode = "login" }) => {
                 fontSize: "1.1rem",
                 fontWeight: "600",
                 borderRadius: "12px",
-                backgroundColor: "#4285f4",
+                backgroundColor: "#65d878ff",
                 textTransform: "none",
                 boxShadow: "0 4px 15px rgba(66, 133, 244, 0.3)",
                 "&:hover": {

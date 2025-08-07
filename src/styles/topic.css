@@ -18,7 +18,7 @@
 
 /* Hero Section */
 .topics-hero {
-  padding: 1.5rem 2rem;
+  padding: 1.3rem 1.8rem;
   background: #ffffff;
   border-bottom: 1px solid #f0f0f0;
 }
@@ -30,33 +30,33 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.8rem;
   flex-direction: row;
 }
 
 .hero-text {
   flex: 1;
-  min-width: 300px;
+  max-width: 200px;
 }
 
 .breadcrumb {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 
 .back-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 1rem;
+  gap: 0.3rem;
+  padding: 0.4rem 0.8rem;
   background: white;
   border: 2px solid #4caf50;
-  border-radius: 8px;
+  border-radius: 6px;
   color: #4caf50;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   text-decoration: none;
 }
 
@@ -68,11 +68,11 @@
 }
 
 .hero-title {
-  font-size: 1.8rem;
+  font-size: x-large;
   font-weight: 700;
   color: #1a202c;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .lesson-name {
@@ -80,44 +80,44 @@
 }
 
 .hero-subtitle {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #64748b;
-  margin: 0.25rem 0 0 0;
+  margin: 0.2rem 0 0 0;
   font-weight: 400;
 }
 
 .hero-stats {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.2rem;
   flex-shrink: 0;
 }
 
 .hero-stat {
   text-align: center;
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.8rem;
   background: #f8fafc;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid #e2e8f0;
-  min-width: 70px;
+  min-width: 60px;
 }
 
 .stat-number {
   display: block;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #4caf50;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #64748b;
   font-weight: 500;
 }
 
 /* Tab Navigation Section */
 .tab-navigation-section {
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.8rem;
   background: #ffffff;
   border-bottom: 1px solid #f0f0f0;
 }
@@ -132,14 +132,14 @@
 
 /* Search Section */
 .search-section-inline {
-  padding: 1.5rem 2rem;
+  padding: 1.2rem 1.8rem;
   background: #ffffff;
 }
 
 .search-content {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.6rem;
   max-width: 1400px;
   margin: 0 auto;
   flex-wrap: wrap;
@@ -150,21 +150,21 @@
 }
 
 .section-header-inline .section-title {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #1a202c;
-  margin: 0 0 0.25rem 0;
+  margin: 0 0 0.2rem 0;
 }
 
 .section-header-inline .section-subtitle {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #64748b;
   margin: 0;
 }
 
 .search-container-inline {
   flex: 1;
-  min-width: 300px;
+  min-width: 280px;
 }
 
 .search-wrapper {
@@ -173,7 +173,7 @@
   align-items: center;
   background: white;
   border: 2px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 0;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -186,9 +186,9 @@
 }
 
 .search-icon {
-  margin-left: 1rem;
-  margin-right: 0.75rem;
-  font-size: 1.1rem;
+  margin-left: 0.8rem;
+  margin-right: 0.6rem;
+  font-size: 1rem;
   color: #4caf50;
 }
 
@@ -196,10 +196,10 @@
   flex: 1;
   border: none;
   outline: none;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #1a202c;
   background: transparent;
-  padding: 0.875rem 0;
+  padding: 0.7rem 0;
   font-weight: 500;
 }
 
@@ -213,10 +213,10 @@
   border: none;
   color: #64748b;
   cursor: pointer;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
   transition: all 0.2s ease;
-  margin-right: 0.5rem;
+  margin-right: 0.4rem;
 }
 
 .clear-search:hover {
@@ -224,17 +224,25 @@
   color: #1a202c;
 }
 
-/* Main Content Area - Add proper margin to avoid content being hidden */
+/* FIXED: Main Content Area - Remove excessive margins and start content right after header */
+.topics-complete {
+  /* REMOVED: margin-top: 900px; - This was causing the huge gap! */
+  /* Calculate the exact height needed for the fixed header */
+  margin-top: 320px; /* ScrollHeader (70px) + Hero (80px) + Tab Navigation (60px) + Search Section (110px) */
+  min-height: calc(100vh - 320px);
+}
+
 .topics-main-content {
-  margin-top: 280px; /* Adjust based on fixed header height */
-  min-height: calc(100vh - 280px);
+  margin-top: 0; /* FIXED: Remove any additional margin */
   background: #ffffff;
-  padding: 2rem;
+  padding: 1.6rem;
+  display: flex;
 }
 
 .topics-container-fixed {
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
 }
 
 /* Loading State */
@@ -243,18 +251,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
+  padding: 3.2rem 1.6rem;
   text-align: center;
 }
 
 .loading-spinner {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border: 4px solid #f3f4f6;
   border-top: 4px solid #4caf50;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 @keyframes spin {
@@ -269,14 +277,14 @@
 /* Topics Grid */
 .topics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
 }
 
 .topic-card {
   background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
+  border-radius: 10px;
+  padding: 1.2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   cursor: pointer;
@@ -294,7 +302,7 @@
 }
 
 .topic-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
   border-color: #4caf50;
 }
@@ -303,45 +311,45 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .topic-icon {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 .topic-badge {
   background: linear-gradient(135deg, #4caf50, #45a049);
   color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 16px;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
 .topic-content {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .topic-title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #1a202c;
-  margin: 0 0 0.5rem 0;
-  line-height: 1.4;
+  margin: 0 0 0.4rem 0;
+  line-height: 1.3;
 }
 
 .topic-description {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #64748b;
-  margin: 0 0 0.5rem 0;
-  line-height: 1.5;
+  margin: 0 0 0.4rem 0;
+  line-height: 1.4;
 }
 
 .topic-meta {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #64748b;
   margin: 0;
 }
@@ -350,24 +358,24 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 1rem;
+  padding-top: 0.8rem;
   border-top: 1px solid #f1f5f9;
 }
 
 .view-text {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: #4caf50;
 }
 
 .arrow-icon {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #4caf50;
   transition: transform 0.3s ease;
 }
 
 .topic-card:hover .arrow-icon {
-  transform: translateX(4px);
+  transform: translateX(3px);
 }
 
 /* Empty State */
@@ -375,33 +383,33 @@
 .no-results-state,
 .error-state {
   text-align: center;
-  padding: 4rem 2rem;
-  max-width: 500px;
+  padding: 3.2rem 1.6rem;
+  max-width: 450px;
   margin: 0 auto;
 }
 
 .empty-icon,
 .no-results-icon,
 .error-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
+  font-size: 3.5rem;
+  margin-bottom: 0.8rem;
 }
 
 .empty-state h3,
 .no-results-state h3,
 .error-state h3 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 600;
   color: #1a202c;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.4rem 0;
 }
 
 .empty-state p,
 .no-results-state p,
 .error-state p {
   color: #64748b;
-  margin: 0 0 2rem 0;
-  line-height: 1.6;
+  margin: 0 0 1.6rem 0;
+  line-height: 1.5;
 }
 
 .back-to-resources-btn,
@@ -409,8 +417,8 @@
   background: linear-gradient(135deg, #4caf50, #45a049);
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -423,9 +431,168 @@
   box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
 }
 
+/* SPECIFIC VIEWPORT OPTIMIZATIONS FOR 1366x768px */
+@media (min-width: 1200px) and (max-width: 1400px) and (min-height: 700px) and (max-height: 800px) {
+  .topics-fixed-header {
+    top: 60px;
+  }
+  
+  .topics-complete {
+    margin-top: 280px; /* Adjusted for smaller header on this viewport */
+  }
+  
+  .topics-hero {
+    padding: 1rem 1.4rem;
+  }
+  
+  .hero-title {
+    font-size: 1.4rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .hero-stats {
+    gap: 1rem;
+  }
+  
+  .hero-stat {
+    padding: 0.5rem 0.7rem;
+    min-width: 55px;
+  }
+  
+  .stat-number {
+    font-size: 1.1rem;
+  }
+  
+  .stat-label {
+    font-size: 0.65rem;
+  }
+  
+  .tab-navigation-section {
+    padding: 0.7rem 1.4rem;
+  }
+  
+  .search-section-inline {
+    padding: 1rem 1.4rem;
+  }
+  
+  .search-content {
+    gap: 1.4rem;
+  }
+  
+  .section-header-inline .section-title {
+    font-size: 1.2rem;
+  }
+  
+  .section-header-inline .section-subtitle {
+    font-size: 0.75rem;
+  }
+  
+  .search-container-inline {
+    min-width: 260px;
+  }
+  
+  .search-input {
+    font-size: 0.85rem;
+    padding: 0.6rem 0;
+  }
+  
+  .topics-main-content {
+    padding: 1.4rem;
+  }
+  
+  .topics-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  
+  .topic-card {
+    padding: 1rem;
+  }
+  
+  .topic-header {
+    margin-bottom: 0.7rem;
+  }
+  
+  .topic-icon {
+    font-size: 1.2rem;
+  }
+  
+  .topic-badge {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.65rem;
+  }
+  
+  .topic-content {
+    margin-bottom: 1rem;
+  }
+  
+  .topic-title {
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .topic-description {
+    font-size: 0.75rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .topic-meta {
+    font-size: 0.75rem;
+  }
+  
+  .topic-footer {
+    padding-top: 0.7rem;
+  }
+  
+  .view-text {
+    font-size: 0.75rem;
+  }
+  
+  .arrow-icon {
+    font-size: 1rem;
+  }
+  
+  .back-btn {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.75rem;
+  }
+  
+  .loading-spinner {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .empty-icon,
+  .no-results-icon,
+  .error-icon {
+    font-size: 3rem;
+  }
+  
+  .empty-state h3,
+  .no-results-state h3,
+  .error-state h3 {
+    font-size: 1.2rem;
+  }
+  
+  .back-to-resources-btn,
+  .clear-search-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* FIXED: Remove the problematic media query that was adding unnecessary margin */
 @media (max-width: 1415px) {
-  .topics-container-fixed{
-    margin-top: 300px;
+  .topics-container-fixed {
+    /* REMOVED: margin-top: 260px; - This was also causing spacing issues */
+    width: 100%;
+  }
+  
+  .topics-complete {
+    margin-top: 300px; /* Consistent header offset for medium screens */
   }
 }
 
@@ -436,27 +603,31 @@
     top: 0;
   }
 
+  .topics-complete {
+    margin-top: 0; /* No fixed header on mobile */
+  }
+
   .topics-main-content {
     margin-top: 0;
-    padding: 1rem;
+    padding: 0.8rem;
   }
 
   .hero-content {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.8rem;
   }
 
   .hero-stats {
     width: 100%;
     justify-content: space-around;
-    gap: 1rem;
+    gap: 0.8rem;
   }
 
   .search-content {
     flex-direction: column;
     align-items: stretch;
-    gap: 1.5rem;
+    gap: 1.2rem;
   }
 
   .search-container-inline {
@@ -465,11 +636,11 @@
 
   .topics-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.8rem;
   }
 
   .topic-card {
-    padding: 1rem;
+    padding: 0.8rem;
   }
 }
 
@@ -479,34 +650,43 @@
   }
 
   .topics-hero {
-    padding: 1rem;
+    padding: 0.8rem;
   }
 
   .tab-navigation-section {
-    padding: 1rem;
+    padding: 0.8rem;
   }
 
   .search-section-inline {
-    padding: 1rem;
+    padding: 0.8rem;
   }
 
   .topics-main-content {
-    padding: 1rem;
+    padding: 0.8rem;
   }
 
   .hero-title {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
 
   .hero-stats {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.6rem;
   }
 
   .hero-stat {
-    padding: 0.5rem 0.75rem;
+    padding: 0.4rem 0.6rem;
   }
 }
-.topics-main-content {
-    margin-top: 1000px
-  }
+.topics-main-content{
+  margin-top: 600px;
+}
+.topics-grid{
+   max-height: calc(100vh - 320px);
+   max-width: 100vw;
+  overflow-y: scroll;
+}
+.topics-main-content{
+  overflow-y: hidden;
+  /* margin-top: 0; */
+}
