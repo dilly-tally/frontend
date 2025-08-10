@@ -29,7 +29,7 @@ export const LessonTopics = () => {
         setLoading(true)
         setError(null)
 
-        const apiUrl = "https://backend-844313246496.europe-west1.run.app/v1/teacherResource/topics/search"
+        const apiUrl = "https://backend-164859304804.us-central1.run.app/v1/teacherResource/topics/search"
         let params = {}
 
         if (lid) {
@@ -38,7 +38,7 @@ export const LessonTopics = () => {
         } else if (query && grade && curriculum) {
           // If we have lesson name, first get lesson ID
           const lessonRes = await axios.get(
-            "https://backend-844313246496.europe-west1.run.app/v1/teacherResource/lessons",
+            "https://backend-164859304804.us-central1.run.app/v1/teacherResource/lessons",
             {
               params: { grade, curriculum },
             },

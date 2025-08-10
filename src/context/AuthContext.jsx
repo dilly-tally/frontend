@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
       if (user) {
         // Track user login in backend
         try {
-          await axios.post("https://backend-844313246496.europe-west1.run.app/v1/auth/login", {
+          await axios.post("https://backend-164859304804.us-central1.run.app/v1/auth/login", {
             name: user.displayName,
             firebaseUID: user.uid,
           })
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }) => {
       if (user) {
         // Track user logout in backend
         try {
-          await axios.post("https://backend-844313246496.europe-west1.run.app/v1/auth/logout", {
+          await axios.post("https://backend-164859304804.us-central1.run.app/v1/auth/logout", {
             firebaseUID: user.uid,
           })
         } catch (error) {

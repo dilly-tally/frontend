@@ -78,7 +78,7 @@ export const PdfViewer = () => {
       try {
         if (!tid) throw new Error("Topic ID is missing")
 
-        const res = await axios.get(`https://backend-844313246496.europe-west1.run.app/v1/teacherResource/topic/${tid}`)
+        const res = await axios.get(`https://backend-164859304804.us-central1.run.app/v1/teacherResource/topic/${tid}`)
 
         const { pdfPath, TNAME, resource, testpdf, testpdfanswers } = res.data.topic
 
@@ -90,7 +90,7 @@ export const PdfViewer = () => {
 
         // Set URLs
         if (pdfPath) {
-          setPdfUrl(`https://backend-844313246496.europe-west1.run.app/${pdfPath}`)
+          setPdfUrl(`https://backend-164859304804.us-central1.run.app/${pdfPath}`)
         }
 
         if (resource) {
@@ -98,14 +98,14 @@ export const PdfViewer = () => {
         }
 
         if (testpdf) {
-          setTestPdfUrl(`https://backend-844313246496.europe-west1.run.app/${testpdf}`)
+          setTestPdfUrl(`https://backend-164859304804.us-central1.run.app/${testpdf}`)
         }
 
         if (testpdfanswers) {
-          setTestPdfAnswersUrl(`https://backend-844313246496.europe-west1.run.app/${testpdfanswers}`)
+          setTestPdfAnswersUrl(`https://backend-164859304804.us-central1.run.app/${testpdfanswers}`)
           console.log(
             "Test PDF answers URL set:",
-            `https://backend-844313246496.europe-west1.run.app/${testpdfanswers}`,
+            `https://backend-164859304804.us-central1.run.app/${testpdfanswers}`,
           )
         }
 

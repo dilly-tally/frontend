@@ -26,8 +26,8 @@ export const TeacherResource = () => {
       try {
         setLoading(true)
         const [curriculaRes, gradesRes] = await Promise.all([
-          axios.get("https://backend-844313246496.europe-west1.run.app/v1/teacherResource/curricula"),
-          axios.get("https://backend-844313246496.europe-west1.run.app/v1/teacherResource/grades"),
+          axios.get("https://backend-164859304804.us-central1.run.app/v1/teacherResource/curricula"),
+          axios.get("https://backend-164859304804.us-central1.run.app/v1/teacherResource/grades"),
         ])
         setCurriculumList(curriculaRes.data)
         setGradeList(gradesRes.data.grades)
@@ -45,7 +45,7 @@ export const TeacherResource = () => {
       if (!selectedCurriculum || !selectedGrade) return
       try {
         setLoading(true)
-        const res = await axios.get("https://backend-844313246496.europe-west1.run.app/v1/teacherResource/lessons", {
+        const res = await axios.get("https://backend-164859304804.us-central1.run.app/v1/teacherResource/lessons", {
           params: { curriculum: selectedCurriculum, grade: selectedGrade },
         })
         setLessons(res.data.lessons)

@@ -45,7 +45,7 @@ const Onboarding = () => {
         location: userData.location,
       });
 
-      const response = await axios.post("https://backend-844313246496.europe-west1.run.app/v1/user/onboarding", {
+      const response = await axios.post("https://backend-164859304804.us-central1.run.app/v1/user/onboarding", {
         email,
         fullName: userData.fullName,
         location: userData.location,
