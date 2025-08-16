@@ -2,10 +2,24 @@
 
 import { useEffect, useState, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import axios from "../api/auth"
+import cachedAPI from "../api/cachedAuth"
 import "../styles/pdfView.css"
 import ScrollHeader from "./Header/ScrollHeader"
-import { Pen, Eraser, Type, Minus, Circle, Trash2, Ban, ChevronLeft, ChevronRight, ArrowLeft, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react'
+import {
+  Pen,
+  Eraser,
+  Type,
+  Minus,
+  Circle,
+  Trash2,
+  Ban,
+  ChevronLeft,
+  ChevronRight,
+  ArrowLeft,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+} from "lucide-react"
 
 export const PdfViewer = () => {
   const { tid } = useParams()
@@ -78,7 +92,7 @@ export const PdfViewer = () => {
       try {
         if (!tid) throw new Error("Topic ID is missing")
 
-        const res = await axios.get(`https://backend-164859304804.us-central1.run.app/v1/teacherResource/topic/${tid}`)
+        const res = await cachedAPI.getTopicDetails(tid)
 
         const { pdfPath, TNAME, resource, testpdf, testpdfanswers } = res.data.topic
 
@@ -103,10 +117,7 @@ export const PdfViewer = () => {
 
         if (testpdfanswers) {
           setTestPdfAnswersUrl(`https://backend-164859304804.us-central1.run.app/${testpdfanswers}`)
-          console.log(
-            "Test PDF answers URL set:",
-            `https://backend-164859304804.us-central1.run.app/${testpdfanswers}`,
-          )
+          console.log("Test PDF answers URL set:", `https://backend-164859304804.us-central1.run.app/${testpdfanswers}`)
         }
 
         setLoading(false)
@@ -151,7 +162,6 @@ export const PdfViewer = () => {
     clearAllDrawings()
   }, [activeTab, pdfUrl, testPdfUrl, testPdfAnswersUrl, showAnswers])
 
-  // Load PDF document and render first page
   const loadPdfDocument = async (documentUrl) => {
     try {
       console.log("Loading PDF document from:", documentUrl)
@@ -160,8 +170,15 @@ export const PdfViewer = () => {
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${window.pdfjsLib.version}/pdf.worker.min.js`
       }
 
+      // Use cached PDF fetch
+      const pdfResponse = await cachedAPI.getPDF(documentUrl)
+      const pdfBlob = pdfResponse.data
+
+      // Create object URL from blob
+      const pdfObjectUrl = URL.createObjectURL(pdfBlob)
+
       const loadingTask = window.pdfjsLib.getDocument({
-        url: documentUrl,
+        url: pdfObjectUrl,
         withCredentials: false,
         httpHeaders: {
           Accept: "application/pdf",
@@ -169,7 +186,7 @@ export const PdfViewer = () => {
       })
 
       const pdf = await loadingTask.promise
-      console.log("PDF loaded successfully. Pages:", pdf.numPages)
+      console.log(`PDF loaded ${pdfResponse.fromCache ? "from cache" : "from server"}. Pages:`, pdf.numPages)
       setPdfDoc(pdf)
       setTotalPages(pdf.numPages)
       setCurrentPage(1)
@@ -181,11 +198,23 @@ export const PdfViewer = () => {
     }
   }
 
-  // Render a specific page to canvas and return as image URL
   const renderPage = async (pdf, pageNumber) => {
     setPageLoading(true)
     try {
       console.log("Rendering page:", pageNumber)
+
+      const currentPdfUrl =
+        activeTab === "test" ? (showAnswers && testPdfAnswersUrl ? testPdfAnswersUrl : testPdfUrl) : pdfUrl
+
+      const cacheKey = `page_${btoa(currentPdfUrl)}_${pageNumber}`
+      const cachedPageImage = cachedAPI.getCachedPageImage(cacheKey)
+
+      if (cachedPageImage) {
+        console.log("Using cached page image for page:", pageNumber)
+        setPageImageUrl(cachedPageImage)
+        setPageLoading(false)
+        return cachedPageImage
+      }
 
       const canvas = document.createElement("canvas")
       const context = canvas.getContext("2d")
@@ -207,6 +236,9 @@ export const PdfViewer = () => {
       console.log("Page rendered successfully")
 
       const imageUrl = canvas.toDataURL("image/png")
+
+      cachedAPI.setCachedPageImage(cacheKey, imageUrl)
+
       setPageImageUrl(imageUrl)
       setPageLoading(false)
 
@@ -805,7 +837,6 @@ export const PdfViewer = () => {
       {/* Main Content Wrapper - Fixed positioning to start after header */}
       <div className="pdf-viewer-wrapper">
         {/* Back Navigation */}
-        
 
         {/* Main Content Container - Fixed height to fit viewport */}
         <div className="pdf-viewer-container">
@@ -821,11 +852,11 @@ export const PdfViewer = () => {
           <div className="tab-navigation">
             <div className="tab-container">
               <div className="back-navigation">
-          <button className="back-btn" onClick={handleBackClick}>
-            <ArrowLeft size={18} />
-            Back to Topics
-          </button>
-        </div>
+                <button className="back-btn" onClick={handleBackClick}>
+                  <ArrowLeft size={18} />
+                  Back to Topics
+                </button>
+              </div>
               <button
                 className={`tab-button ${activeTab === "content" ? "active" : ""}`}
                 onClick={() => handleTabChange("content")}

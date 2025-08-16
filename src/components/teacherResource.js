@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import axios from "../api/auth"
+import cachedAPI from "../api/cachedAuth"
 import "../styles/teacherResource.css"
 import { TabBar } from "./tabBar"
 import ScrollHeader from "./Header/ScrollHeader"
@@ -25,10 +25,7 @@ export const TeacherResource = () => {
     const fetchFilters = async () => {
       try {
         setLoading(true)
-        const [curriculaRes, gradesRes] = await Promise.all([
-          axios.get("https://backend-164859304804.us-central1.run.app/v1/teacherResource/curricula"),
-          axios.get("https://backend-164859304804.us-central1.run.app/v1/teacherResource/grades"),
-        ])
+        const [curriculaRes, gradesRes] = await Promise.all([cachedAPI.getCurricula(), cachedAPI.getGrades()])
         setCurriculumList(curriculaRes.data)
         setGradeList(gradesRes.data.grades)
       } catch (error) {
@@ -45,8 +42,9 @@ export const TeacherResource = () => {
       if (!selectedCurriculum || !selectedGrade) return
       try {
         setLoading(true)
-        const res = await axios.get("https://backend-164859304804.us-central1.run.app/v1/teacherResource/lessons", {
-          params: { curriculum: selectedCurriculum, grade: selectedGrade },
+        const res = await cachedAPI.getLessons({
+          curriculum: selectedCurriculum,
+          grade: selectedGrade,
         })
         setLessons(res.data.lessons)
       } catch (error) {
@@ -93,14 +91,8 @@ export const TeacherResource = () => {
                 <span className="stat-label">Lessons</span>
               </div>
             </div>
-
-            
-
-            
           </div>
         </div>
-
-        {/* Remove the separate Tab Navigation Section since it's now in hero-content */}
 
         {/* Filters Section */}
         <div className="filters-section">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import axios from "../api/auth"
+import cachedAPI from "../api/cachedAuth"
 import "../styles/topic.css"
 import { TabBar } from "./tabBar"
 import ScrollHeader from "./Header/ScrollHeader"
@@ -29,7 +29,6 @@ export const LessonTopics = () => {
         setLoading(true)
         setError(null)
 
-        const apiUrl = "https://backend-164859304804.us-central1.run.app/v1/teacherResource/topics/search"
         let params = {}
 
         if (lid) {
@@ -37,12 +36,7 @@ export const LessonTopics = () => {
           params = { lid }
         } else if (query && grade && curriculum) {
           // If we have lesson name, first get lesson ID
-          const lessonRes = await axios.get(
-            "https://backend-164859304804.us-central1.run.app/v1/teacherResource/lessons",
-            {
-              params: { grade, curriculum },
-            },
-          )
+          const lessonRes = await cachedAPI.getLessons({ grade, curriculum })
 
           const lessons = lessonRes.data.lessons || []
           const matchedLesson = lessons.find((lesson) => lesson.LNAME === query)
@@ -56,7 +50,7 @@ export const LessonTopics = () => {
           throw new Error("Either lesson ID (lid) or lesson name (query) with grade and curriculum is required")
         }
 
-        const res = await axios.get(apiUrl, { params })
+        const res = await cachedAPI.getTopics(params)
         setTopics(res.data.topics || [])
         setLesson(res.data.lesson || null)
       } catch (err) {
@@ -185,57 +179,57 @@ export const LessonTopics = () => {
 
       {/* Main Content Area - COMPLETELY SEPARATE */}
       <div className="topics-complete">
-      <div className="topics-main-content">
-        <div className="topics-container-fixed">
-          {filteredTopics.length > 0 ? (
-            <div className="topics-grid">
-              {filteredTopics.map((topic, index) => (
-                <div
-                  key={topic.TID || index}
-                  className="topic-card"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                  onClick={() => navigate(`/viewpdf/${topic.TID}`)}
-                >
-                  <div className="topic-header">
-                    <div className="topic-icon">📄</div>
-                    <div className="topic-badge">PDF Resource</div>
+        <div className="topics-main-content">
+          <div className="topics-container-fixed">
+            {filteredTopics.length > 0 ? (
+              <div className="topics-grid">
+                {filteredTopics.map((topic, index) => (
+                  <div
+                    key={topic.TID || index}
+                    className="topic-card"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    onClick={() => navigate(`/viewpdf/${topic.TID}`)}
+                  >
+                    <div className="topic-header">
+                      <div className="topic-icon">📄</div>
+                      <div className="topic-badge">PDF Resource</div>
+                    </div>
+                    <div className="topic-content">
+                      <h3 className="topic-title">{topic.TNAME}</h3>
+                      <p className="topic-description">{topic.TDESC || "No description available."}</p>
+                      <p className="topic-meta">
+                        {grade} • {curriculum}
+                      </p>
+                    </div>
+                    <div className="topic-footer">
+                      <span className="view-text">View Resource</span>
+                      <div className="arrow-icon">→</div>
+                    </div>
                   </div>
-                  <div className="topic-content">
-                    <h3 className="topic-title">{topic.TNAME}</h3>
-                    <p className="topic-description">{topic.TDESC || "No description available."}</p>
-                    <p className="topic-meta">
-                      {grade} • {curriculum}
-                    </p>
-                  </div>
-                  <div className="topic-footer">
-                    <span className="view-text">View Resource</span>
-                    <div className="arrow-icon">→</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : topics.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">📚</div>
-              <h3>No topics found</h3>
-              <p>No topics available for this lesson. Please try a different lesson or check back later.</p>
-              <button className="back-to-resources-btn" onClick={handleBackClick}>
-                Back to Resources
-              </button>
-            </div>
-          ) : (
-            <div className="no-results-state">
-              <div className="no-results-icon">🔍</div>
-              <h3>No matching topics</h3>
-              <p>No topics match your search criteria. Try adjusting your search terms.</p>
-              <button className="clear-search-btn" onClick={() => setSearchQuery("")}>
-                Clear Search
-              </button>
-            </div>
-          )}
+                ))}
+              </div>
+            ) : topics.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">📚</div>
+                <h3>No topics found</h3>
+                <p>No topics available for this lesson. Please try a different lesson or check back later.</p>
+                <button className="back-to-resources-btn" onClick={handleBackClick}>
+                  Back to Resources
+                </button>
+              </div>
+            ) : (
+              <div className="no-results-state">
+                <div className="no-results-icon">🔍</div>
+                <h3>No matching topics</h3>
+                <p>No topics match your search criteria. Try adjusting your search terms.</p>
+                <button className="clear-search-btn" onClick={() => setSearchQuery("")}>
+                  Clear Search
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-     </div>
     </div>
   )
 }
