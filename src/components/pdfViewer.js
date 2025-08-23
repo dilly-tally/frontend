@@ -19,6 +19,7 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCcw,
+  Highlighter,
 } from "lucide-react"
 
 export const PdfViewer = () => {
@@ -290,223 +291,6 @@ export const PdfViewer = () => {
     }
   }
 
-  // Redraw all existing lines on the canvas
-  const redrawCanvas = () => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-
-    const ctx = canvas.getContext("2d")
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    drawnLines.forEach((line) => {
-      ctx.globalCompositeOperation = "source-over"
-      ctx.strokeStyle = line.color
-      ctx.lineWidth = 2
-      ctx.lineCap = "round"
-      ctx.lineJoin = "round"
-
-      ctx.beginPath()
-      ctx.moveTo(line.startX, line.startY)
-      ctx.lineTo(line.endX, line.endY)
-      ctx.stroke()
-    })
-  }
-
-  // Resize canvas when PDF image loads
-  useEffect(() => {
-    if (pageImageUrl && pdfImageRef.current) {
-      const img = pdfImageRef.current
-
-      const handleImageLoad = () => {
-        console.log("PDF image loaded, resizing canvas")
-        // Add a small delay to ensure the image is fully rendered
-        setTimeout(() => {
-          resizeCanvas()
-        }, 50)
-      }
-
-      if (img.complete && img.naturalHeight !== 0) {
-        handleImageLoad()
-      } else {
-        img.onload = handleImageLoad
-        // Also add error handling
-        img.onerror = (error) => {
-          console.error("Error loading PDF image:", error)
-        }
-      }
-
-      const handleResize = () => {
-        setTimeout(resizeCanvas, 100)
-      }
-
-      window.addEventListener("resize", handleResize)
-
-      return () => {
-        window.removeEventListener("resize", handleResize)
-        if (img.onload) img.onload = null
-        if (img.onerror) img.onerror = null
-      }
-    }
-  }, [pageImageUrl, drawnLines])
-
-  // Zoom functions
-  const handleZoomIn = () => {
-    setZoomLevel((prev) => Math.min(prev + 0.25, 3))
-  }
-
-  const handleZoomOut = () => {
-    setZoomLevel((prev) => Math.max(prev - 0.25, 0.5))
-  }
-
-  const handleZoomReset = () => {
-    setZoomLevel(1)
-    setPanOffset({ x: 0, y: 0 })
-  }
-
-  // Pan functions
-  const handlePanStart = (e) => {
-    if (zoomLevel > 1) {
-      setIsPanning(true)
-      setLastPanPoint({ x: e.clientX, y: e.clientY })
-    }
-  }
-
-  const handlePanMove = (e) => {
-    if (isPanning && zoomLevel > 1) {
-      const deltaX = e.clientX - lastPanPoint.x
-      const deltaY = e.clientY - lastPanPoint.y
-
-      setPanOffset((prev) => ({
-        x: prev.x + deltaX,
-        y: prev.y + deltaY,
-      }))
-
-      setLastPanPoint({ x: e.clientX, y: e.clientY })
-    }
-  }
-
-  const handlePanEnd = () => {
-    setIsPanning(false)
-  }
-
-  // Add fullscreen handlers
-  const enterFullscreen = () => {
-    setIsFullscreen(true)
-    setZoomLevel(1)
-    setPanOffset({ x: 0, y: 0 })
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen()
-    } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen()
-    } else if (document.documentElement.msRequestFullscreen) {
-      document.documentElement.msRequestFullscreen()
-    }
-  }
-
-  const exitFullscreen = () => {
-    setIsFullscreen(false)
-    setZoomLevel(1)
-    setPanOffset({ x: 0, y: 0 })
-    if (document.exitFullscreen) {
-      document.exitFullscreen()
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen()
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen()
-    }
-  }
-
-  // Test fullscreen handlers
-  const enterTestFullscreen = () => {
-    setIsTestFullscreen(true)
-    setZoomLevel(1)
-    setPanOffset({ x: 0, y: 0 })
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen()
-    } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen()
-    } else if (document.documentElement.msRequestFullscreen) {
-      document.documentElement.msRequestFullscreen()
-    }
-  }
-
-  const exitTestFullscreen = () => {
-    setIsTestFullscreen(false)
-    setZoomLevel(1)
-    setPanOffset({ x: 0, y: 0 })
-    if (document.exitFullscreen) {
-      document.exitFullscreen()
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen()
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen()
-    }
-  }
-
-  // Listen for fullscreen changes
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      const isCurrentlyFullscreen = !!(
-        document.fullscreenElement ||
-        document.webkitFullscreenElement ||
-        document.msFullscreenElement
-      )
-      if (!isCurrentlyFullscreen) {
-        setIsFullscreen(false)
-        setIsTestFullscreen(false)
-        setZoomLevel(1)
-        setPanOffset({ x: 0, y: 0 })
-      }
-    }
-
-    document.addEventListener("fullscreenchange", handleFullscreenChange)
-    document.addEventListener("webkitfullscreenchange", handleFullscreenChange)
-    document.addEventListener("msfullscreenchange", handleFullscreenChange)
-
-    return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreenChange)
-      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange)
-      document.removeEventListener("msfullscreenchange", handleFullscreenChange)
-    }
-  }, [])
-
-  // Page navigation functions
-  const nextPage = async () => {
-    console.log("Next page clicked. Current:", currentPage, "Total:", totalPages, "Loading:", pageLoading)
-    if (currentPage < totalPages && pdfDoc && !pageLoading) {
-      const newPage = currentPage + 1
-      console.log("Navigating to page:", newPage)
-      setCurrentPage(newPage)
-      clearAllDrawings()
-      await renderPage(pdfDoc, newPage)
-    } else {
-      console.log("Cannot go to next page - at end or loading")
-    }
-  }
-
-  const prevPage = async () => {
-    console.log("Previous page clicked. Current:", currentPage, "Loading:", pageLoading)
-    if (currentPage > 1 && pdfDoc && !pageLoading) {
-      const newPage = currentPage - 1
-      console.log("Navigating to page:", newPage)
-      setCurrentPage(newPage)
-      clearAllDrawings()
-      await renderPage(pdfDoc, newPage)
-    } else {
-      console.log("Cannot go to previous page - at beginning or loading")
-    }
-  }
-
-  const goToPage = async (pageNum) => {
-    console.log("Go to page:", pageNum)
-    if (pageNum >= 1 && pageNum <= totalPages && pageNum !== currentPage && pdfDoc && !pageLoading) {
-      setCurrentPage(pageNum)
-      clearAllDrawings()
-      await renderPage(pdfDoc, pageNum)
-    }
-  }
-
-  // Drawing functions
   const startDrawing = (e) => {
     if (activeTool === "none") return
 
@@ -529,6 +313,29 @@ export const PdfViewer = () => {
     setIsDrawing(true)
     setStartPos({ x, y })
 
+    if (activeTool === "highlighter") {
+      ctx.globalCompositeOperation = "multiply" // Use multiply for proper highlighting effect
+      ctx.strokeStyle = "rgba(255, 255, 0, 0.4)" // Slightly more opaque for multiply blend
+      ctx.lineWidth = 15
+      ctx.lineCap = "butt" // Square edges
+      ctx.lineJoin = "miter" // Sharp corners
+      ctx.globalAlpha = 1.0 // Let the rgba handle transparency
+    } else if (activeTool === "eraser") {
+      ctx.globalCompositeOperation = "destination-out"
+      ctx.strokeStyle = drawColor
+      ctx.lineWidth = 20
+      ctx.lineCap = "round"
+      ctx.lineJoin = "round"
+      ctx.globalAlpha = 1.0
+    } else {
+      ctx.globalCompositeOperation = "source-over"
+      ctx.strokeStyle = drawColor
+      ctx.lineWidth = activeTool === "pen" ? 3 : 2
+      ctx.lineCap = "round"
+      ctx.lineJoin = "round"
+      ctx.globalAlpha = 1.0
+    }
+
     ctx.beginPath()
     ctx.moveTo(x, y)
 
@@ -540,56 +347,6 @@ export const PdfViewer = () => {
 
     if (activeTool === "line") {
       setCurrentLine({ startX: x, startY: y, endX: x, endY: y, color: drawColor })
-    }
-  }
-
-  const draw = (e) => {
-    if (!isDrawing || activeTool === "none" || activeTool === "dot" || activeTool === "text") return
-
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext("2d")
-    const rect = canvas.getBoundingClientRect()
-
-    const x = (e.clientX - rect.left) * (canvas.width / rect.width)
-    const y = (e.clientY - rect.top) * (canvas.height / rect.height)
-
-    if (activeTool === "line") {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      drawnLines.forEach((line) => {
-        ctx.globalCompositeOperation = "source-over"
-        ctx.strokeStyle = line.color
-        ctx.lineWidth = 2
-        ctx.lineCap = "round"
-        ctx.lineJoin = "round"
-
-        ctx.beginPath()
-        ctx.moveTo(line.startX, line.startY)
-        ctx.lineTo(line.endX, line.endY)
-        ctx.stroke()
-      })
-
-      ctx.globalCompositeOperation = "source-over"
-      ctx.strokeStyle = drawColor
-      ctx.lineWidth = 2
-      ctx.lineCap = "round"
-      ctx.lineJoin = "round"
-
-      ctx.beginPath()
-      ctx.moveTo(startPos.x, startPos.y)
-      ctx.lineTo(x, y)
-      ctx.stroke()
-
-      setCurrentLine((prev) => ({ ...prev, endX: x, endY: y }))
-    } else {
-      ctx.globalCompositeOperation = activeTool === "eraser" ? "destination-out" : "source-over"
-      ctx.strokeStyle = drawColor
-      ctx.lineWidth = activeTool === "eraser" ? 20 : activeTool === "pen" ? 3 : 2
-      ctx.lineCap = "round"
-      ctx.lineJoin = "round"
-
-      ctx.lineTo(x, y)
-      ctx.stroke()
     }
   }
 
@@ -783,6 +540,284 @@ export const PdfViewer = () => {
   const handleBackClick = () => {
     navigate(-1) // Go back to previous page
   }
+
+  const draw = (e) => {
+    if (!isDrawing || activeTool === "none" || activeTool === "dot" || activeTool === "text") return
+
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext("2d")
+    const rect = canvas.getBoundingClientRect()
+
+    const x = (e.clientX - rect.left) * (canvas.width / rect.width)
+    const y = (e.clientY - rect.top) * (canvas.height / rect.height)
+
+    if (activeTool === "line") {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+      drawnLines.forEach((line) => {
+        ctx.globalCompositeOperation = "source-over"
+        ctx.strokeStyle = line.color
+        ctx.lineWidth = 2
+        ctx.lineCap = "round"
+        ctx.lineJoin = "round"
+        ctx.globalAlpha = 1.0
+
+        ctx.beginPath()
+        ctx.moveTo(line.startX, line.startY)
+        ctx.lineTo(line.endX, line.endY)
+        ctx.stroke()
+      })
+
+      ctx.globalCompositeOperation = "source-over"
+      ctx.strokeStyle = drawColor
+      ctx.lineWidth = 2
+      ctx.lineCap = "round"
+      ctx.lineJoin = "round"
+      ctx.globalAlpha = 1.0
+
+      ctx.beginPath()
+      ctx.moveTo(startPos.x, startPos.y)
+      ctx.lineTo(x, y)
+      ctx.stroke()
+
+      setCurrentLine((prev) => ({ ...prev, endX: x, endY: y }))
+    } else {
+      ctx.lineTo(x, y)
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+    }
+  }
+
+  // Redraw all existing lines on the canvas
+  const redrawCanvas = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext("2d")
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    drawnLines.forEach((line) => {
+      if (line.tool === "highlighter") {
+        ctx.globalCompositeOperation = "multiply"
+        ctx.strokeStyle = "rgba(255, 255, 0, 0.4)"
+        ctx.lineWidth = 15
+        ctx.lineCap = "butt"
+        ctx.lineJoin = "miter"
+        ctx.globalAlpha = 1.0
+      } else {
+        ctx.globalCompositeOperation = "source-over"
+        ctx.strokeStyle = line.color
+        ctx.lineWidth = 2
+        ctx.lineCap = "round"
+        ctx.lineJoin = "round"
+        ctx.globalAlpha = 1.0
+      }
+
+      ctx.beginPath()
+      ctx.moveTo(line.startX, line.startY)
+      ctx.lineTo(line.endX, line.endY)
+      ctx.stroke()
+    })
+  }
+
+  // Resize canvas when PDF image loads
+  useEffect(() => {
+    if (pageImageUrl && pdfImageRef.current) {
+      const img = pdfImageRef.current
+
+      const handleImageLoad = () => {
+        console.log("PDF image loaded, resizing canvas")
+        // Add a small delay to ensure the image is fully rendered
+        setTimeout(() => {
+          resizeCanvas()
+        }, 50)
+      }
+
+      if (img.complete && img.naturalHeight !== 0) {
+        handleImageLoad()
+      } else {
+        img.onload = handleImageLoad
+        // Also add error handling
+        img.onerror = (error) => {
+          console.error("Error loading PDF image:", error)
+        }
+      }
+
+      const handleResize = () => {
+        setTimeout(resizeCanvas, 100)
+      }
+
+      window.addEventListener("resize", handleResize)
+
+      return () => {
+        window.removeEventListener("resize", handleResize)
+        if (img.onload) img.onload = null
+        if (img.onerror) img.onerror = null
+      }
+    }
+  }, [pageImageUrl, drawnLines])
+
+  // Zoom functions
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 0.25, 3))
+  }
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 0.25, 0.5))
+  }
+
+  const handleZoomReset = () => {
+    setZoomLevel(1)
+    setPanOffset({ x: 0, y: 0 })
+  }
+
+  // Pan functions
+  const handlePanStart = (e) => {
+    // Don't pan if any drawing tool is active
+    if (zoomLevel > 1 && activeTool === "none") {
+      setIsPanning(true)
+      setLastPanPoint({ x: e.clientX, y: e.clientY })
+    }
+  }
+
+  const handlePanMove = (e) => {
+    // Only pan if no drawing tool is active
+    if (isPanning && zoomLevel > 1 && activeTool === "none") {
+      const deltaX = e.clientX - lastPanPoint.x
+      const deltaY = e.clientY - lastPanPoint.y
+
+      setPanOffset((prev) => ({
+        x: prev.x + deltaX,
+        y: prev.y + deltaY,
+      }))
+
+      setLastPanPoint({ x: e.clientX, y: e.clientY })
+    }
+  }
+
+  const handlePanEnd = () => {
+    setIsPanning(false)
+  }
+
+  // Add fullscreen handlers
+  const enterFullscreen = () => {
+    setIsFullscreen(true)
+    setZoomLevel(1)
+    setPanOffset({ x: 0, y: 0 })
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen()
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen()
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen()
+    }
+  }
+
+  const exitFullscreen = () => {
+    setIsFullscreen(false)
+    setZoomLevel(1)
+    setPanOffset({ x: 0, y: 0 })
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen()
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen()
+    }
+  }
+
+  // Test fullscreen handlers
+  const enterTestFullscreen = () => {
+    setIsTestFullscreen(true)
+    setZoomLevel(1)
+    setPanOffset({ x: 0, y: 0 })
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen()
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen()
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen()
+    }
+  }
+
+  const exitTestFullscreen = () => {
+    setIsTestFullscreen(false)
+    setZoomLevel(1)
+    setPanOffset({ x: 0, y: 0 })
+    if (document.exitFullscreen) {
+      document.exitFullscreen()
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen()
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen()
+    }
+  }
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isCurrentlyFullscreen = !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.msFullscreenElement
+      )
+      if (!isCurrentlyFullscreen) {
+        setIsFullscreen(false)
+        setIsTestFullscreen(false)
+        setZoomLevel(1)
+        setPanOffset({ x: 0, y: 0 })
+      }
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange)
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange)
+    document.addEventListener("msfullscreenchange", handleFullscreenChange)
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange)
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange)
+      document.removeEventListener("msfullscreenchange", handleFullscreenChange)
+    }
+  }, [])
+
+  // Page navigation functions
+  const nextPage = async () => {
+    console.log("Next page clicked. Current:", currentPage, "Total:", totalPages, "Loading:", pageLoading)
+    if (currentPage < totalPages && pdfDoc && !pageLoading) {
+      const newPage = currentPage + 1
+      console.log("Navigating to page:", newPage)
+      setCurrentPage(newPage)
+      clearAllDrawings()
+      await renderPage(pdfDoc, newPage)
+    } else {
+      console.log("Cannot go to next page - at end or loading")
+    }
+  }
+
+  const prevPage = async () => {
+    console.log("Previous page clicked. Current:", currentPage, "Loading:", pageLoading)
+    if (currentPage > 1 && pdfDoc && !pageLoading) {
+      const newPage = currentPage - 1
+      console.log("Navigating to page:", newPage)
+      setCurrentPage(newPage)
+      clearAllDrawings()
+      await renderPage(pdfDoc, newPage)
+    } else {
+      console.log("Cannot go to previous page - at beginning or loading")
+    }
+  }
+
+  const goToPage = async (pageNum) => {
+    console.log("Go to page:", pageNum)
+    if (pageNum >= 1 && pageNum <= totalPages && pageNum !== currentPage && pdfDoc && !pageLoading) {
+      setCurrentPage(pageNum)
+      clearAllDrawings()
+      await renderPage(pdfDoc, pageNum)
+    }
+  }
+
+  // Drawing functions
 
   if (loading)
     return (
@@ -1019,6 +1054,14 @@ export const PdfViewer = () => {
                         </button>
 
                         <button
+                          className={`tool-btn ${activeTool === "highlighter" ? "active" : ""}`}
+                          onClick={() => handleToolChange("highlighter")}
+                          title="Highlighter Tool"
+                        >
+                          <Highlighter size={14} />
+                        </button>
+
+                        <button
                           className={`tool-btn ${activeTool === "eraser" ? "active" : ""}`}
                           onClick={() => handleToolChange("eraser")}
                           title="Eraser Tool"
@@ -1060,12 +1103,14 @@ export const PdfViewer = () => {
                     <div className="pdf-viewer-fullscreen">
                       <div
                         className="pdf-container-fullscreen"
+                        data-tool-active={activeTool !== "none"}
                         onMouseDown={handlePanStart}
                         onMouseMove={handlePanMove}
                         onMouseUp={handlePanEnd}
                         onMouseLeave={handlePanEnd}
                         style={{
-                          cursor: zoomLevel > 1 ? (isPanning ? "grabbing" : "grab") : "default",
+                          cursor:
+                            zoomLevel > 1 && activeTool === "none" ? (isPanning ? "grabbing" : "grab") : "default",
                           overflow: "hidden",
                         }}
                       >
@@ -1111,7 +1156,9 @@ export const PdfViewer = () => {
                                           ? "pointer"
                                           : activeTool === "text"
                                             ? "text"
-                                            : "default",
+                                            : activeTool === "highlighter"
+                                              ? "crosshair"
+                                              : "default",
                               }}
                               onMouseDown={startDrawing}
                               onMouseMove={draw}
@@ -1243,6 +1290,14 @@ export const PdfViewer = () => {
                         </button>
 
                         <button
+                          className={`tool-btn ${activeTool === "highlighter" ? "active" : ""}`}
+                          onClick={() => handleToolChange("highlighter")}
+                          title="Highlighter Tool"
+                        >
+                          <Highlighter size={16} />
+                        </button>
+
+                        <button
                           className={`tool-btn ${activeTool === "eraser" ? "active" : ""}`}
                           onClick={() => handleToolChange("eraser")}
                           title="Eraser Tool"
@@ -1317,7 +1372,9 @@ export const PdfViewer = () => {
                                           ? "pointer"
                                           : activeTool === "text"
                                             ? "text"
-                                            : "default",
+                                            : activeTool === "highlighter"
+                                              ? "crosshair"
+                                              : "default",
                               }}
                               onMouseDown={startDrawing}
                               onMouseMove={draw}
@@ -1594,12 +1651,14 @@ export const PdfViewer = () => {
                         <div className="pdf-viewer-fullscreen">
                           <div
                             className="pdf-container-fullscreen"
+                            data-tool-active={activeTool !== "none"}
                             onMouseDown={handlePanStart}
                             onMouseMove={handlePanMove}
                             onMouseUp={handlePanEnd}
                             onMouseLeave={handlePanEnd}
                             style={{
-                              cursor: zoomLevel > 1 ? (isPanning ? "grabbing" : "grab") : "default",
+                              cursor:
+                                zoomLevel > 1 && activeTool === "none" ? (isPanning ? "grabbing" : "grab") : "default",
                               overflow: "hidden",
                             }}
                           >
