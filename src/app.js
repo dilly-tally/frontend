@@ -8,6 +8,7 @@ import { Dashboard } from "./components/dashboard"
 import { TeacherResource } from "./components/teacherResource"
 import { LessonTopics } from "./components/topic"
 import { PdfViewer } from "./components/pdfViewer"
+import { StudentTask } from "./components/studentTask"
 import LandingPage from "./pages/LandingPage"
 import { AuthProvider } from "./context/AuthContext"
 
@@ -37,6 +38,7 @@ function App() {
             <Route path="/teacherResource" element={<TeacherResource />} />
             <Route path="/topics" element={<LessonTopics />} />
             <Route path="/viewpdf/:tid" element={<PdfViewer />} />
+            <Route path="/student-task" element={<StudentTask />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AuthProvider>
