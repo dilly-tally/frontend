@@ -1,0 +1,84 @@
+/* Add modern, clean table styles for Classes component */
+.classes-card {
+  background: #ffffff;
+  border-radius: 1rem; /* rounded-2xl */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06); /* soft shadow */
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .classes-card {
+    padding: 1.25rem;
+  }
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto; /* horizontal scroll on small screens */
+}
+
+.students-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 720px; /* keep structure on small screens */
+}
+
+.students-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f8fafc; /* light background for header */
+  color: #111827; /* neutral dark text */
+  font-weight: 600; /* medium-bold */
+  text-align: left;
+  padding: 12px 14px; /* consistent cell padding */
+  font-size: 0.95rem; /* slightly larger header text */
+  z-index: 1;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06); /* subtle divider */
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04); /* slight header shadow */
+}
+
+.students-table tbody td {
+  padding: 12px 14px;
+  color: #374151; /* neutral gray text */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* subtle divider */
+  vertical-align: middle;
+}
+
+.students-table tbody tr:nth-child(even) {
+  background: #f6fbff; /* very light gray/blue zebra row */
+}
+
+.students-table tbody tr:hover {
+  background: #eef6ff; /* row hover highlight */
+  transition: background-color 160ms ease;
+}
+
+.edit-pill-btn {
+  appearance: none;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 9999px; /* pill shape */
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #ffffff;
+  background-color: #16a34a; /* green base (maintain brand green if already used) */
+  cursor: pointer;
+  transition: background-color 160ms ease, transform 120ms ease;
+  white-space: nowrap;
+}
+
+.edit-pill-btn:hover {
+  background-color: #14803c; /* darker green hover */
+}
+
+.edit-pill-btn:active {
+  transform: translateY(1px);
+}
+
+/* Optional small helper to keep action column tight */
+.col-actions {
+  width: 1%;
+  white-space: nowrap;
+  text-align: left;
+}

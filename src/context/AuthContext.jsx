@@ -18,21 +18,61 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [userLoginId, setUserLoginId] = useState(null)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user)
 
       if (user) {
-        // Track user login in backend
         try {
-          await axios.post("https://backend-164859304804.us-central1.run.app/v1/auth/login", {
+          const resp = await axios.post("https://backend-164859304804.us-central1.run.app/v1/auth/login", {
             name: user.displayName,
             firebaseUID: user.uid,
           })
+          let backendId =
+            resp?.data?.user?.id ?? resp?.data?.userLogin?.id ?? resp?.data?.data?.id ?? resp?.data?.id ?? null
+
+          // Fallback: fetch by firebaseUID using existing route /v1/auth/user-info?firebaseUID=...
+          if (!backendId) {
+            try {
+              const getResp = await axios.get(`https://backend-164859304804.us-central1.run.app/v1/auth/user-info`, {
+                params: { firebaseUID: user.uid },
+              })
+              backendId =
+                getResp?.data?.user?.id ??
+                getResp?.data?.userLogin?.id ??
+                getResp?.data?.data?.id ??
+                getResp?.data?.id ??
+                null
+            } catch (e) {
+              // console.log("[v0] fallback user-by-firebase failed", e)
+            }
+          }
+
+          if (backendId) {
+            setUserLoginId(backendId)
+            try {
+              localStorage.setItem("userLoginId", String(backendId))
+            } catch {}
+          } else {
+            try {
+              const cached = localStorage.getItem("userLoginId")
+              if (cached) setUserLoginId(Number.parseInt(cached, 10))
+            } catch {}
+          }
         } catch (error) {
           console.error("Error tracking user login:", error)
+          try {
+            const cached = localStorage.getItem("userLoginId")
+            if (cached) setUserLoginId(Number.parseInt(cached, 10))
+          } catch {}
         }
+      } else {
+        try {
+          localStorage.removeItem("userLoginId")
+        } catch {}
+        setUserLoginId(null)
       }
 
       setLoading(false)
@@ -54,7 +94,6 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       if (user) {
-        // Track user logout in backend
         try {
           await axios.post("https://backend-164859304804.us-central1.run.app/v1/auth/logout", {
             firebaseUID: user.uid,
@@ -76,6 +115,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     signInWithGoogle,
     logout,
+    userLoginId,
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

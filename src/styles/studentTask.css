@@ -1,6 +1,6 @@
 .modern-student-task {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: white;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -22,33 +22,8 @@
   color: white;
 }
 
-.hero-content {
-  max-width: 1200px;
-  margin: 0 auto;
-}
 
-.hero-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem;
-}
-
-.highlight {
-  color: #fff3cd;
-}
-
-.hero-subtitle {
-  font-size: 1.1rem;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.navigation-section {
-  padding: 0 2rem;
-  background: white;
-}
-
-.student-task-scrollable-content {
+.student-task-scrollable-contentt {
   margin-top: 540px;
   padding: 2rem;
   max-width: 1200px;
