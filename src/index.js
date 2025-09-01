@@ -5,7 +5,10 @@ import "./styles/signup.css"; // Load global styles
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <div className="launch">
+      
+      Launching Soon...
+    </div>
   </React.StrictMode>,
   document.getElementById("root")
 );
